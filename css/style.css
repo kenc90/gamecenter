@@ -490,36 +490,42 @@ body {
 
 /* ---------- Vista / Aero glass ---------- */
 :root[data-theme="vista"] {
-  --desktop-bg: #336296;
+  /* Vista "Bloom"-style wallpaper: broad soft aurora blooms over a deep blue base. */
+  --desktop-bg: #0f3f6e;
   --desktop-bg2:
-    radial-gradient(140% 100% at 50% 0%, #4d7fb5 0%, #2d5c8f 45%, #1b3c63 100%);
+    radial-gradient(46% 42% at 50% -6%, rgba(210,245,255,.5) 0%, rgba(140,200,240,0) 70%),
+    radial-gradient(34% 30% at 22% 8%, rgba(120,255,190,.5) 0%, rgba(60,180,130,0) 66%),
+    radial-gradient(30% 28% at 74% 6%, rgba(255,255,255,.42) 0%, rgba(255,255,255,0) 68%),
+    radial-gradient(58% 52% at 16% 84%, rgba(120,225,140,.6) 0%, rgba(60,170,120,0) 62%),
+    radial-gradient(52% 48% at 82% 78%, rgba(90,205,255,.55) 0%, rgba(40,140,200,0) 62%),
+    radial-gradient(72% 58% at 50% 110%, rgba(185,255,205,.5) 0%, rgba(80,200,140,0) 66%),
+    linear-gradient(160deg, #1b5f9e 0%, #0f3f6e 45%, #071f3c 100%);
 
   --font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   --win-border: rgba(180, 210, 240, .6);
   --win-radius: 8px 8px 5px 5px;
-  --win-bg: rgba(203, 223, 245, .52);
+  --win-bg: rgba(170, 200, 232, .20);
   --win-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.65),
+    inset 0 0 0 1px rgba(255,255,255,.28),
     0 0 0 1px rgba(40,80,130,.5),
     0 14px 48px rgba(8, 24, 48, .6);
 
   --tb-h: 34px;
-  --tb-bg: linear-gradient(
-    rgba(150,196,236,.95) 0%,
-    rgba(96,150,205,.9) 46%,
-    rgba(58,110,172,.92) 51%,
-    rgba(96,150,205,.9) 100%);
+  /* Flat translucent tint — no gradient, no shine band. Let the blurred
+     backdrop do the work. */
+  --tb-bg: rgba(24, 70, 130, .34);
   --tb-border: rgba(160,200,240,.7);
   --tb-text: #fff;
   --tb-text-shadow: 0 0 6px rgba(30,90,170,.95), 0 0 2px rgba(0,0,0,.7), 0 1px 1px rgba(0,0,0,.6);
-  --tb-sheen: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.15) 47%, rgba(255,255,255,0) 52%);
+  /* No glossy highlight overlay — Vista is plain tinted glass, not shiny. */
+  --tb-sheen: none;
   --tb-btn-normal: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #cfe4f6 45%, #9dc2e4 100%);
   --tb-btn-close: radial-gradient(120% 120% at 50% 0%, #ffe9df 0%, #f3a988 45%, #cf4a24 100%);
   --tb-btn-border: rgba(255,255,255,.9);
   --tb-btn-radius: 6px;
 
-  --menu-bg: rgba(240, 246, 252, .55);
+  --menu-bg: rgba(226, 238, 250, .26);
   --menu-border: rgba(150,180,210,.7);
   --menu-text: #0b2942;
   --menu-hover-bg: #cde3f7;
@@ -528,7 +534,7 @@ body {
   --dropdown-border: #7f9db9;
 
   --body-bg: transparent;
-  --panel-bg: rgba(224, 233, 244, .85);
+  --panel-bg: rgba(214, 228, 242, .40);
   --bevel-light: #ffffff;
   --bevel-dark: #97a9bd;
   --field-bg: #cfd8e4;
@@ -559,8 +565,8 @@ body {
 /* Aero glass: real-time backdrop blur + light caption glyphs on glossy pills */
 :root[data-theme="vista"] .xp-window,
 :root[data-theme="vista"] .dialog {
-  backdrop-filter: blur(13px) saturate(1.7) brightness(1.06);
-  -webkit-backdrop-filter: blur(13px) saturate(1.7) brightness(1.06);
+  backdrop-filter: blur(16px) saturate(1.8) brightness(1.08);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8) brightness(1.08);
 }
 :root[data-theme="vista"] .title-bar { border-radius: 7px 7px 0 0; }
 :root[data-theme="vista"] .tb-btn {
