@@ -108,12 +108,29 @@
     renderLed(timerDigits, String(Math.min(999, time)).padStart(3, " "));
   }
 
-  // ---------- Smiley faces ----------
+  // ---------- Smiley faces (SVG for cross-platform consistency) ----------
+  function face(inner) {
+    return `<svg viewBox="0 0 26 26" width="26" height="26" aria-hidden="true">`
+      + `<circle cx="13" cy="13" r="11.5" fill="#ffd23f" stroke="#8a6d00" stroke-width="1"/>`
+      + inner + `</svg>`;
+  }
+  const EYES = `<circle cx="9" cy="10.5" r="1.7" fill="#3a2a00"/>`
+    + `<circle cx="17" cy="10.5" r="1.7" fill="#3a2a00"/>`;
+  const SMILE = `<path d="M7 15 Q13 20.5 19 15" fill="none" stroke="#3a2a00" stroke-width="1.8" stroke-linecap="round"/>`;
   const FACES = {
-    normal: "😊", worried: "😮", dead: "😵", cool: "😎",
+    normal: face(EYES + SMILE),
+    worried: face(EYES + `<ellipse cx="13" cy="16.8" rx="2.8" ry="3.6" fill="#3a2a00"/>`),
+    dead: face(
+      `<g stroke="#3a2a00" stroke-width="1.7" stroke-linecap="round" fill="none">`
+      + `<path d="M7 8.6 l4 4 M11 8.6 l-4 4"/><path d="M15 8.6 l4 4 M19 8.6 l-4 4"/></g>`
+      + `<ellipse cx="13" cy="17" rx="2.6" ry="3.2" fill="#3a2a00"/>`),
+    cool: face(
+      `<g fill="#141414"><rect x="4.6" y="9" width="7" height="4.6" rx="2"/>`
+      + `<rect x="14.4" y="9" width="7" height="4.6" rx="2"/>`
+      + `<rect x="11" y="10.4" width="4" height="1.4"/></g>` + SMILE),
   };
   function renderFace(state) {
-    smileyEl.textContent = FACES[state] || FACES.normal;
+    smileyEl.innerHTML = FACES[state] || FACES.normal;
     smileyEl.setAttribute("data-face", state);
   }
 
@@ -290,7 +307,7 @@
       canRollback = true;
       rollbackBtn.hidden = false;
       smileyEl.title = "Rollback (God Mode)";
-      setStatus("Boom! Click \u21a9 Rollback (or the smiley) to undo the fatal move.");
+      setStatus("Boom! Click Rollback (or the smiley) to undo the fatal move.");
     } else {
       setStatus("Boom! You hit a mine.");
     }

@@ -281,6 +281,8 @@ body {
   border-bottom: 2px solid var(--bevel-light);
 }
 .smiley svg { display: block; width: 26px; height: 26px; }
+/* Keep inline SVG faces aligned when reused in dialogs / overlay text */
+.overlay-msg svg, .icon-row svg { vertical-align: middle; }
 
 /* Mine field */
 .field-bevel {
@@ -421,6 +423,7 @@ body {
   z-index: 10;
   padding: 4px 10px;
   font: inherit; font-weight: bold;
+  display: inline-flex; align-items: center; gap: 5px;
   color: var(--btn-text);
   background: var(--btn-bg);
   border: 1px solid var(--btn-border);
@@ -429,6 +432,7 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,.35);
   animation: rollIn 180ms ease-out;
 }
+.rollback-btn svg { width: 14px; height: 14px; display: block; }
 .rollback-btn:hover { filter: brightness(1.08); }
 .rollback-btn[hidden] { display: none; }
 @keyframes rollIn {
