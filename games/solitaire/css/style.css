@@ -255,21 +255,20 @@ body { background: var(--felt-2); font-family: system-ui, -apple-system, "Segoe 
 /* ---------- Rules modal ---------- */
 .modal {
   position: fixed; inset: 0; z-index: 1100;
-  display: flex; align-items: center; justify-content: center;
+  overflow: auto;
+  display: grid; place-content: center; place-content: safe center;
   padding: 16px;
 }
 .modal[hidden] { display: none; }
 .modal__backdrop {
-  position: absolute; inset: 0;
+  position: fixed; inset: 0;
   background: rgba(2, 16, 10, .35);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
 .modal__panel {
-  position: relative;
+  position: relative; z-index: 1;
   width: min(94vw, 520px);
-  max-height: 86vh;
-  display: flex; flex-direction: column;
   /* Frosted glass: translucent tint + heavy backdrop blur so the felt shows through. */
   background: rgba(10, 46, 32, .38);
   backdrop-filter: blur(28px) saturate(140%);
@@ -295,7 +294,7 @@ body { background: var(--felt-2); font-family: system-ui, -apple-system, "Segoe 
   padding: 0 4px;
 }
 .modal__x:hover { color: #fff; }
-.modal__body { padding: 14px 20px 4px; overflow: auto; font-size: 14px; line-height: 1.6; color: #dcece2; }
+.modal__body { padding: 14px 20px 4px; font-size: 14px; line-height: 1.6; color: #dcece2; }
 .modal__lead { margin: 4px 0 12px; color: #eaf3ee; }
 .modal__body h3 {
   margin: 16px 0 6px; font-size: 13px; font-weight: 700;

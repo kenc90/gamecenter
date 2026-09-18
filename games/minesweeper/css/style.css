@@ -415,12 +415,16 @@ body {
 .dialog-backdrop {
   position: fixed; inset: 0;
   background: var(--overlay-bg);
-  display: flex; align-items: center; justify-content: center;
+  overflow: auto;
+  display: grid; place-content: center; place-content: safe center;
   z-index: 300;
 }
 .dialog {
   width: min(460px, calc(100vw - 24px));
-  max-height: calc(100vh - 24px);
+  /* Keep the panel at least as tall as its content so an overflowing dialog
+     grows and lets the backdrop scroll (overflow:hidden alone would let the
+     grid row shrink and clip the OK button on very short viewports). */
+  min-height: max-content;
   display: flex; flex-direction: column;
   background: var(--win-bg);
   border: 1px solid var(--win-border);
@@ -429,7 +433,7 @@ body {
   overflow: hidden;
 }
 .dialog .title-bar { flex: 0 0 auto; }
-.dialog-content { padding: 16px; color: var(--dialog-text); overflow: auto; }
+.dialog-content { padding: 16px; color: var(--dialog-text); }
 .dialog-content h2 { font-size: 14px; margin: 0 0 10px; }
 .dialog-content p { margin: 0 0 8px; line-height: 1.5; }
 .dialog-content ul { margin: 0 0 8px; padding-left: 18px; line-height: 1.6; }
