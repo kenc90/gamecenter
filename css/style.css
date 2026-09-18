@@ -321,9 +321,6 @@ body {
 .cell.revealed.mine-hit { background: var(--mine-hit-bg); }
 .cell.revealed { color: var(--mine-color); }
 .cell .mine .hl { fill: var(--mine-hl); }
-.cell.revealed.mine-hit .spikes { stroke: var(--mine-hl); }
-.cell.revealed.mine-hit circle { fill: var(--mine-hl); }
-.cell.revealed.mine-hit .hl { fill: var(--mine-hit-bg); }
 .cell.flag { color: #000; }
 
 .cell svg { display: block; width: calc(var(--cell) * 0.8); height: calc(var(--cell) * 0.8); }
