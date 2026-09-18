@@ -25,6 +25,7 @@
   const rollbackBtn = document.getElementById("rollbackBtn");
   const statusBar = document.getElementById("statusBar");
   const matrixCanvas = document.getElementById("matrixRain");
+  const windowTitleEl = document.getElementById("windowTitle");
 
   // ---------- Game state ----------
   let level = "expert";
@@ -688,6 +689,13 @@
     if (matrixRaf) { cancelAnimationFrame(matrixRaf); matrixRaf = null; }
   }
 
+  // The Virus theme renames the game; every other theme keeps the original.
+  function titleFor(t) { return t === "virus" ? "Virussweeper" : "Minesweeper"; }
+  function applyTitle(t) {
+    if (windowTitleEl) windowTitleEl.textContent = titleFor(t);
+    document.title = titleFor(t);
+  }
+
   // Theme is applied by setting data-theme on <html>; flags/faces are repainted.
   function setTheme(t) {
     if (!THEMES.includes(t)) return;
@@ -697,6 +705,7 @@
     markChecked();
     renderFace(faceState);
     for (let i = 0; i < cells.length; i++) paintCell(i);
+    applyTitle(t);
     if (t === "virus") startMatrix(); else stopMatrix();
   }
 
@@ -880,6 +889,7 @@
     if (saved && THEMES.includes(saved)) theme = saved;
   } catch {}
   document.documentElement.setAttribute("data-theme", theme);
+  applyTitle(theme);
   if (theme === "virus") startMatrix();
 
   // Restore God Mode preference.
