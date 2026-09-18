@@ -795,20 +795,17 @@
     setTimeout(() => windowEl.classList.remove("flash"), 400);
   }
 
-  function showExit() {
-    overlayMsgEl.innerHTML = `${faceSvg("cool", theme)} Thanks for playing Minesweeper! <a href="#" onclick="location.reload()">Play again</a>`;
-    overlayEl.hidden = false;
-  }
   overlayEl.addEventListener("click", () => { overlayEl.hidden = true; });
 
   // ---------- Window controls ----------
-  // Close returns to the game center. The target is read from the shared back
-  // link so the centre's path is declared in exactly one place (index.html).
-  btnCloseEl.addEventListener("click", () => {
+  // Returns to the game center. The target is read from the shared back link so
+  // the centre's path is declared in exactly one place (index.html).
+  function goToCenter() {
     // assign() leaves a history entry, so the browser Back button comes back to
     // the board; the game itself is persisted in ms-game either way.
     window.location.assign(backLinkEl ? backLinkEl.href : "../../index.html");
-  });
+  }
+  btnCloseEl.addEventListener("click", goToCenter);
 
   // ---------- Menu behavior ----------
   const menuBar = document.getElementById("menuBar");
@@ -857,7 +854,7 @@
       case "easy": setLevel("easy"); break;
       case "medium": setLevel("medium"); break;
       case "expert": setLevel("expert"); break;
-      case "exit": showExit(); break;
+      case "exit": goToCenter(); break;
       case "how-to-play": showHowToPlay(); break;
       case "about": showAbout(); break;
       case "best-times": showBestTimes(); break;
