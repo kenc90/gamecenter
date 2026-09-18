@@ -1,0 +1,213 @@
+/* ============================================================
+   Game Center — shared chrome
+   Everything here is namespaced (.gc-* classes, --gc-* tokens) so it
+   never collides with a game's own theme tokens. Page-level resets are
+   additionally scoped to body.gc-body, which only the center sets, so
+   loading this file inside a game page stays completely inert.
+   ============================================================ */
+
+:root {
+  --gc-bg: #f4f6fa;
+  --gc-surface: #ffffff;
+  --gc-surface-2: #f0f3f8;
+  --gc-text: #14181f;
+  --gc-text-muted: #5b6472;
+  --gc-border: #e0e5ee;
+  --gc-accent: #3b6ff0;
+  --gc-accent-2: #7b3bf0;
+  --gc-on-accent: #ffffff;
+  --gc-shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 8px 24px rgba(16, 24, 40, .08);
+  --gc-shadow-hi: 0 4px 12px rgba(16, 24, 40, .10), 0 20px 44px rgba(16, 24, 40, .16);
+  --gc-radius: 14px;
+  --gc-ring: 0 0 0 3px rgba(59, 111, 240, .35);
+  --gc-font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Automatic dark mode, unless the user explicitly picked light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode="light"]) {
+    --gc-bg: #0e1117;
+    --gc-surface: #171b23;
+    --gc-surface-2: #1f242e;
+    --gc-text: #e7ecf4;
+    --gc-text-muted: #98a2b3;
+    --gc-border: #262c37;
+    --gc-accent: #5b8cff;
+    --gc-accent-2: #9a5bff;
+    --gc-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    --gc-shadow-hi: 0 4px 12px rgba(0, 0, 0, .5), 0 20px 44px rgba(0, 0, 0, .5);
+    --gc-ring: 0 0 0 3px rgba(91, 140, 255, .4);
+  }
+}
+
+/* Manual override always wins. */
+:root[data-mode="dark"] {
+  --gc-bg: #0e1117;
+  --gc-surface: #171b23;
+  --gc-surface-2: #1f242e;
+  --gc-text: #e7ecf4;
+  --gc-text-muted: #98a2b3;
+  --gc-border: #262c37;
+  --gc-accent: #5b8cff;
+  --gc-accent-2: #9a5bff;
+  --gc-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  --gc-shadow-hi: 0 4px 12px rgba(0, 0, 0, .5), 0 20px 44px rgba(0, 0, 0, .5);
+  --gc-ring: 0 0 0 3px rgba(91, 140, 255, .4);
+}
+
+/* ---- Page frame: scoped to the center only ---- */
+body.gc-body {
+  margin: 0;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: var(--gc-font);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--gc-text);
+  /* Plain value first: if color-mix() is unsupported the declaration is ignored
+     and this survives instead of falling back to transparent. */
+  background: var(--gc-bg);
+  background:
+    radial-gradient(90% 60% at 50% -10%, color-mix(in srgb, var(--gc-accent) 12%, transparent) 0%, transparent 60%),
+    var(--gc-bg);
+  -webkit-font-smoothing: antialiased;
+}
+body.gc-body *,
+body.gc-body *::before,
+body.gc-body *::after { box-sizing: border-box; }
+
+.gc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px clamp(16px, 5vw, 48px);
+  border-bottom: 1px solid var(--gc-border);
+  background: var(--gc-surface);
+  background: color-mix(in srgb, var(--gc-surface) 72%, transparent);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.gc-brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -.01em; }
+.gc-brand svg { display: block; }
+.gc-brand b {
+  background: linear-gradient(90deg, var(--gc-accent), var(--gc-accent-2));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.gc-main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(24px, 6vw, 56px) clamp(16px, 5vw, 48px) 64px;
+}
+.gc-title { margin: 0 0 6px; font-size: clamp(26px, 4.5vw, 38px); letter-spacing: -.02em; }
+.gc-sub { margin: 0 0 32px; color: var(--gc-text-muted); }
+
+.gc-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+/* ---- Game card ---- */
+.gc-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--gc-border);
+  border-radius: var(--gc-radius);
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow);
+  color: inherit;
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.gc-card:hover,
+.gc-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: var(--gc-shadow-hi);
+  border-color: var(--gc-accent);
+  border-color: color-mix(in srgb, var(--gc-accent) 45%, var(--gc-border));
+}
+.gc-card:focus-visible { outline: none; box-shadow: var(--gc-ring), var(--gc-shadow-hi); }
+.gc-card__art {
+  display: flex; align-items: center; justify-content: center;
+  padding: 26px;
+  background: linear-gradient(140deg, var(--gc-surface-2), var(--gc-surface));
+  border-bottom: 1px solid var(--gc-border);
+}
+.gc-card__art svg { width: 132px; height: auto; display: block; }
+.gc-card__body { padding: 16px 18px 18px; }
+.gc-card__title { margin: 0 0 4px; font-size: 17px; font-weight: 620; letter-spacing: -.01em; }
+.gc-card__desc { margin: 0 0 14px; font-size: 13.5px; color: var(--gc-text-muted); }
+.gc-card__cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13.5px; font-weight: 600; color: var(--gc-accent);
+}
+.gc-card__cta span { transition: transform .18s ease; }
+.gc-card:hover .gc-card__cta span { transform: translateX(3px); }
+
+.gc-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px; font-weight: 600; letter-spacing: .02em;
+  color: var(--gc-on-accent);
+  background: linear-gradient(90deg, var(--gc-accent), var(--gc-accent-2));
+  vertical-align: middle;
+}
+
+.gc-footer {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 5vw, 48px) 40px;
+  font-size: 13px;
+  color: var(--gc-text-muted);
+}
+
+/* ---- Mode toggle ---- */
+.gc-toggle {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 13px;
+  border: 1px solid var(--gc-border);
+  border-radius: 999px;
+  background: var(--gc-surface);
+  color: var(--gc-text);
+  font: inherit; font-size: 13px; font-weight: 550;
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.gc-toggle:hover { border-color: var(--gc-accent); }
+.gc-toggle:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.gc-toggle svg { display: block; }
+
+/* ---- Back-to-center link, shown on game pages ---- */
+.gc-back {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 400;              /* above the window chrome, below dialogs */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--gc-border);
+  border-radius: 999px;
+  background: var(--gc-surface);
+  color: var(--gc-text);
+  font: 500 12.5px/1 var(--gc-font);
+  text-decoration: none;
+  box-shadow: var(--gc-shadow);
+  opacity: .72;
+  transition: opacity .15s ease, transform .15s ease;
+}
+.gc-back:hover { opacity: 1; transform: translateY(-1px); }
+.gc-back:focus-visible { outline: none; box-shadow: var(--gc-ring), var(--gc-shadow); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gc-card, .gc-card__cta span, .gc-back, .gc-toggle { transition: none; }
+  .gc-card:hover, .gc-back:hover { transform: none; }
+}

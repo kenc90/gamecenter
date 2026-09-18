@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Game Center</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="stylesheet" href="shared/css/base.css" />
+
+<!-- Apply a saved mode before first paint so the page cannot flash the wrong
+     theme. The key must match the one used in shared/js/center.js. -->
+<script>
+  try {
+    var m = localStorage.getItem("gc-mode");
+    if (m === "light" || m === "dark") document.documentElement.setAttribute("data-mode", m);
+  } catch (e) {}
+</script>
+</head>
+<body class="gc-body">
+  <header class="gc-header">
+    <a class="gc-brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="21" height="21" rx="5" fill="none" stroke="currentColor" stroke-width="2" opacity=".45"/>
+        <circle cx="12" cy="12" r="4" fill="currentColor"/>
+        <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M12 5.5V2.5M12 18.5v3M5.5 12h-3M18.5 12h3"/>
+        </g>
+      </svg>
+      <span><b>Game</b> Center</span>
+    </a>
+
+    <button class="gc-toggle" id="modeToggle" type="button" aria-pressed="false">
+      <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"/>
+        </g>
+      </svg>
+      <span id="modeLabel">Dark</span>
+    </button>
+  </header>
+
+  <main class="gc-main">
+    <h1 class="gc-title">Game Center</h1>
+    <p class="gc-sub">Pick a game to start. Progress is saved in this browser.</p>
+
+    <!-- Adding a game = copy this <a> block (and later a card alongside it). -->
+    <div class="gc-grid">
+      <a class="gc-card" href="games/minesweeper/index.html">
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Minesweeper board preview">
+            <g>
+              <!-- covered tiles -->
+              <g fill="#7fb2e5" stroke="rgba(255,255,255,.45)" stroke-width="1.5">
+                <rect x="4" y="4" width="26" height="26" rx="4"/>
+                <rect x="32" y="4" width="26" height="26" rx="4"/>
+                <rect x="88" y="4" width="26" height="26" rx="4"/>
+                <rect x="4" y="32" width="26" height="26" rx="4"/>
+                <rect x="88" y="32" width="26" height="26" rx="4"/>
+                <rect x="32" y="60" width="26" height="26" rx="4"/>
+                <rect x="4" y="88" width="26" height="26" rx="4"/>
+                <rect x="32" y="88" width="26" height="26" rx="4"/>
+                <rect x="60" y="88" width="26" height="26" rx="4"/>
+                <rect x="88" y="88" width="26" height="26" rx="4"/>
+              </g>
+              <!-- revealed tiles -->
+              <g fill="#f2f5fa" stroke="#c3ccda" stroke-width="1.5">
+                <rect x="60" y="4" width="26" height="26" rx="4"/>
+                <rect x="32" y="32" width="26" height="26" rx="4"/>
+                <rect x="60" y="32" width="26" height="26" rx="4"/>
+                <rect x="4" y="60" width="26" height="26" rx="4"/>
+              </g>
+              <g font-family="system-ui, sans-serif" font-size="16" font-weight="700" text-anchor="middle">
+                <text x="73" y="23" fill="#1a56d6">1</text>
+                <text x="45" y="51" fill="#1a56d6">1</text>
+                <text x="73" y="51" fill="#178a17">2</text>
+                <text x="17" y="79" fill="#1a56d6">1</text>
+              </g>
+              <!-- detonated cell -->
+              <rect x="60" y="60" width="26" height="26" rx="4" fill="#ff6a5a"/>
+              <g stroke="#1d2126" stroke-width="2" stroke-linecap="round">
+                <path d="M73 65v16M65 73h16M67.5 67.5l11 11M78.5 67.5l-11 11"/>
+              </g>
+              <circle cx="73" cy="73" r="5.5" fill="#1d2126"/>
+              <!-- flagged cell -->
+              <rect x="88" y="60" width="26" height="26" rx="4" fill="#f6d9a8" stroke="#c3ccda" stroke-width="1.5"/>
+              <path d="M101 64v15" stroke="#1d2126" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M101 64l10 4-10 4z" fill="#e02020"/>
+              <rect x="95" y="78" width="12" height="2.8" rx="1.4" fill="#1d2126"/>
+            </g>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            Minesweeper
+            <span class="gc-badge">XP · Vista · +5 themes</span>
+          </span>
+          <span class="gc-card__desc">
+            The classic Windows XP clone — clear the field without touching a mine.
+            God Mode, undo, best times and seven visual themes.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="gc-footer">
+    <p>Games live under <code>games/&lt;name&gt;/</code>; shared styling in <code>shared/</code>.</p>
+  </footer>
+
+  <script src="shared/js/center.js" defer></script>
+</body>
+</html>
