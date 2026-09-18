@@ -99,9 +99,12 @@ body.tetris-app *, body.tetris-app *::before, body.tetris-app *::after { box-siz
 .stage {
   flex: 1 1 auto; min-height: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
+  justify-content: safe center;         /* keep top reachable when it must scroll */
   gap: 12px;
   padding: var(--spad);
-  overflow: hidden;                     /* never show a scrollbar here */
+  overflow-x: hidden;
+  overflow-y: auto;                     /* scroll only as a last resort on very
+                                           short screens, so nothing is clipped */
 }
 .playfield {
   display: flex; align-items: stretch; justify-content: center; gap: clamp(12px, 2.5vw, 24px);
@@ -109,10 +112,14 @@ body.tetris-app *, body.tetris-app *::before, body.tetris-app *::after { box-siz
 }
 
 /* The well keeps a 1:2 (w:h) aspect. Cap its height to the viewport so nothing
-   scrolls, and shrink the block size on narrow screens via the canvas scaling. */
+   scrolls, and shrink the block size on narrow screens via the canvas scaling.
+   The 300px budget covers every row that shares the screen: top bar (~78) +
+   gaps (~36) + one-line touch pad (~44) + hint (~26) + caption (~16) + stage
+   padding (~52) + slack — so no content is pushed off-screen on short windows. */
 .board-wrap {
   position: relative;
-  height: min(calc(100vh - 250px), calc((100vw - var(--spad) * 2 - 16px) * 0.62), 560px);
+  height: min(calc(100vh - 300px), calc((100vw - var(--spad) * 2 - 16px) * 0.62), 560px);
+  min-height: 260px;                    /* stay playable; stage scrolls if needed */
   aspect-ratio: 1 / 2;
   border-radius: 10px;
   background: linear-gradient(180deg, #12002e, #08000f);
@@ -178,14 +185,14 @@ kbd {
   color: #8f86bd; letter-spacing: .02em;
 }
 
-/* ---------- Touch pad ---------- */
+/* ---------- Touch pad (one compact row) ---------- */
 .touchpad {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-  width: min(92vw, 340px); user-select: none; margin-top: 2px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  width: min(92vw, 280px); user-select: none; margin-top: 0;
 }
 .tpad__btn {
-  appearance: none; cursor: pointer; font: inherit; font-size: 20px;
-  height: 48px; border-radius: 12px;
+  appearance: none; cursor: pointer; font: inherit; font-size: 15px;
+  height: 34px; border-radius: 9px;
   border: 1px solid rgba(5, 217, 232, .4); background: rgba(5, 217, 232, .08); color: var(--np-cyan);
   box-shadow: 0 0 10px rgba(5, 217, 232, .12);
   transition: transform .06s ease, background .12s ease, box-shadow .12s ease;
@@ -193,13 +200,6 @@ kbd {
 .tpad__btn:hover { background: rgba(5, 217, 232, .18); }
 .tpad__btn:active { transform: translateY(1px) scale(.97); box-shadow: 0 0 16px rgba(5, 217, 232, .4); }
 .tpad__btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(5, 217, 232, .5); }
-.tpad__btn--drop {
-  grid-column: span 3;
-  border-color: rgba(255, 42, 109, .5); background: rgba(255, 42, 109, .12); color: #ffd0dd;
-  box-shadow: 0 0 10px rgba(255, 42, 109, .2);
-}
-.tpad__btn--drop:hover { background: rgba(255, 42, 109, .22); }
-.tpad__btn--drop:active { box-shadow: 0 0 16px rgba(255, 42, 109, .5); }
 
 /* ---------- Back-to-center link (neon chip, theme-independent) ---------- */
 .gc-back {
@@ -239,12 +239,40 @@ kbd {
 .modal__body b { color: var(--np-yellow); }
 .modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
 
-/* Small screens: let the control row drop below the brand row; stack panel. */
+/* Small screens: let the control row drop below the brand row. */
 @media (max-width: 620px) {
   .topbar__controls { margin-left: 0; width: 100%; }
-  .panel { flex-direction: row; flex-wrap: wrap; justify-content: center; min-width: 0; width: 100%; }
-  .stat { flex: 1 1 70px; }
-  .next { flex: 1 1 120px; }
+}
+
+/* Phones / narrow windows: the game well must DOMINATE. The side panel drops
+   beneath the board as a thin horizontal strip, the keyboard hint is hidden,
+   and every chrome box shrinks so nothing looks bigger than the board. */
+@media (max-width: 640px), (max-height: 620px) {
+  .stage { gap: 8px; }
+  .playfield { flex-direction: column; align-items: center; gap: 8px; }
+  .panel {
+    flex-direction: row; flex-wrap: wrap; align-items: stretch; justify-content: center;
+    gap: 6px; width: 100%; max-width: 340px; min-width: 0;
+  }
+  .stat { flex: 1 1 60px; padding: 4px 8px; border-radius: 9px; text-align: center; }
+  .stat__k { font-size: 9px; letter-spacing: .06em; }
+  .stat__v { font-size: 16px; }
+  .next { flex-direction: row; gap: 6px; padding: 4px 8px; align-items: center; justify-content: center; }
+  .next__k { align-self: center; }
+  .next canvas { width: 44px; height: 44px; }
+  .hintline { display: none; }
+  .overlay__msg { font-size: 15px; }
+  .btn { padding: 6px 10px; font-size: 12px; }
+  .topbar { padding: 7px 12px; }
+  .topbar__logo { width: 28px; height: 28px; font-size: 12px; }
+  .board-status { font-size: 11px; }
+  /* Bigger well: it's no longer beside the panel, so allow ~90% of the
+     viewport width (instead of 62%), and the height budget clears the compact
+     header + strip-below panel + touch pad + caption (~235px). */
+  .board-wrap {
+    height: min(calc(100vh - 235px), calc((100vw - var(--spad) * 2) * 0.9), 560px);
+    min-height: 220px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

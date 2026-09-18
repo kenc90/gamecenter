@@ -67,16 +67,15 @@
 
     <p class="hintline">
       <kbd>&#8592;</kbd><kbd>&#8594;</kbd> move &middot; <kbd>&#8593;</kbd> rotate &middot;
-      <kbd>&#8595;</kbd> soft drop &middot; <kbd>Space</kbd> hard drop &middot; <kbd>P</kbd> pause
+      <kbd>&#8595;</kbd> soft drop &middot; <kbd>Space</kbd> pause &middot; <kbd>R</kbd> new game
     </p>
 
     <!-- Touch pad for phones / tablets -->
     <div class="touchpad" role="group" aria-label="Tetris controls">
       <button class="tpad__btn" data-act="left"  type="button" aria-label="Move left">&#9664;</button>
+      <button class="tpad__btn" data-act="down"  type="button" aria-label="Soft drop">&#9660;</button>
       <button class="tpad__btn" data-act="rotate" type="button" aria-label="Rotate">&#10227;</button>
       <button class="tpad__btn" data-act="right" type="button" aria-label="Move right">&#9654;</button>
-      <button class="tpad__btn" data-act="down"  type="button" aria-label="Soft drop">&#9660;</button>
-      <button class="tpad__btn tpad__btn--drop" data-act="drop" type="button" aria-label="Hard drop">&#10515;</button>
     </div>
 
     <p class="board-status" aria-hidden="true">Stack the falling blocks, clear the lines.</p>
@@ -97,13 +96,13 @@
         <ul>
           <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> or <kbd>A</kbd><kbd>D</kbd> move the piece left or right.</li>
           <li><kbd>&#8593;</kbd> or <kbd>W</kbd> rotates the piece clockwise.</li>
-          <li><kbd>&#8595;</kbd> or <kbd>S</kbd> soft-drops (faster fall); <kbd>Space</kbd> hard-drops it down.</li>
-          <li><kbd>P</kbd> pauses, <kbd>R</kbd> starts a new game &mdash; or use the on-screen pad on touch devices.</li>
+          <li>Hold <kbd>&#8595;</kbd> or <kbd>S</kbd> to soft-drop &mdash; a gentle, slower fall.</li>
+          <li><kbd>Space</kbd> pauses &mdash; it also starts a game after a run ends; <kbd>R</kbd> starts a new one &mdash; or use the on-screen pad on touch devices.</li>
         </ul>
         <h3>Rules</h3>
         <ul>
           <li>Pieces fall in a randomised &ldquo;7-bag&rdquo; order &mdash; all seven shapes appear before any repeats.</li>
-          <li>Clearing 1&ndash;4 rows scores <b>100 / 300 / 500 / 800</b> &times; level; soft/hard drops add 1 point per cell.</li>
+          <li>Clearing 1&ndash;4 rows scores <b>100 / 300 / 500 / 800</b> &times; level.</li>
           <li>Every <b>10 lines</b> raises the level, and the pieces fall faster.</li>
           <li>A piece locks when it can&rsquo;t fall further; if a new piece can&rsquo;t spawn, the game is over.</li>
           <li>Your <b>best score</b> and the current run are saved in this browser.</li>

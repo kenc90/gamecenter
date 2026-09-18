@@ -131,11 +131,13 @@
     }
     lockPiece();
   }
-  function hardDrop() {
-    var d = 0;
-    while (fits(cur, cur.r, cur.x, cur.y + 1)) { cur.y++; d++; }
-    score += d * 2;
-    lockPiece();
+  function shiftDown(n) {                              // swipe-down: drop n rows
+    if (!alive || paused) return;
+    for (var i = 0; i < n; i++) {
+      if (fits(cur, cur.r, cur.x, cur.y + 1)) cur.y++;
+      else break;
+    }
+    draw();
   }
   function lockPiece() {
     cells(cur, cur.r, cur.x, cur.y).forEach(function (c) {
@@ -275,7 +277,7 @@
     paused = p;
     setPauseBtn();
     save();
-    say(p ? "Paused — press P or Space to resume." : "Stack the falling blocks, clear the lines.");
+    say(p ? "Paused — press Space to resume." : "Stack the falling blocks, clear the lines.");
     if (!p) { lastTime = 0; acc = 0; }
     draw();
   }
@@ -318,7 +320,9 @@
     if (!lastTime) lastTime = t;
     acc += t - lastTime;
     lastTime = t;
-    var iv = softDrop ? Math.min(50, gravityMs()) : gravityMs();
+    // Soft drop is a gentle ~6x gravity (never faster than one cell per 90ms),
+    // so holding Down nudges the piece down controllably instead of slamming it.
+    var iv = softDrop ? Math.max(90, gravityMs() / 6) : gravityMs();
     while (acc >= iv) { acc -= iv; step(); if (!alive || clearFlash) break; }
     render();
   }
@@ -335,11 +339,17 @@
   function finishClear() {
     var n = clearFlash.length;
     // Remove flashed rows (ascending order so earlier splices don't shift
-    // the later indexes), then regrow the well to full height on top.
+    // the later indexes). Every row above them must FALL — so empty rows are
+    // unshifted back on TOP; appending at the bottom would leave the stack
+    // floating with an empty floor.
     clearFlash.slice().sort(function (a, b) { return a - b; }).forEach(function (y) {
       grid.splice(y, 1);
     });
-    while (grid.length < ROWS) { var row = []; for (var x = 0; x < COLS; x++) row.push(null); grid.push(row); }
+    while (grid.length < ROWS) {
+      var row = [];
+      for (var x = 0; x < COLS; x++) row.push(null);
+      grid.unshift(row);
+    }
     clearFlash = null;
     score += [0, 100, 300, 500, 800][n] * level;
     lines += n;
@@ -372,13 +382,11 @@
     else if (k === "x" || k === "X") { e.preventDefault(); rotate(-1); }
     else if (k === "ArrowDown" || k === "s" || k === "S") { e.preventDefault(); softToggle(true); }
     else if (k === " ") {
+      // Space is the pause / start key.
       e.preventDefault();
       if (!alive) newGame();
-      else if (e.repeat) return;
-      else if (paused) setPaused(false);
-      else hardDrop();
+      else if (!e.repeat) togglePause();
     }
-    else if (k === "p" || k === "P") { togglePause(); }
     else if (k === "r" || k === "R") { newGame(); }
     else if (k === "Enter") { if (!alive) { e.preventDefault(); newGame(); } }
   });
@@ -395,7 +403,6 @@
       if (act === "left") move(-1);
       else if (act === "right") move(1);
       else if (act === "rotate") rotate(1);
-      else if (act === "drop") hardDrop();
     }
     b.addEventListener("pointerdown", function (e) {
       e.preventDefault();
@@ -421,7 +428,7 @@
     }
   });
 
-  // Swipe on the well: horizontal shifts, up rotates, down hard-drops, tap rotates.
+  // Swipe on the well: horizontal shifts, up rotates, down drops a few rows.
   var sw = null;
   canvas.addEventListener("pointerdown", function (e) { sw = { x: e.clientX, y: e.clientY, t: Date.now() }; });
   canvas.addEventListener("pointerup", function (e) {
@@ -434,7 +441,7 @@
       var n = Math.max(1, Math.round(Math.abs(dx) / 40));
       for (var i = 0; i < n; i++) move(dx > 0 ? 1 : -1);
     } else if (dy < 0) rotate(1);
-    else hardDrop();
+    else shiftDown(Math.max(1, Math.round(dy / 40)));
   });
 
   newBtn.addEventListener("click", function () { newGame(); });
