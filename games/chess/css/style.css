@@ -1,60 +1,103 @@
 /* ===== Chess — game UI =====
-   Chrome follows the shared --gc-* tokens (light/dark aware). The board
-   keeps a fixed classic wood-on-cream palette so the pieces stay legible
-   regardless of theme. */
+   Solitaire-style layout: a frosted top bar carries the title, live status and
+   every control; the board grows to fill the rest of the viewport. Chrome
+   follows the shared --gc-* tokens (light/dark aware); the board itself keeps
+   a fixed classic wood-on-cream palette so the pieces stay legible in either
+   theme. */
 
-.wrap {
-  max-width: 960px;
-  margin: 0 auto;
+html, body { height: 100%; }
+.chess-app {
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: clamp(20px, 5vw, 40px) 16px 48px;
 }
-.head { width: 100%; max-width: 520px; text-align: center; }
-.title { margin: 0; font-size: clamp(26px, 6vw, 34px); letter-spacing: -.02em; }
-.sub { margin: 4px 0 0; color: var(--gc-text-muted); font-weight: 600; min-height: 1.4em; }
 
-/* ---- Segmented control (mode / difficulty) ---- */
+/* ---------- Top bar (transparent / frosted) ---------- */
+.topbar {
+  flex: none;
+  display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap;
+  padding: 10px clamp(12px, 3vw, 28px);
+  /* Plain value first so an unsupported color-mix() still leaves a solid bar. */
+  background: var(--gc-surface);
+  background: color-mix(in srgb, var(--gc-surface) 78%, transparent);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border-bottom: 1px solid var(--gc-border);
+  box-shadow: var(--gc-shadow);
+  z-index: 20;
+}
+.topbar__brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.topbar__logo {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 34px; height: 34px; border-radius: 9px;
+  background: linear-gradient(140deg, var(--gc-accent), var(--gc-accent-2));
+  color: #fff; font-size: 22px; line-height: 1;
+  box-shadow: var(--gc-shadow);
+}
+.topbar__title { margin: 0; font-size: clamp(19px, 3.4vw, 25px); letter-spacing: -.02em; white-space: nowrap; }
+.topbar__status { margin: 0; font-size: 13.5px; font-weight: 600; color: var(--gc-text-muted); min-height: 1.2em; }
+.topbar__controls { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+.topbar__btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------- Segmented control (mode / difficulty) ---------- */
 .segmented {
   display: inline-flex; gap: 4px; padding: 4px;
   background: var(--gc-surface-2); border: 1px solid var(--gc-border); border-radius: 12px;
 }
-.segmented--sub { margin-top: -6px; }
+.segmented[hidden] { display: none; }
 .seg {
   appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
-  padding: 8px 16px; border: 0; border-radius: 9px; background: transparent; color: var(--gc-text-muted);
+  padding: 7px 14px; border: 0; border-radius: 9px; background: transparent; color: var(--gc-text-muted);
   transition: background .15s ease, color .15s ease;
 }
-.seg--sm { padding: 6px 12px; font-size: 13px; }
+.seg--sm { padding: 6px 11px; font-size: 13px; }
 .seg:hover { color: var(--gc-text); }
 .seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
 .seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
 
-/* ---- Layout: board + side panel ---- */
-.game { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
-.board-wrap { position: relative; }
+/* ---------- Buttons ---------- */
+.btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
+  padding: 9px 15px; border-radius: 10px;
+  border: 1px solid var(--gc-border); background: var(--gc-surface); color: var(--gc-text);
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover:not(:disabled) { border-color: var(--gc-accent); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn--primary { background: var(--gc-accent); border-color: var(--gc-accent); color: var(--gc-on-accent); }
+.btn--primary:hover { filter: brightness(1.05); }
 
+/* ---------- Stage + board ---------- */
+.stage {
+  flex: 1 1 auto; min-height: 0;
+  display: grid; place-items: center;
+  padding: clamp(10px, 2.5vh, 26px);
+  overflow: auto;
+}
+.board-wrap {
+  /* Fit the largest square that clears the top bar (chrome ≈ 140px) and
+     the viewport width, capped so it never looks absurd on huge screens. */
+  --bs: min(94vw, calc(100vh - 140px), 700px);
+  position: relative;
+  width: var(--bs); height: var(--bs);
+}
 .board {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  width: min(92vw, 520px);
-  aspect-ratio: 1 / 1;
-  border: 6px solid #4a3526;
-  border-radius: 6px;
+  width: 100%; height: 100%;
+  border: 6px solid #4a3526; border-radius: 8px;
   box-shadow: var(--gc-shadow-hi);
-  overflow: hidden;
-  user-select: none;
-  touch-action: manipulation;
+  overflow: hidden; user-select: none; touch-action: manipulation;
 }
 .sq {
   position: relative;
   display: flex; align-items: center; justify-content: center;
-  font-size: clamp(22px, 5.4vw, 40px);
-  line-height: 1;
-  cursor: pointer;
+  font-size: calc(var(--bs) * .082);        /* pieces scale with the board */
+  line-height: 1; cursor: pointer;
 }
 .sq--light { background: #efeab5; }
 .sq--dark  { background: #a8784f; }
@@ -63,7 +106,7 @@
 .sq .pc--b { color: #16130f; text-shadow: 0 1px 1px rgba(255,255,255,.25); }
 
 /* coordinate labels */
-.sq__coord { position: absolute; font-size: 9px; font-weight: 700; opacity: .5; pointer-events: none; z-index: 0; }
+.sq__coord { position: absolute; font-size: max(8px, calc(var(--bs) * .021)); font-weight: 700; opacity: .5; pointer-events: none; z-index: 0; }
 .sq__file { right: 3px; bottom: 2px; }
 .sq__rank { left: 3px; top: 2px; }
 .sq--light .sq__coord { color: #8a6b3f; }
@@ -77,8 +120,8 @@
 .hint::before { content: ""; width: 26%; height: 26%; border-radius: 50%; background: rgba(30, 30, 30, .28); }
 .hint--cap::before { width: 90%; height: 90%; background: transparent; border: 4px solid rgba(220, 50, 47, .55); }
 
-/* ---- Promotion chooser ---- */
-.promo { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: rgba(6, 12, 20, .5); }
+/* ---------- Promotion chooser ---------- */
+.promo { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(6, 12, 20, .5); }
 .promo[hidden] { display: none; }
 .promo__inner { background: var(--gc-surface); border: 1px solid var(--gc-border); border-radius: 14px; box-shadow: var(--gc-shadow-hi); padding: 14px 16px; text-align: center; }
 .promo__label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 8px; color: var(--gc-text); }
@@ -91,45 +134,18 @@
 .link-btn { appearance: none; border: 0; background: transparent; cursor: pointer; font: inherit; font-size: 13px; color: var(--gc-accent); padding: 6px; text-decoration: underline; }
 .link-btn[hidden] { display: none; }
 
-/* ---- Side panel ---- */
-.panel { width: min(92vw, 520px); display: flex; flex-direction: column; gap: 12px; }
-.captured { display: flex; flex-direction: column; gap: 4px; font-size: 20px; }
-.captured__row { display: flex; align-items: center; gap: 8px; min-height: 24px; }
-.captured__who { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--gc-text-muted); font-weight: 700; width: 72px; flex: none; }
-.cap { line-height: 1; word-break: break-all; }
-
-.moves {
-  max-height: 180px; overflow: auto;
-  display: grid; grid-template-columns: auto 1fr 1fr; gap: 2px 10px;
-  padding: 10px 12px; font-size: 13.5px; font-variant-numeric: tabular-nums;
-  background: var(--gc-surface); border: 1px solid var(--gc-border); border-radius: 12px;
-}
-.moves__n { color: var(--gc-text-muted); }
-.moves__mv { color: var(--gc-text); }
-.moves:empty { display: none; }
-
-.controls { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn {
-  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
-  padding: 10px 16px; border-radius: 10px; flex: 1;
-  border: 1px solid var(--gc-border); background: var(--gc-surface); color: var(--gc-text);
-  transition: transform .06s ease, background .15s ease, border-color .15s ease;
-}
-.btn:hover:not(:disabled) { border-color: var(--gc-accent); }
-.btn:active:not(:disabled) { transform: translateY(1px); }
-.btn:focus-visible { outline: none; box-shadow: var(--gc-ring); }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
-.btn--primary { background: var(--gc-accent); border-color: var(--gc-accent); color: var(--gc-on-accent); flex: none; }
-.btn--primary:hover { filter: brightness(1.05); }
-
-/* ---- Rules modal ---- */
+/* ---------- Rules modal (frosted glass) ---------- */
 .modal { position: fixed; inset: 0; z-index: 1100; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .modal[hidden] { display: none; }
-.modal__backdrop { position: absolute; inset: 0; background: rgba(6, 12, 20, .55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.modal__backdrop { position: absolute; inset: 0; background: rgba(6, 12, 20, .5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .modal__panel {
   position: relative; width: min(94vw, 520px); max-height: 86vh; overflow: auto;
   padding: 0; border-radius: 16px;
-  background: var(--gc-surface); color: var(--gc-text);
+  background: var(--gc-surface);
+  background: color-mix(in srgb, var(--gc-surface) 82%, transparent);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  color: var(--gc-text);
   border: 1px solid var(--gc-border); box-shadow: var(--gc-shadow-hi);
 }
 .modal__head { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--gc-border); }
@@ -142,12 +158,13 @@
 .modal__body ul { margin: 0 0 6px; padding-left: 20px; }
 .modal__body li { margin: 3px 0; }
 .modal__body b { color: var(--gc-text); }
+kbd { font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace; padding: 1px 6px; border-radius: 5px; color: var(--gc-text); background: var(--gc-surface-2); border: 1px solid var(--gc-border); }
 .modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
 
-/* ---- Wide screens: board beside panel ---- */
-@media (min-width: 860px) {
-  .game { flex-direction: row; align-items: flex-start; justify-content: center; gap: 28px; }
-  .panel { width: 300px; }
+/* Small screens: let the brand row and control row stack cleanly. */
+@media (max-width: 620px) {
+  .topbar__status { width: 100%; order: 3; margin-left: 44px; }
+  .topbar__controls { margin-left: 0; width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

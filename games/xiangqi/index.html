@@ -16,44 +16,40 @@
 <link rel="stylesheet" href="../../shared/css/base.css" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="gc-body">
+<body class="gc-body xiangqi-app">
   <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
 
-  <main class="wrap">
-    <header class="head">
-      <h1 class="title">Chinese Chess</h1>
-      <p class="sub" id="status">Red to move.</p>
-    </header>
-
-    <!-- Mode + difficulty -->
-    <div class="segmented" role="tablist" aria-label="Game mode">
-      <button id="modePvp" class="seg" role="tab" aria-selected="true" type="button">2 Players</button>
-      <button id="modeAi" class="seg" role="tab" aria-selected="false" type="button">vs Computer</button>
-    </div>
-    <div class="segmented segmented--sub" id="diffRow" hidden>
-      <button id="diffEasy" class="seg seg--sm" type="button">Easy</button>
-      <button id="diffMed" class="seg seg--sm" type="button" aria-selected="true">Medium</button>
-      <button id="diffHard" class="seg seg--sm" type="button">Hard</button>
+  <!-- Top bar: title, live status and every control (Solitaire-style). -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__logo" aria-hidden="true">&#24101;</span>
+      <h1 class="topbar__title">Chinese Chess</h1>
+      <p class="topbar__status" id="status">Red to move.</p>
     </div>
 
-    <div class="game">
-      <div class="board-wrap">
-        <div class="board" id="board" role="grid" aria-label="Xiangqi board"></div>
+    <div class="topbar__controls">
+      <div class="segmented" role="tablist" aria-label="Game mode">
+        <button id="modePvp" class="seg" role="tab" aria-selected="true" type="button">2 Players</button>
+        <button id="modeAi" class="seg" role="tab" aria-selected="false" type="button">vs Computer</button>
       </div>
+      <div class="segmented" id="diffRow" hidden>
+        <button id="diffEasy" class="seg seg--sm" type="button">Easy</button>
+        <button id="diffMed" class="seg seg--sm" type="button" aria-selected="true">Medium</button>
+        <button id="diffHard" class="seg seg--sm" type="button">Hard</button>
+      </div>
+      <div class="topbar__btns">
+        <button id="newBtn" class="btn btn--primary" type="button">New Game</button>
+        <button id="undoBtn" class="btn" type="button" disabled>Undo</button>
+        <button id="flipBtn" class="btn" type="button">Flip</button>
+        <button id="rulesBtn" class="btn" type="button">Rules</button>
+      </div>
+    </div>
+  </header>
 
-      <aside class="panel">
-        <div class="captured">
-          <div class="captured__row"><span class="captured__who">Red took</span><span class="cap" id="capByRed"></span></div>
-          <div class="captured__row"><span class="captured__who">Black took</span><span class="cap" id="capByBlack"></span></div>
-        </div>
-        <div class="moves" id="moves" aria-label="Move history" aria-live="polite"></div>
-        <div class="controls">
-          <button id="newBtn" class="btn btn--primary" type="button">New Game</button>
-          <button id="undoBtn" class="btn" type="button" disabled>Undo</button>
-          <button id="flipBtn" class="btn" type="button">Flip</button>
-        </div>
-        <button id="rulesBtn" class="link-btn" type="button">How to play</button>
-      </aside>
+  <!-- Play surface: the board fills all remaining space. -->
+  <main class="stage">
+    <div class="board-wrap">
+      <div class="board" id="board" role="grid" aria-label="Xiangqi board"></div>
     </div>
   </main>
 
@@ -69,7 +65,7 @@
         <p class="modal__lead"><b>Goal:</b> trap the enemy General so it cannot escape. Checkmate &mdash; or even stalemate &mdash; wins the game.</p>
         <h3>The pieces</h3>
         <ul>
-          <li><b>General</b> &#24067;/&#23559; one step orthogonally inside the palace; the two Generals may never face each other down an open file.</li>
+          <li><b>General</b> &#24101;/&#23559; one step orthogonally inside the palace; the two Generals may never face each other down an open file.</li>
           <li><b>Advisor</b> &#20181;/&#22785; one step diagonally, always inside the palace.</li>
           <li><b>Elephant</b> &#30456;/&#35937; two steps diagonally, never crossing the river; blocked by a piece at its &ldquo;eye&rdquo;.</li>
           <li><b>Horse</b> &#39573; one orthogonal then one diagonal; blocked by a piece at its &ldquo;leg&rdquo;.</li>
@@ -86,6 +82,7 @@
         <ul>
           <li>Tap a piece to see its legal moves, then tap a highlighted point.</li>
           <li>Use <b>Undo</b>, <b>Flip</b>, or play <b>vs Computer</b> (Easy / Medium / Hard) &mdash; you are Red.</li>
+          <li>Shortcuts: <kbd>N</kbd> new &middot; <kbd>U</kbd> undo &middot; <kbd>R</kbd> rules.</li>
           <li>The game is saved in this browser &mdash; close the tab and come back.</li>
         </ul>
       </div>

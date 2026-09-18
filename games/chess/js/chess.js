@@ -28,9 +28,6 @@
   var promoEl = document.getElementById("promo");
   var promoOptsEl = document.getElementById("promoOpts");
   var promoCancelEl = document.getElementById("promoCancel");
-  var capWhiteEl = document.getElementById("capByWhite");
-  var capBlackEl = document.getElementById("capByBlack");
-  var movesEl = document.getElementById("moves");
   var newBtn = document.getElementById("newBtn");
   var undoBtn = document.getElementById("undoBtn");
   var flipBtn = document.getElementById("flipBtn");
@@ -383,7 +380,7 @@
   function applyMove(m) {
     var san = toSAN(g, m);
     var mover = g.turn;
-    // track captures for the tray
+    // track captures (kept in save data)
     if (m.captured) {
       (mover === "w" ? meta.capturedW : meta.capturedB).push(m.captured);
     }
@@ -518,17 +515,6 @@
   }
 
   function renderSide() {
-    capWhiteEl.innerHTML = meta.capturedW.map(function (p) { return '<span class="pc--b">' + GLYPH[p[1]] + "</span>"; }).join(" ");
-    capBlackEl.innerHTML = meta.capturedB.map(function (p) { return '<span class="pc--w">' + GLYPH[p[1]] + "</span>"; }).join(" ");
-    movesEl.innerHTML = "";
-    for (var i = 0; i < meta.moveList.length; i += 2) {
-      var n = document.createElement("span"); n.className = "moves__n"; n.textContent = (i / 2 + 1) + ".";
-      var w = document.createElement("span"); w.className = "moves__mv"; w.textContent = meta.moveList[i];
-      movesEl.appendChild(n); movesEl.appendChild(w);
-      var b = document.createElement("span"); b.className = "moves__mv"; b.textContent = meta.moveList[i + 1] || "";
-      movesEl.appendChild(b);
-    }
-    movesEl.scrollTop = movesEl.scrollHeight;
     undoBtn.disabled = hist.length <= 1;
   }
 
@@ -590,8 +576,13 @@
   diffBtns.med.addEventListener("click", function () { setDiff("med"); });
   diffBtns.hard.addEventListener("click", function () { setDiff("hard"); });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") { closeRules(); if (pending) { closePromo(); selected = null; legalCache = []; render(); } }
-    else if (e.key === "r" || e.key === "R") { if (modalEl.hidden) newGame(); }
+    if (e.key === "Escape") { closeRules(); if (pending) { closePromo(); selected = null; legalCache = []; render(); } return; }
+    if (!modalEl.hidden || pending) return;          // modal / promotion owns the keyboard
+    if (e.metaKey || e.ctrlKey || e.altKey) return;  // leave browser shortcuts alone
+    var k = e.key.toLowerCase();
+    if (k === "n") { e.preventDefault(); newGame(); }
+    else if (k === "u") { e.preventDefault(); undo(); }
+    else if (k === "r") { e.preventDefault(); openRules(); }
   });
 
   /* ---------- boot ---------- */

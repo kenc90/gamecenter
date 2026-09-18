@@ -38,6 +38,27 @@
 .btn--primary { background: var(--gc-accent); border-color: var(--gc-accent); color: var(--gc-on-accent); }
 .btn--primary:hover { filter: brightness(1.05); }
 
+/* ---- Speed picker (segmented) ---- */
+.segmented {
+  display: inline-flex; gap: 4px; padding: 4px;
+  background: var(--gc-surface-2); border: 1px solid var(--gc-border); border-radius: 12px;
+}
+.seg {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
+  padding: 7px 14px; border: 0; border-radius: 9px; background: transparent; color: var(--gc-text-muted);
+  transition: background .15s ease, color .15s ease;
+}
+.seg--sm { padding: 6px 12px; font-size: 13px; }
+.seg:hover { color: var(--gc-text); }
+.seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
+.seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+
+.speedrow { display: flex; align-items: center; gap: 10px; }
+.speedrow__label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; color: var(--gc-text-muted); }
+
+/* ---- On-screen control hint ---- */
+.hintline { margin: 0; font-size: 12.5px; color: var(--gc-text-muted); line-height: 2; }
+
 /* ---- Device / LCD screen ---- */
 .device {
   padding: 16px;

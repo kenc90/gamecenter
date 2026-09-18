@@ -36,6 +36,22 @@
       <button id="rulesBtn" class="btn" type="button" title="How to play">Rules</button>
     </div>
 
+    <!-- Speed picker -->
+    <div class="speedrow">
+      <span class="speedrow__label">Speed</span>
+      <div class="segmented" id="speedSeg" role="group" aria-label="Snake speed">
+        <button class="seg seg--sm" type="button" data-speed="slow">Slow</button>
+        <button class="seg seg--sm" type="button" data-speed="normal" aria-selected="true">Normal</button>
+        <button class="seg seg--sm" type="button" data-speed="fast">Fast</button>
+      </div>
+    </div>
+
+    <p class="hintline">
+      Move with <kbd>&#8592;</kbd><kbd>&#8593;</kbd><kbd>&#8595;</kbd><kbd>&#8594;</kbd>
+      or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+      &middot; <kbd>Space</kbd> pauses &mdash; press it after a game over to start a new one.
+    </p>
+
     <!-- Retro LCD play field -->
     <div class="device">
       <div class="screen">
@@ -73,7 +89,9 @@
         <ul>
           <li><b>Arrow keys</b> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to turn.</li>
           <li><b>Swipe</b> on the screen, or tap the on-screen pad, on touch devices.</li>
-          <li><kbd>Space</kbd> pauses. <kbd>R</kbd> starts a new game.</li>
+          <li><kbd>Space</kbd> pauses; once you&rsquo;ve crashed it starts a new run.</li>
+          <li>Choose a <b>Speed</b> (Slow / Normal / Fast) any time &mdash; it&rsquo;s saved for next visit.</li>
+          <li><kbd>R</kbd> also starts a new game.</li>
         </ul>
         <h3>Rules</h3>
         <ul>

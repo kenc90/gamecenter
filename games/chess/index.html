@@ -16,52 +16,48 @@
 <link rel="stylesheet" href="../../shared/css/base.css" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="gc-body">
+<body class="gc-body chess-app">
   <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
 
-  <main class="wrap">
-    <header class="head">
-      <h1 class="title">Chess</h1>
-      <p class="sub" id="status">White to move.</p>
-    </header>
-
-    <!-- Mode + difficulty -->
-    <div class="segmented" role="tablist" aria-label="Game mode">
-      <button id="modePvp" class="seg" role="tab" aria-selected="true" type="button">2 Players</button>
-      <button id="modeAi" class="seg" role="tab" aria-selected="false" type="button">vs Computer</button>
-    </div>
-    <div class="segmented segmented--sub" id="diffRow" hidden>
-      <button id="diffEasy" class="seg seg--sm" type="button">Easy</button>
-      <button id="diffMed" class="seg seg--sm" type="button" aria-selected="true">Medium</button>
-      <button id="diffHard" class="seg seg--sm" type="button">Hard</button>
+  <!-- Top bar: title, live status and every control (Solitaire-style). -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__logo" aria-hidden="true">&#9822;</span>
+      <h1 class="topbar__title">Chess</h1>
+      <p class="topbar__status" id="status">White to move.</p>
     </div>
 
-    <div class="game">
-      <div class="board-wrap">
-        <div class="board" id="board" role="grid" aria-label="Chess board"></div>
-        <!-- Promotion chooser -->
-        <div class="promo" id="promo" hidden>
-          <div class="promo__inner">
-            <span class="promo__label">Promote to</span>
-            <div class="promo__opts" id="promoOpts"></div>
-            <button class="link-btn" id="promoCancel" type="button">Cancel</button>
-          </div>
+    <div class="topbar__controls">
+      <div class="segmented" role="tablist" aria-label="Game mode">
+        <button id="modePvp" class="seg" role="tab" aria-selected="true" type="button">2 Players</button>
+        <button id="modeAi" class="seg" role="tab" aria-selected="false" type="button">vs Computer</button>
+      </div>
+      <div class="segmented" id="diffRow" hidden>
+        <button id="diffEasy" class="seg seg--sm" type="button">Easy</button>
+        <button id="diffMed" class="seg seg--sm" type="button" aria-selected="true">Medium</button>
+        <button id="diffHard" class="seg seg--sm" type="button">Hard</button>
+      </div>
+      <div class="topbar__btns">
+        <button id="newBtn" class="btn btn--primary" type="button">New Game</button>
+        <button id="undoBtn" class="btn" type="button" disabled>Undo</button>
+        <button id="flipBtn" class="btn" type="button">Flip</button>
+        <button id="rulesBtn" class="btn" type="button">Rules</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Play surface: the board fills all remaining space. -->
+  <main class="stage">
+    <div class="board-wrap">
+      <div class="board" id="board" role="grid" aria-label="Chess board"></div>
+      <!-- Promotion chooser -->
+      <div class="promo" id="promo" hidden>
+        <div class="promo__inner">
+          <span class="promo__label">Promote to</span>
+          <div class="promo__opts" id="promoOpts"></div>
+          <button class="link-btn" id="promoCancel" type="button">Cancel</button>
         </div>
       </div>
-
-      <aside class="panel">
-        <div class="captured">
-          <div class="captured__row"><span class="captured__who">White took</span><span class="cap" id="capByWhite"></span></div>
-          <div class="captured__row"><span class="captured__who">Black took</span><span class="cap" id="capByBlack"></span></div>
-        </div>
-        <div class="moves" id="moves" aria-label="Move history" aria-live="polite"></div>
-        <div class="controls">
-          <button id="newBtn" class="btn btn--primary" type="button">New Game</button>
-          <button id="undoBtn" class="btn" type="button" disabled>Undo</button>
-          <button id="flipBtn" class="btn" type="button">Flip</button>
-        </div>
-        <button id="rulesBtn" class="link-btn" type="button">How to play</button>
-      </aside>
     </div>
   </main>
 
@@ -94,6 +90,7 @@
         <ul>
           <li>Click a piece to see its legal moves, then click a highlighted square to go there.</li>
           <li>Use <b>Undo</b>, <b>Flip</b>, or play <b>vs Computer</b> (Easy / Medium / Hard).</li>
+          <li>Shortcuts: <kbd>N</kbd> new &middot; <kbd>U</kbd> undo &middot; <kbd>R</kbd> rules.</li>
           <li>The game is saved in this browser &mdash; close the tab and come back.</li>
         </ul>
       </div>

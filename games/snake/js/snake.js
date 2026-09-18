@@ -7,6 +7,10 @@
   var COLS = 23, ROWS = 15, CELL = 20;
   var BEST_KEY = "gc-snake-best";
   var SAVE_KEY = "gc-snake-save";
+  var SPEED_KEY = "gc-snake-speed";
+  // Base step interval (ms) per speed tier; the snake still accelerates a little
+  // as it grows, but always relative to the tier the player picked.
+  var SPEEDS = { slow: 195, normal: 150, fast: 105 };
 
   // LCD palette (fixed — a Nokia screen isn't theme-dependent).
   var C_BG = "#9db854", C_GRID = "rgba(28,42,8,.10)", C_PIXEL = "#1c2a08";
@@ -22,12 +26,14 @@
   var pauseBtn = document.getElementById("pauseBtn");
   var rulesBtn = document.getElementById("rulesBtn");
   var rulesModal = document.getElementById("rulesModal");
+  var speedSeg = document.getElementById("speedSeg");
 
   canvas.width = COLS * CELL;
   canvas.height = ROWS * CELL;
 
   var snake, dir, turnQueue, food, score, best = 0, alive, paused;
-  var lastTime = 0, acc = 0, stepMs = 150, rafId = null;
+  var lastTime = 0, acc = 0, stepMs = SPEEDS.normal, rafId = null;
+  var speedName = "normal", baseStep = SPEEDS.normal;
 
   // ---------- Persistence ----------
   function save() {
@@ -39,13 +45,30 @@
   }
   function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} }
   function loadBest() { try { best = localStorage.getItem(BEST_KEY) | 0; } catch (e) { best = 0; } }
+  function loadSpeed() {
+    try { var s = localStorage.getItem(SPEED_KEY); if (s && SPEEDS[s]) { speedName = s; baseStep = SPEEDS[s]; } } catch (e) {}
+  }
+  function reflectSpeed() {
+    if (!speedSeg) return;
+    Array.prototype.forEach.call(speedSeg.querySelectorAll(".seg"), function (b) {
+      b.setAttribute("aria-selected", String(b.dataset.speed === speedName));
+    });
+  }
+  function setSpeed(name) {
+    if (!SPEEDS[name]) return;
+    speedName = name; baseStep = SPEEDS[name];
+    try { localStorage.setItem(SPEED_KEY, name); } catch (e) {}
+    stepMs = baseStep;              // apply live, even mid-run
+    reflectSpeed();
+    draw();
+  }
 
   function loadSaved() {
     try {
       var o = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!o || !o.snake || !o.snake.length) return false;
       snake = o.snake; dir = o.dir; food = o.food; score = o.score | 0;
-      stepMs = o.stepMs || 150;
+      stepMs = o.stepMs || baseStep;
       turnQueue = [];
       alive = true; paused = false;
       return true;
@@ -58,7 +81,7 @@
     snake = [{ x: cx + 2, y: cy }, { x: cx + 1, y: cy }, { x: cx, y: cy }];
     dir = { x: 1, y: 0 };
     turnQueue = [];
-    score = 0; stepMs = 150;
+    score = 0; stepMs = baseStep;
     alive = true; paused = false;
     spawnFood();
     overlayEl.hidden = true;
@@ -109,7 +132,8 @@
     if (eating) {
       score += 10;
       if (score > best) { best = score; try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {} }
-      stepMs = Math.max(65, 150 - (snake.length - 3) * 3);
+      // Nudge faster as it grows, never below ~half the chosen tier's interval.
+      stepMs = Math.max(Math.round(baseStep * 0.5), baseStep - (snake.length - 3) * 3);
       spawnFood();
     } else {
       snake.pop();
@@ -124,7 +148,7 @@
     clearSave();
     overlayMsgEl.textContent = "Game over — " + score + " pts";
     overlayEl.hidden = false;
-    statusEl.textContent = "Ouch! Press New Game (or R) to try again.";
+    statusEl.textContent = "Ouch! Press Space (or R / New Game) to try again.";
     draw();
   }
 
@@ -193,8 +217,9 @@
     else if (k === "ArrowDown" || k === "s" || k === "S") { e.preventDefault(); turn("down"); }
     else if (k === "ArrowLeft" || k === "a" || k === "A") { e.preventDefault(); turn("left"); }
     else if (k === "ArrowRight" || k === "d" || k === "D") { e.preventDefault(); turn("right"); }
-    else if (k === " ") { e.preventDefault(); togglePause(); }
+    else if (k === " ") { e.preventDefault(); if (!alive) newGame(); else togglePause(); }
     else if (k === "r" || k === "R") { newGame(); }
+    else if (k === "Enter") { if (!alive) { e.preventDefault(); newGame(); } }
   });
 
   // Swipe on the screen.
@@ -217,6 +242,10 @@
   newBtn.addEventListener("click", newGame);
   document.getElementById("overNew").addEventListener("click", newGame);
   pauseBtn.addEventListener("click", togglePause);
+  if (speedSeg) speedSeg.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".seg[data-speed]");
+    if (b) setSpeed(b.dataset.speed);
+  });
 
   // ---------- Rules modal ----------
   function openRules() { if (rulesModal) rulesModal.hidden = false; }
@@ -229,6 +258,8 @@
 
   // ---------- Boot ----------
   loadBest();
+  loadSpeed();
+  reflectSpeed();
   if (!loadSaved()) newGame();
   renderHUD();
   setPauseBtn();
