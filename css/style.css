@@ -505,19 +505,19 @@ body {
 
   --win-border: rgba(180, 210, 240, .6);
   --win-radius: 8px 8px 5px 5px;
-  --win-bg: rgba(170, 200, 232, .20);
+  --win-bg: rgba(255, 255, 255, .06);
   --win-shadow:
     inset 0 0 0 1px rgba(255,255,255,.28),
     0 0 0 1px rgba(40,80,130,.5),
     0 14px 48px rgba(8, 24, 48, .6);
 
   --tb-h: 34px;
-  /* Flat translucent tint — no gradient, no shine band. Let the blurred
-     backdrop do the work. */
-  --tb-bg: rgba(24, 70, 130, .34);
+  /* Neutral dark veil only — adds lightness contrast, no blue hue. Keeps the
+     white caption legible without tinting the glass. */
+  --tb-bg: rgba(12, 16, 22, .26);
   --tb-border: rgba(160,200,240,.7);
   --tb-text: #fff;
-  --tb-text-shadow: 0 0 6px rgba(30,90,170,.95), 0 0 2px rgba(0,0,0,.7), 0 1px 1px rgba(0,0,0,.6);
+  --tb-text-shadow: 0 0 6px rgba(0, 0, 0, .5), 0 1px 1px rgba(0, 0, 0, .6);
   /* No glossy highlight overlay — Vista is plain tinted glass, not shiny. */
   --tb-sheen: none;
   --tb-btn-normal: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #cfe4f6 45%, #9dc2e4 100%);
@@ -525,7 +525,7 @@ body {
   --tb-btn-border: rgba(255,255,255,.9);
   --tb-btn-radius: 6px;
 
-  --menu-bg: rgba(226, 238, 250, .26);
+  --menu-bg: rgba(255, 255, 255, .12);
   --menu-border: rgba(150,180,210,.7);
   --menu-text: #0b2942;
   --menu-hover-bg: #cde3f7;
@@ -534,7 +534,7 @@ body {
   --dropdown-border: #7f9db9;
 
   --body-bg: transparent;
-  --panel-bg: rgba(214, 228, 242, .40);
+  --panel-bg: rgba(255, 255, 255, .16);
   --bevel-light: #ffffff;
   --bevel-dark: #97a9bd;
   --field-bg: #cfd8e4;
@@ -565,8 +565,9 @@ body {
 /* Aero glass: real-time backdrop blur + light caption glyphs on glossy pills */
 :root[data-theme="vista"] .xp-window,
 :root[data-theme="vista"] .dialog {
-  backdrop-filter: blur(16px) saturate(1.8) brightness(1.08);
-  -webkit-backdrop-filter: blur(16px) saturate(1.8) brightness(1.08);
+  /* saturate kept near 1 so the glass does not amplify the wallpaper's blue. */
+  backdrop-filter: blur(16px) saturate(1.1) brightness(1.04);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1) brightness(1.04);
 }
 :root[data-theme="vista"] .title-bar { border-radius: 7px 7px 0 0; }
 :root[data-theme="vista"] .tb-btn {
