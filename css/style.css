@@ -22,11 +22,15 @@ html, body { height: 100%; margin: 0; overflow: hidden; }
   --win-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 
   --tb-h: 28px;
-  --tb-bg: linear-gradient(#0058ee 3%, #3593ff 6%, #288eff 24%, #2295ff 51%, #0054e3 91%, #0042be 97%);
+  /* Windows XP Luna caption ramp — these are the authentic scheme stops: deep
+     royal at the very top, a bright azure highlight, a long mid-blue body, then
+     a dark navy footer band. The earlier "too strong" look came from the white
+     gloss below, not from this gradient, so only the sheen stays tamed. */
+  --tb-bg: linear-gradient(#0058ee 3%, #3593ff 6%, #288eff 24%, #2295ff 51%, #0054e3 91%, #0042be 100%);
   --tb-border: #0831d9;
   --tb-text: #fff;
   --tb-text-shadow: 1px 1px 1px rgba(0,0,0,.55);
-  --tb-sheen: linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,0) 50%);
+  --tb-sheen: linear-gradient(rgba(255,255,255,.26), rgba(255,255,255,0) 50%);
   /* XP: blue minimize/maximize, red-orange close. */
   --tb-btn-normal: linear-gradient(#9ac8f7 0%, #4f96e8 14%, #2c7ede 55%, #1d6ac8 88%, #1660b6 100%);
   --tb-btn-close: linear-gradient(#f7bda1 0%, #ec8054 14%, #d74d22 55%, #c84018 88%, #b8370f 100%);
