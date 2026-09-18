@@ -173,9 +173,32 @@
       + inner + `</svg>`;
   }
 
+  function oceanFace(state) {
+    const blue = "#0a5aa8", foam = "#bfe6f5", line = "#0b6ea8", red = "#c62828";
+    const eyes = `<circle cx="9" cy="10.5" r="1.8" fill="${blue}"/>`
+      + `<circle cx="17" cy="10.5" r="1.8" fill="${blue}"/>`;
+    const smile = `<path d="M7 15 Q13 20.5 19 15" fill="none" stroke="${blue}" stroke-width="1.9" stroke-linecap="round"/>`;
+    let inner;
+    if (state === "worried") inner = eyes + `<ellipse cx="13" cy="16.8" rx="2.8" ry="3.6" fill="${blue}"/>`;
+    else if (state === "dead") inner =
+      `<g stroke="${red}" stroke-width="1.8" stroke-linecap="round" fill="none">`
+      + `<path d="M7 8.6 l4 4 M11 8.6 l-4 4"/><path d="M15 8.6 l4 4 M19 8.6 l-4 4"/></g>`
+      + `<ellipse cx="13" cy="17" rx="2.6" ry="3.2" fill="${red}"/>`;
+    else if (state === "cool") inner =
+      `<g fill="${blue}"><rect x="4.6" y="9" width="7" height="4.6" rx="2"/>`
+      + `<rect x="14.4" y="9" width="7" height="4.6" rx="2"/>`
+      + `<rect x="11" y="10.4" width="4" height="1.4"/></g>` + smile;
+    else inner = eyes + smile;
+    return `<svg viewBox="0 0 26 26" width="26" height="26" class="face-ocean" aria-hidden="true">`
+      + `<circle cx="13" cy="13" r="11.5" fill="${foam}" stroke="${line}" stroke-width="1.4"/>`
+      + `<circle cx="9.5" cy="9" r="3.2" fill="rgba(255,255,255,.55)"/>`
+      + inner + `</svg>`;
+  }
+
   function faceSvg(state, t) {
     if (t === "cyberpunk") return cyberFace(state);
     if (t === "virus") return virusFace(state);
+    if (t === "ocean") return oceanFace(state);
     return classicFace(state);
   }
   function renderFace(state) {
