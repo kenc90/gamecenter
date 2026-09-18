@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="xp">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Minesweeper</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -42,13 +45,22 @@
           <div class="menu-dropdown">
             <button data-action="new"><u>N</u>ew</button>
             <hr />
-            <button data-action="easy"><u>E</u>asy</button>
-            <button data-action="medium">M<u>a</u>ximum</button>
-            <button data-action="expert"><u>E</u>xpert</button>
+            <button data-action="easy" data-check="level"><u>E</u>asy</button>
+            <button data-action="medium" data-check="level">M<u>a</u>ximum</button>
+            <button data-action="expert" data-check="level"><u>E</u>xpert</button>
             <hr />
             <button data-action="best-times"><u>B</u>est Times...</button>
             <hr />
             <button data-action="exit">E<u>x</u>it</button>
+          </div>
+        </div>
+        <div class="menu-item" data-menu="theme">
+          <span class="menu-label"><u>T</u>heme</span>
+          <div class="menu-dropdown">
+            <button data-action="theme-xp" data-check="theme">Windows <u>X</u>P</button>
+            <button data-action="theme-vista" data-check="theme">Windows <u>V</u>ista</button>
+            <button data-action="theme-classic" data-check="theme">Classic <u>9</u>5</button>
+            <button data-action="theme-cyberpunk" data-check="theme"><u>C</u>yberpunk</button>
           </div>
         </div>
         <div class="menu-item" data-menu="help">

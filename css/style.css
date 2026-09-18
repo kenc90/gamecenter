@@ -1,16 +1,82 @@
-/* ===== Windows XP Minesweeper clone ===== */
+/* ===== Minesweeper clone — themed UI =====
+   Layout/geometry is fixed here; all themeable visuals are CSS custom
+   properties. The XP look is the default on :root; other themes override
+   tokens via html[data-theme="..."]. Add a new theme by adding a block. */
 * { box-sizing: border-box; }
 
 html, body { height: 100%; margin: 0; overflow: hidden; }
 
+/* ---------- Theme tokens ---------- */
+:root,
+:root[data-theme="xp"] {
+  --desktop-bg: #3a6ea5;
+  --desktop-bg2:
+    radial-gradient(120% 90% at 50% 110%, #7ab648 0%, #4a8a2c 32%, rgba(74,138,44,0) 55%),
+    linear-gradient(#5a9fd4 0%, #3f7cbb 45%, #2f66a3 100%);
+
+  --font: Tahoma, "Segoe UI", Geneva, Verdana, sans-serif;
+
+  --win-border: #0831d9;
+  --win-radius: 8px 8px 0 0;
+  --win-bg: #ece9d8;
+  --win-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+
+  --tb-h: 28px;
+  --tb-bg: linear-gradient(#0058ee 3%, #3593ff 6%, #288eff 24%, #2295ff 51%, #0054e3 91%, #0042be 97%);
+  --tb-border: #0831d9;
+  --tb-text: #fff;
+  --tb-text-shadow: 1px 1px 1px rgba(0,0,0,.55);
+  --tb-btn-normal: linear-gradient(#5c95f2, #1b5cd6);
+  --tb-btn-close: linear-gradient(#f1a180, #d84b2b 45%, #c3341a);
+  --tb-btn-border: #fff;
+  --tb-btn-radius: 3px;
+
+  --menu-bg: #ece9d8;
+  --menu-border: #d4c5a0;
+  --menu-text: #000;
+  --menu-hover-bg: #316ac5;
+  --menu-hover-text: #fff;
+  --dropdown-bg: #fff;
+  --dropdown-border: #aca899;
+
+  --body-bg: #ece9d8;
+  --panel-bg: #d6d3ce;
+  --bevel-light: #fff;
+  --bevel-dark: #7f7f7f;
+  --field-bg: #c0c0c0;
+
+  --cell-face: #d6d3ce;
+  --cell-border-light: #fff;
+  --cell-border-dark: #7b7b7b;
+  --cell-revealed-border: #808080;
+  --led-color: #ff2b2b;
+  --led-color-off: rgba(255, 43, 43, 0.12);
+  --led-bg: #000;
+
+  --n1: #0000ff; --n2: #007b00; --n3: #ff0000; --n4: #00007f;
+  --n5: #7f0000; --n6: #007f7f; --n7: #000000; --n8: #808080;
+
+  --mine-hit-bg: #f00;
+  --question-color: #b00;
+  --wrong-color: #d00;
+  --win-glow: rgba(255, 255, 180, 0.9);
+
+  --overlay-bg: rgba(0,0,0,.15);
+  --dialog-text: #000;
+  --dialog-border-cell: #b8b199;
+  --btn-bg: linear-gradient(#fdfdfd, #e6e3d9);
+  --btn-border: #003c74;
+  --btn-text: #000;
+}
+
 body {
-  font-family: Tahoma, "Segoe UI", Geneva, Verdana, sans-serif;
+  font-family: var(--font);
   font-size: 11px;
   -webkit-font-smoothing: antialiased;
   user-select: none;
 }
 
-/* XP "Bliss"-style desktop backdrop */
+/* ---------- Desktop backdrop ---------- */
 .desktop {
   height: 100%;
   display: flex;
@@ -18,18 +84,16 @@ body {
   justify-content: center;
   padding: 24px;
   overflow: hidden;
-  background: #3a6ea5;
-  background:
-    radial-gradient(120% 90% at 50% 110%, #7ab648 0%, #4a8a2c 32%, rgba(74,138,44,0) 55%),
-    linear-gradient(#5a9fd4 0%, #3f7cbb 45%, #2f66a3 100%);
+  background: var(--desktop-bg);
+  background: var(--desktop-bg2);
 }
 
 /* ---- Window chrome ---- */
 .xp-window {
-  border: 1px solid #0831d9;
-  border-radius: 8px 8px 0 0;
-  background: #ece9d8;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--win-border);
+  border-radius: var(--win-radius);
+  background: var(--win-bg);
+  box-shadow: var(--win-shadow);
   overflow: hidden;
   max-width: 100%;
   max-height: 100%;
@@ -38,49 +102,49 @@ body {
 .xp-window.flash { animation: winFlash 320ms ease-in-out; }
 @keyframes winFlash {
   0%, 100% { box-shadow: 0 6px 24px rgba(0,0,0,.45); }
-  50% { box-shadow: 0 0 0 6px rgba(255, 255, 180, 0.9), 0 6px 24px rgba(0,0,0,.45); }
+  50% { box-shadow: 0 0 0 6px var(--win-glow), 0 6px 24px rgba(0,0,0,.45); }
 }
 
 .title-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 28px;
+  height: var(--tb-h);
   padding: 0 4px 0 6px;
-  background: linear-gradient(#0058ee 3%, #3593ff 6%, #288eff 24%, #2295ff 51%, #0054e3 91%, #0042be 97%);
-  border-bottom: 1px solid #0831d9;
+  background: var(--tb-bg);
+  border-bottom: 1px solid var(--tb-border);
 }
 .title-bar-inner { display: flex; align-items: center; gap: 5px; overflow: hidden; }
 .title-icon { display: inline-flex; width: 16px; height: 16px; }
 .title-icon svg { display: block; }
 .title-text {
-  color: #fff;
+  color: var(--tb-text);
   font-weight: bold;
   font-size: 12px;
-  text-shadow: 1px 1px 1px rgba(0,0,0,.55);
+  text-shadow: var(--tb-text-shadow);
   white-space: nowrap;
 }
 .title-buttons { display: flex; align-items: center; gap: 2px; }
 .tb-btn {
   width: 21px; height: 21px;
-  border: 1px solid #fff;
-  border-radius: 3px;
-  color: #fff;
+  border: 1px solid var(--tb-btn-border);
+  border-radius: var(--tb-btn-radius);
+  color: var(--tb-text);
   font-size: 11px; line-height: 1;
   cursor: default;
   display: inline-flex; align-items: center; justify-content: center;
   box-shadow: inset 0 0 3px rgba(0,0,0,.35);
 }
-.tb-btn.minimize, .tb-btn.maximize { background: linear-gradient(#5c95f2, #1b5cd6); }
-.tb-btn.close { background: linear-gradient(#f1a180, #d84b2b 45%, #c3341a); font-weight: bold; }
+.tb-btn.minimize, .tb-btn.maximize { background: var(--tb-btn-normal); }
+.tb-btn.close { background: var(--tb-btn-close); font-weight: bold; }
 .tb-btn:active { filter: brightness(.85); }
 .tb-btn:hover { filter: brightness(1.12); }
 
 /* ---- Menu bar ---- */
 .menu-bar {
   display: flex;
-  background: #ece9d8;
-  border-bottom: 1px solid #d4c5a0;
+  background: var(--menu-bg);
+  border-bottom: 1px solid var(--menu-border);
   padding: 1px 0;
   position: relative;
 }
@@ -88,11 +152,11 @@ body {
 .menu-label {
   display: inline-block;
   padding: 3px 8px;
-  color: #000;
+  color: var(--menu-text);
   cursor: default;
 }
 .menu-item.open .menu-label,
-.menu-label:hover { background: #316ac5; color: #fff; }
+.menu-label:hover { background: var(--menu-hover-bg); color: var(--menu-hover-text); }
 .menu-label u { text-decoration: underline; }
 
 .menu-dropdown {
@@ -100,8 +164,8 @@ body {
   position: absolute;
   top: 100%; left: 0;
   min-width: 150px;
-  background: #fff;
-  border: 1px solid #aca899;
+  background: var(--dropdown-bg);
+  border: 1px solid var(--dropdown-border);
   box-shadow: 2px 2px 6px rgba(0,0,0,.35);
   padding: 2px;
   z-index: 50;
@@ -114,28 +178,29 @@ body {
   padding: 4px 22px;
   font: inherit; cursor: default;
   white-space: nowrap;
+  color: var(--menu-text);
 }
-.menu-dropdown button:hover { background: #316ac5; color: #fff; }
+.menu-dropdown button:hover { background: var(--menu-hover-bg); color: var(--menu-hover-text); }
 .menu-dropdown button.checked { position: relative; }
 .menu-dropdown button.checked::before {
   content: "\25B8";
   position: absolute; left: 8px; color: #666;
 }
-.menu-dropdown button.checked:hover::before { color: #fff; }
-.menu-dropdown hr { border: 0; border-top: 1px solid #d4c5a0; margin: 2px 1px; }
+.menu-dropdown button.checked:hover::before { color: var(--menu-hover-text); }
+.menu-dropdown hr { border: 0; border-top: 1px solid var(--menu-border); margin: 2px 1px; }
 
 /* ---- Game body ---- */
 .game-body {
-  background: #ece9d8;
+  background: var(--body-bg);
   padding: 6px;
 }
 .bevel {
-  border-top: 2px solid #7f7f7f;
-  border-left: 2px solid #7f7f7f;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-top: 2px solid var(--bevel-dark);
+  border-left: 2px solid var(--bevel-dark);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
   padding: 6px;
-  background: #d6d3ce;
+  background: var(--panel-bg);
 }
 
 /* Top panel with LED displays + smiley */
@@ -143,38 +208,37 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-top: 2px solid var(--bevel-dark);
+  border-left: 2px solid var(--bevel-dark);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
   padding: 4px 5px;
   margin-bottom: 8px;
-  background: #d6d3ce;
+  background: var(--panel-bg);
 }
 
 .led-display {
   display: flex;
   gap: 1px;
-  background: #000;
+  background: var(--led-bg);
   padding: 1px 2px;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-top: 2px solid var(--bevel-dark);
+  border-left: 2px solid var(--bevel-dark);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
 }
 .led-digit {
   width: 15px; height: 26px;
   position: relative;
-  background: #000;
+  background: var(--led-bg);
 }
 /* Seven segments, toggled visible via .on (added in JS) */
 .led-digit .seg {
   position: absolute;
-  background: #ff2b2b;
-  opacity: 0.12;
+  background: var(--led-color-off);
   border-radius: 1px;
 }
-.led-digit .seg.on { opacity: 1; }
+.led-digit .seg.on { background: var(--led-color); }
 /* horizontal segments: a (top), g (mid), d (bottom) */
 .led-digit .seg.a { left: 3px;  right: 3px; top: 2px;   height: 3px; }
 .led-digit .seg.g { left: 3px;  right: 3px; top: 11.5px; height: 3px; }
@@ -188,109 +252,110 @@ body {
 .smiley {
   width: 32px; height: 32px;
   font-size: 20px; line-height: 1;
-  background: #d6d3ce;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #7f7f7f;
-  border-bottom: 2px solid #7f7f7f;
+  background: var(--panel-bg);
+  border-top: 2px solid var(--bevel-light);
+  border-left: 2px solid var(--bevel-light);
+  border-right: 2px solid var(--bevel-dark);
+  border-bottom: 2px solid var(--bevel-dark);
   padding: 2px;
   cursor: default;
   display: inline-flex; align-items: center; justify-content: center;
 }
 .smiley:active,
 .smiley.pressed {
-  border-top: 2px solid #7f7f7f;
-  border-left: 2px solid #7f7f7f;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-top: 2px solid var(--bevel-dark);
+  border-left: 2px solid var(--bevel-dark);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
 }
 .smiley svg { display: block; width: 26px; height: 26px; }
 
 /* Mine field */
 .field-bevel {
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
+  border-top: 2px solid var(--bevel-dark);
+  border-left: 2px solid var(--bevel-dark);
+  border-right: 2px solid var(--bevel-light);
+  border-bottom: 2px solid var(--bevel-light);
 }
 .field {
   display: grid;
-  background: #c0c0c0;
+  background: var(--field-bg);
   --cell: 20px;
 }
 
 .cell {
   width: var(--cell); height: var(--cell);
   display: flex; align-items: center; justify-content: center;
-  font-family: Verdana, Tahoma, sans-serif;
+  font-family: var(--font);
   font-size: calc(var(--cell) * 0.62); font-weight: bold;
   line-height: 1;
   cursor: default;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid #7b7b7b;
-  border-bottom: 2px solid #7b7b7b;
-  background: #d6d3ce;
+  border-top: 2px solid var(--cell-border-light);
+  border-left: 2px solid var(--cell-border-light);
+  border-right: 2px solid var(--cell-border-dark);
+  border-bottom: 2px solid var(--cell-border-dark);
+  background: var(--cell-face);
 }
 .field.locked .cell { cursor: default; }
 
 .cell.revealed {
-  border: 1px solid #808080;
-  background: #d6d3ce;
+  border: 1px solid var(--cell-revealed-border);
+  background: var(--cell-face);
   cursor: default;
 }
-.cell.revealed.mine-hit { background: #f00; }
+.cell.revealed.mine-hit { background: var(--mine-hit-bg); }
 
 .cell svg { display: block; width: calc(var(--cell) * 0.8); height: calc(var(--cell) * 0.8); }
 
-.cell.question { color: #b00; }
+.cell.question { color: var(--question-color); }
 
 .cell.wrong { position: relative; }
 .cell.wrong::after {
   content: "";
   position: absolute; left: 10%; top: 46%;
-  width: 80%; height: 2px; background: #d00;
+  width: 80%; height: 2px; background: var(--wrong-color);
   transform: rotate(45deg);
   pointer-events: none;
 }
 
-/* Number colors (XP palette) */
-.cell[data-n="1"] { color: #0000ff; }
-.cell[data-n="2"] { color: #007b00; }
-.cell[data-n="3"] { color: #ff0000; }
-.cell[data-n="4"] { color: #00007f; }
-.cell[data-n="5"] { color: #7f0000; }
-.cell[data-n="6"] { color: #007f7f; }
-.cell[data-n="7"] { color: #000000; }
-.cell[data-n="8"] { color: #808080; }
+/* Number colors */
+.cell[data-n="1"] { color: var(--n1); }
+.cell[data-n="2"] { color: var(--n2); }
+.cell[data-n="3"] { color: var(--n3); }
+.cell[data-n="4"] { color: var(--n4); }
+.cell[data-n="5"] { color: var(--n5); }
+.cell[data-n="6"] { color: var(--n6); }
+.cell[data-n="7"] { color: var(--n7); }
+.cell[data-n="8"] { color: var(--n8); }
 
-/* Win confetti-ish border pulse */
+/* Win border pulse */
 .xp-window.win .bevel { animation: winBevel 700ms ease-in-out 2; }
 @keyframes winBevel {
-  50% { background: #fff7c0; }
+  50% { background: var(--win-glow); }
 }
 
 /* Overlay (exit) */
 .overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.15);
+  background: var(--overlay-bg);
   display: flex; align-items: center; justify-content: center;
   z-index: 200;
 }
 .overlay[hidden] { display: none; }
 .overlay-msg {
-  background: #ece9d8;
-  border: 1px solid #0831d9;
+  background: var(--win-bg);
+  border: 1px solid var(--win-border);
   border-radius: 6px;
   padding: 18px 26px;
   font-size: 12px;
+  color: var(--dialog-text);
   box-shadow: 0 6px 24px rgba(0,0,0,.4);
 }
 
-/* ---- XP dialog / modal ---- */
+/* ---- Dialog / modal ---- */
 .dialog-backdrop {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.15);
+  background: var(--overlay-bg);
   display: flex; align-items: center; justify-content: center;
   z-index: 300;
 }
@@ -298,20 +363,20 @@ body {
   width: min(460px, calc(100vw - 24px));
   max-height: calc(100vh - 24px);
   display: flex; flex-direction: column;
-  background: #ece9d8;
-  border: 1px solid #0831d9;
-  border-radius: 8px 8px 0 0;
+  background: var(--win-bg);
+  border: 1px solid var(--win-border);
+  border-radius: var(--win-radius);
   box-shadow: 0 8px 30px rgba(0,0,0,.5);
   overflow: hidden;
 }
-.dialog .title-bar { border-radius: 6px 6px 0 0; flex: 0 0 auto; }
-.dialog-content { padding: 16px; color: #000; overflow: auto; }
+.dialog .title-bar { flex: 0 0 auto; }
+.dialog-content { padding: 16px; color: var(--dialog-text); overflow: auto; }
 .dialog-content h2 { font-size: 14px; margin: 0 0 10px; }
 .dialog-content p { margin: 0 0 8px; line-height: 1.5; }
 .dialog-content ul { margin: 0 0 8px; padding-left: 18px; line-height: 1.6; }
 .dialog-content table { border-collapse: collapse; width: 100%; }
-.dialog-content td, .dialog-content th { border: 1px solid #b8b199; padding: 4px 8px; text-align: center; }
-.dialog-content th { background: #d6d3ce; }
+.dialog-content td, .dialog-content th { border: 1px solid var(--dialog-border-cell); padding: 4px 8px; text-align: center; }
+.dialog-content th { background: var(--panel-bg); }
 .dialog-content .icon-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .dialog-buttons {
   display: flex; justify-content: flex-end; gap: 8px;
@@ -322,14 +387,14 @@ body {
   min-width: 75px;
   padding: 4px 12px;
   font: inherit;
-  background: linear-gradient(#fdfdfd, #e6e3d9);
-  border: 1px solid #003c74;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
   border-radius: 3px;
+  color: var(--btn-text);
   cursor: default;
 }
-.xp-btn:hover { background: linear-gradient(#fff, #ece9d8); border-color: #2a5f9e; }
-.xp-btn:active { background: #d6d3ce; }
-.xp-btn.primary { background: linear-gradient(#fefefe, #e9f0fb); }
+.xp-btn:hover { filter: brightness(1.05); }
+.xp-btn:active { filter: brightness(.95); }
 
 /* ---- Responsive chrome: shrink fixed UI on small screens ---- */
 @media (max-width: 640px), (max-height: 640px) {
@@ -339,8 +404,209 @@ body {
   .top-panel { margin-bottom: 5px; padding: 3px 4px; }
 }
 
-/* Keep tap/click targets comfortable and avoid iOS zoom on inputs */
+/* Keep tap/click targets comfortable on touch devices */
 @media (hover: none) and (pointer: coarse) {
   .menu-label { padding: 8px 12px; }
   .tb-btn { width: 30px; height: 30px; }
 }
+
+/* ============================================================
+   THEMES — override tokens only. Add a new theme by copying a
+   block and changing the values + selector.
+   ============================================================ */
+
+/* ---------- Vista / Aero glass ---------- */
+:root[data-theme="vista"] {
+  --desktop-bg: #336296;
+  --desktop-bg2:
+    radial-gradient(140% 100% at 50% 0%, #4d7fb5 0%, #2d5c8f 45%, #1b3c63 100%);
+
+  --font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  --win-border: #1c3a5e;
+  --win-radius: 6px 6px 3px 3px;
+  --win-bg: #eef3f8;
+  --win-shadow: 0 0 0 1px rgba(255,255,255,.35), 0 10px 34px rgba(0,0,0,.55);
+
+  --tb-h: 30px;
+  --tb-bg: linear-gradient(rgba(90,135,185,.92), rgba(45,80,130,.94));
+  --tb-border: rgba(20,45,80,.9);
+  --tb-text: #fff;
+  --tb-text-shadow: 0 0 6px rgba(0,0,0,.6);
+  --tb-btn-normal: linear-gradient(#dceaf7, #7ea6cc);
+  --tb-btn-close: linear-gradient(#f4c0a8, #cf3f1e);
+  --tb-btn-border: rgba(255,255,255,.7);
+  --tb-btn-radius: 4px;
+
+  --menu-bg: #eef3f8;
+  --menu-border: #b6c6d8;
+  --menu-text: #10233a;
+  --menu-hover-bg: #cde3f7;
+  --menu-hover-text: #06182e;
+  --dropdown-bg: #f6f9fc;
+  --dropdown-border: #7f9db9;
+
+  --body-bg: #eef3f8;
+  --panel-bg: #dfe7f0;
+  --bevel-light: #ffffff;
+  --bevel-dark: #97a9bd;
+  --field-bg: #cfd8e4;
+
+  --cell-face: #dfe7f0;
+  --cell-border-light: #ffffff;
+  --cell-border-dark: #93a6ba;
+  --cell-revealed-border: #aebccb;
+  --led-color: #26a6ff;
+  --led-color-off: rgba(38,166,255,.15);
+  --led-bg: #0b1622;
+
+  --n1: #0a52d6; --n2: #168a16; --n3: #d41a1a; --n4: #3a1a9e;
+  --n5: #8a3a12; --n6: #0f8f8f; --n7: #1a1a1a; --n8: #767676;
+
+  --mine-hit-bg: #ff5a5a;
+  --question-color: #b00;
+  --wrong-color: #d00;
+  --win-glow: rgba(180, 220, 255, 0.95);
+
+  --overlay-bg: rgba(10, 25, 45, .35);
+  --dialog-text: #10233a;
+  --dialog-border-cell: #b0bfce;
+  --btn-bg: linear-gradient(#f6fafd, #d7e3ef);
+  --btn-border: #5b7f9f;
+  --btn-text: #10233a;
+}
+
+/* ---------- Cyberpunk (neon) ---------- */
+:root[data-theme="cyberpunk"] {
+  --desktop-bg: #05010c;
+  --desktop-bg2:
+    radial-gradient(120% 90% at 80% -10%, rgba(255,45,249,.25), transparent 55%),
+    radial-gradient(120% 100% at 10% 110%, rgba(0,229,255,.22), transparent 55%),
+    linear-gradient(#0a0118, #05010c);
+
+  --font: "Rajdhani", "Segoe UI", Tahoma, sans-serif;
+
+  --win-border: #ff2bf9;
+  --win-radius: 2px;
+  --win-bg: #0c0a1a;
+  --win-shadow: 0 0 0 1px rgba(0,229,255,.4), 0 0 30px rgba(255,45,249,.35), 0 0 60px rgba(0,229,255,.2);
+
+  --tb-h: 30px;
+  --tb-bg: linear-gradient(90deg, #1a0033, #2a0b4a 50%, #12002a);
+  --tb-border: #ff2bf9;
+  --tb-text: #00e5ff;
+  --tb-text-shadow: 0 0 8px rgba(0,229,255,.9);
+  --tb-btn-normal: linear-gradient(#123, #08202f);
+  --tb-btn-close: linear-gradient(#ff2bf9, #7a0060);
+  --tb-btn-border: rgba(0,229,255,.6);
+  --tb-btn-radius: 2px;
+
+  --menu-bg: #0c0a1a;
+  --menu-border: #2a1b45;
+  --menu-text: #d6f7ff;
+  --menu-hover-bg: #ff2bf9;
+  --menu-hover-text: #05010c;
+  --dropdown-bg: #12082a;
+  --dropdown-border: #ff2bf9;
+
+  --body-bg: #0c0a1a;
+  --panel-bg: #141026;
+  --bevel-light: #2c2350;
+  --bevel-dark: #05010c;
+  --field-bg: #070512;
+
+  --cell-face: #17112b;
+  --cell-border-light: #3a2c63;
+  --cell-border-dark: #05010c;
+  --cell-revealed-border: #241a40;
+  --led-color: #00ffd5;
+  --led-color-off: rgba(0,255,213,.14);
+  --led-bg: #04101a;
+
+  --n1: #00e5ff; --n2: #39ff14; --n3: #ff2b6b; --n4: #b026ff;
+  --n5: #ff9e00; --n6: #00fff0; --n7: #ff2bf9; --n8: #c8c8ff;
+
+  --mine-hit-bg: #4a0010;
+  --question-color: #ff2bf9;
+  --wrong-color: #ff2b6b;
+  --win-glow: rgba(0, 255, 213, 0.5);
+
+  --overlay-bg: rgba(0, 0, 0, .6);
+  --dialog-text: #d6f7ff;
+  --dialog-border-cell: #2a1b45;
+  --btn-bg: linear-gradient(#1a1030, #0c0a1a);
+  --btn-border: #ff2bf9;
+  --btn-text: #00e5ff;
+}
+:root[data-theme="cyberpunk"] .title-text { text-transform: uppercase; letter-spacing: 2px; }
+:root[data-theme="cyberpunk"] .led-digit .seg.on { box-shadow: 0 0 5px var(--led-color); }
+:root[data-theme="cyberpunk"] .xp-window,
+:root[data-theme="cyberpunk"] .cell { position: relative; }
+:root[data-theme="cyberpunk"] .xp-window::before {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+
+/* ---------- Classic (Windows 95/98 gray) ---------- */
+:root[data-theme="classic"] {
+  --desktop-bg: #008080;
+  --desktop-bg2: #008080;
+
+  --font: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+
+  --win-border: #dfdfdf;
+  --win-radius: 0;
+  --win-bg: #c0c0c0;
+  --win-shadow: 2px 2px 8px rgba(0,0,0,.5);
+
+  --tb-h: 22px;
+  --tb-bg: linear-gradient(90deg, #000080, #1084d0);
+  --tb-border: #dfdfdf;
+  --tb-text: #fff;
+  --tb-text-shadow: none;
+  --tb-btn-normal: #c0c0c0;
+  --tb-btn-close: #c0c0c0;
+  --tb-btn-border: #dfdfdf;
+  --tb-btn-radius: 0;
+
+  --menu-bg: #c0c0c0;
+  --menu-border: #808080;
+  --menu-text: #000;
+  --menu-hover-bg: #000080;
+  --menu-hover-text: #fff;
+  --dropdown-bg: #c0c0c0;
+  --dropdown-border: #dfdfdf;
+
+  --body-bg: #c0c0c0;
+  --panel-bg: #c0c0c0;
+  --bevel-light: #ffffff;
+  --bevel-dark: #808080;
+  --field-bg: #808080;
+
+  --cell-face: #c0c0c0;
+  --cell-border-light: #dfdfdf;
+  --cell-border-dark: #808080;
+  --cell-revealed-border: #808080;
+  --led-color: #f00;
+  --led-color-off: rgba(255, 0, 0, .12);
+  --led-bg: #000;
+
+  --n1: #0000ff; --n2: #008000; --n3: #ff0000; --n4: #000080;
+  --n5: #800000; --n6: #008080; --n7: #000000; --n8: #808080;
+
+  --mine-hit-bg: #f00;
+  --question-color: #000;
+  --wrong-color: #d00;
+  --win-glow: rgba(255, 255, 0, 0.85);
+
+  --overlay-bg: rgba(0,0,0,.25);
+  --dialog-text: #000;
+  --dialog-border-cell: #808080;
+  --btn-bg: #c0c0c0;
+  --btn-border: #dfdfdf;
+  --btn-text: #000;
+}
+:root[data-theme="classic"] .tb-btn { box-shadow: none; color: #000; }
+:root[data-theme="classic"] .menu-dropdown { box-shadow: 2px 2px 0 rgba(0,0,0,.4); }

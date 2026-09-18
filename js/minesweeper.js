@@ -11,6 +11,8 @@
 
   const FLAG = { NONE: 0, FLAG: 1, QUESTION: 2 };
 
+  const THEMES = ["xp", "vista", "classic", "cyberpunk"];
+
   // ---------- DOM refs ----------
   const fieldEl = document.getElementById("field");
   const smileyEl = document.getElementById("smiley");
@@ -23,6 +25,7 @@
 
   // ---------- Game state ----------
   let level = "expert";
+  let theme = "xp";
   let cols, rows, totalMines;
   let cells = [];        // flat array of cell objects
   let minesPlaced = false;
@@ -146,7 +149,7 @@
     updateMineCounter();
     renderFace("normal");
     windowEl.classList.remove("win");
-    markActiveLevel();
+    markChecked();
     layout();
   }
 
@@ -393,10 +396,22 @@
 
   function setLevel(l) { if (LEVELS[l]) { level = l; buildBoard(); } }
 
-  function markActiveLevel() {
+  // Theme is applied by setting data-theme on <html>; no rebuild needed.
+  function setTheme(t) {
+    if (!THEMES.includes(t)) return;
+    theme = t;
+    document.documentElement.setAttribute("data-theme", t);
+    try { localStorage.setItem("ms-theme", t); } catch {}
+    markChecked();
+  }
+
+  // Group-aware checkmark rendering for menu items (difficulty + theme).
+  function markChecked() {
+    const active = { level, theme: "theme-" + theme };
     document.querySelectorAll(".menu-dropdown button[data-action]").forEach((b) => {
-      b.classList.remove("checked");
-      if (b.dataset.action === level) b.classList.add("checked");
+      const group = b.dataset.check;
+      if (!group) return;
+      b.classList.toggle("checked", b.dataset.action === active[group]);
     });
   }
 
@@ -525,6 +540,8 @@
       case "how-to-play": showHowToPlay(); break;
       case "about": showAbout(); break;
       case "best-times": showBestTimes(); break;
+      default:
+        if (action && action.startsWith("theme-")) setTheme(action.slice(6));
     }
   }
 
@@ -533,7 +550,7 @@
     if (modalRoot.firstChild) { if (e.key === "Escape") closeModal(); return; }
     const k = e.key.toLowerCase();
     if (e.altKey) {
-      const map = { g: "game", h: "help" };
+      const map = { g: "game", t: "theme", h: "help" };
       if (map[k]) {
         e.preventDefault();
         const item = menuBar.querySelector(`[data-menu="${map[k]}"]`);
@@ -551,6 +568,14 @@
   // ---------- Init ----------
   mineDigits = buildLed(mineCounterEl);
   timerDigits = buildLed(timerEl);
+
+  // Restore saved theme (validate against the known list).
+  try {
+    const saved = localStorage.getItem("ms-theme");
+    if (saved && THEMES.includes(saved)) theme = saved;
+  } catch {}
+  document.documentElement.setAttribute("data-theme", theme);
+
   buildBoard();
 
   // Keep the board fitted to the viewport (does not reset game state).
