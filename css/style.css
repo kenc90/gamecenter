@@ -1,7 +1,7 @@
 /* ===== Windows XP Minesweeper clone ===== */
 * { box-sizing: border-box; }
 
-html, body { height: 100%; margin: 0; }
+html, body { height: 100%; margin: 0; overflow: hidden; }
 
 body {
   font-family: Tahoma, "Segoe UI", Geneva, Verdana, sans-serif;
@@ -12,12 +12,12 @@ body {
 
 /* XP "Bliss"-style desktop backdrop */
 .desktop {
-  min-height: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  overflow: auto;
+  overflow: hidden;
   background: #3a6ea5;
   background:
     radial-gradient(120% 90% at 50% 110%, #7ab648 0%, #4a8a2c 32%, rgba(74,138,44,0) 55%),

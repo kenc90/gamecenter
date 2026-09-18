@@ -151,18 +151,28 @@
   }
 
   // Compute the largest cell size (in px) that lets the current grid fit
-  // within the viewport, then expose it as the --cell custom property.
+  // within the viewport without overflowing, then expose it as --cell.
   function layout() {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    // Reserve space for window chrome, title bar, menu, top panel and bevels.
-    const padX = 48;
-    const padY = 128;
-    const availW = Math.max(120, vw - padX);
-    const availH = Math.max(120, vh - padY);
-    // Border thickness (2px each side) is fixed, so subtract it per cell.
-    let size = Math.floor(Math.min((availW - cols * 3) / cols, (availH - rows * 3) / rows));
-    size = Math.max(12, Math.min(size, 46));
+    const vw = document.documentElement.clientWidth;
+    const vh = document.documentElement.clientHeight;
+    const pad = parseFloat(getComputedStyle(fieldEl.closest(".desktop")).paddingLeft) || 0;
+
+    // Pass 1: render at a reference size to measure fixed chrome (title bar,
+    // menu, counters, bevels). This overhead does not depend on cell size.
+    // Lift the max-size clamp so offsetWidth/Height report the true size.
+    fieldEl.style.setProperty("--cell", "20px");
+    const prevMax = windowEl.style.cssText;
+    windowEl.style.maxWidth = "none";
+    windowEl.style.maxHeight = "none";
+    const overheadX = windowEl.offsetWidth - fieldEl.offsetWidth;
+    const overheadY = windowEl.offsetHeight - fieldEl.offsetHeight;
+    windowEl.style.cssText = prevMax;
+
+    const availFieldW = vw - pad * 2 - overheadX;
+    const availFieldH = vh - pad * 2 - overheadY;
+
+    let size = Math.floor(Math.min(availFieldW / cols, availFieldH / rows));
+    size = Math.max(8, Math.min(size, 46));
     fieldEl.style.setProperty("--cell", size + "px");
   }
 
