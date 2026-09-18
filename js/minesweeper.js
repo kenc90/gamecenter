@@ -24,6 +24,7 @@
   const modalRoot = document.getElementById("modal-root");
   const rollbackBtn = document.getElementById("rollbackBtn");
   const statusBar = document.getElementById("statusBar");
+  const matrixCanvas = document.getElementById("matrixRain");
 
   // ---------- Game state ----------
   let level = "expert";
@@ -636,6 +637,57 @@
 
   function setLevel(l) { if (LEVELS[l]) { level = l; buildBoard(); saveGame(); setStatus(godMode ? "New game — God Mode ON." : "New game — first click is always safe."); } }
 
+  // ---------- Matrix code rain (Virus theme background) ----------
+  const matrixCtx = matrixCanvas ? matrixCanvas.getContext("2d") : null;
+  const MATRIX_GLYPHS = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモ0123456789ABCDEF$#%&*+=";
+  const MATRIX_FONT_PX = 16;
+  const reduceMotion = !!(window.matchMedia
+    && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  let matrixRaf = null, matrixCols = 0, matrixDrops = [], matrixStep = 0;
+
+  function matrixResize() {
+    if (!matrixCanvas) return;
+    matrixCanvas.width = window.innerWidth;
+    matrixCanvas.height = window.innerHeight;
+    matrixCols = Math.ceil(matrixCanvas.width / MATRIX_FONT_PX);
+    matrixDrops = new Array(matrixCols);
+    for (let i = 0; i < matrixCols; i++) matrixDrops[i] = Math.random() * -60;
+    if (matrixCtx) {
+      matrixCtx.fillStyle = "#03170a";
+      matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    }
+  }
+
+  function matrixFrame() {
+    matrixRaf = requestAnimationFrame(matrixFrame);
+    if ((matrixStep++ % 3) !== 0) return;   // ~20fps: plenty for rain, saves CPU
+    const w = matrixCanvas.width, h = matrixCanvas.height;
+    matrixCtx.fillStyle = "rgba(3, 23, 10, 0.08)";   // translucent wipe = fading trail
+    matrixCtx.fillRect(0, 0, w, h);
+    matrixCtx.font = MATRIX_FONT_PX + "px monospace";
+    matrixCtx.textAlign = "center";
+    for (let i = 0; i < matrixCols; i++) {
+      const glyph = MATRIX_GLYPHS[(Math.random() * MATRIX_GLYPHS.length) | 0];
+      const x = i * MATRIX_FONT_PX + MATRIX_FONT_PX / 2;
+      const y = matrixDrops[i] * MATRIX_FONT_PX;
+      matrixCtx.fillStyle = "rgba(215,255,220,.95)";  // bright leading glyph
+      matrixCtx.fillText(glyph, x, y);
+      matrixCtx.fillStyle = "rgba(40,205,90,.5)";     // green trail
+      matrixCtx.fillText(glyph, x, y - MATRIX_FONT_PX);
+      if (y > h && Math.random() > 0.972) matrixDrops[i] = 0;
+      matrixDrops[i] += 1;
+    }
+  }
+
+  function startMatrix() {
+    if (!matrixCtx || reduceMotion || matrixRaf) return;
+    matrixResize();
+    matrixRaf = requestAnimationFrame(matrixFrame);
+  }
+  function stopMatrix() {
+    if (matrixRaf) { cancelAnimationFrame(matrixRaf); matrixRaf = null; }
+  }
+
   // Theme is applied by setting data-theme on <html>; flags/faces are repainted.
   function setTheme(t) {
     if (!THEMES.includes(t)) return;
@@ -645,6 +697,7 @@
     markChecked();
     renderFace(faceState);
     for (let i = 0; i < cells.length; i++) paintCell(i);
+    if (t === "virus") startMatrix(); else stopMatrix();
   }
 
   // Group-aware checkmark rendering for menu items (difficulty + theme).
@@ -827,6 +880,7 @@
     if (saved && THEMES.includes(saved)) theme = saved;
   } catch {}
   document.documentElement.setAttribute("data-theme", theme);
+  if (theme === "virus") startMatrix();
 
   // Restore God Mode preference.
   try { godMode = localStorage.getItem("ms-god") === "1"; } catch {}
@@ -849,8 +903,18 @@
   let resizeRaf = null;
   function scheduleLayout() {
     if (resizeRaf) return;
-    resizeRaf = requestAnimationFrame(() => { resizeRaf = null; layout(); });
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = null;
+      layout();
+      if (matrixRaf) matrixResize();
+    });
   }
   window.addEventListener("resize", scheduleLayout);
   window.addEventListener("orientationchange", scheduleLayout);
+
+  // Pause the rain while the tab is hidden; resume on Virus theme.
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopMatrix();
+    else if (theme === "virus") startMatrix();
+  });
 })();
