@@ -42,9 +42,10 @@
 
   <main class="gc-main">
     <h1 class="gc-title">Game Center</h1>
-    <p class="gc-sub">Pick a game to start. Progress is saved in this browser.</p>
+    <p class="gc-sub">Pick a game to start.</p>
 
-    <!-- Adding a game = copy this <a> block (and later a card alongside it). -->
+    <!-- Adding a game = create games/<name>/ with its own css/ and js/, then copy
+         this <a> block. Shared chrome for every page lives in shared/. -->
     <div class="gc-grid">
       <a class="gc-card" href="games/minesweeper/index.html">
         <span class="gc-card__art">
@@ -106,7 +107,7 @@
   </main>
 
   <footer class="gc-footer">
-    <p>Games live under <code>games/&lt;name&gt;/</code>; shared styling in <code>shared/</code>.</p>
+    <p>A small collection of browser games. No accounts, no ads - progress is saved in this browser.</p>
   </footer>
 
   <script src="shared/js/center.js" defer></script>
