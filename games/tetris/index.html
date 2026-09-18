@@ -16,21 +16,23 @@
   <!-- Live status for screen readers and the caption line under the deck. -->
   <p class="visually-hidden" id="status" aria-live="polite">Press Space (or Start) to play.</p>
 
-  <main class="stage">
-    <header class="topbar">
-      <div class="topbar__brand">
-        <span class="topbar__logo" aria-hidden="true">&#9646;&#9646;</span>
-        <h1 class="topbar__title">Tetris</h1>
+  <!-- Full-width header pinned to the very top, so the stage below can use
+       every remaining pixel for the game area. -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__logo" aria-hidden="true">&#9646;&#9646;</span>
+      <h1 class="topbar__title">Tetris</h1>
+    </div>
+    <div class="topbar__controls">
+      <div class="topbar__btns">
+        <button id="newGame" class="btn btn--primary" type="button">New Game</button>
+        <button id="pauseBtn" class="btn" type="button" aria-pressed="false">Pause</button>
+        <button id="rulesBtn" class="btn" type="button" title="How to play">Rules</button>
       </div>
-      <div class="topbar__controls">
-        <div class="topbar__btns">
-          <button id="newGame" class="btn btn--primary" type="button">New Game</button>
-          <button id="pauseBtn" class="btn" type="button" aria-pressed="false">Pause</button>
-          <button id="rulesBtn" class="btn" type="button" title="How to play">Rules</button>
-        </div>
-      </div>
-    </header>
+    </div>
+  </header>
 
+  <main class="stage">
     <div class="playfield">
       <!-- Well + side panel size themselves to fit the screen, no scrollbars. -->
       <div class="board-wrap">
@@ -67,13 +69,13 @@
 
     <p class="hintline">
       <kbd>&#8592;</kbd><kbd>&#8594;</kbd> move &middot; <kbd>&#8593;</kbd> rotate &middot;
-      <kbd>&#8595;</kbd> soft drop &middot; <kbd>Space</kbd> pause &middot; <kbd>R</kbd> new game
+      <kbd>&#8595;</kbd> drop &middot; <kbd>Space</kbd> pause &middot; <kbd>R</kbd> new game
     </p>
 
     <!-- Touch pad for phones / tablets -->
     <div class="touchpad" role="group" aria-label="Tetris controls">
       <button class="tpad__btn" data-act="left"  type="button" aria-label="Move left">&#9664;</button>
-      <button class="tpad__btn" data-act="down"  type="button" aria-label="Soft drop">&#9660;</button>
+      <button class="tpad__btn" data-act="down"  type="button" aria-label="Drop">&#9660;</button>
       <button class="tpad__btn" data-act="rotate" type="button" aria-label="Rotate">&#10227;</button>
       <button class="tpad__btn" data-act="right" type="button" aria-label="Move right">&#9654;</button>
     </div>
@@ -96,7 +98,7 @@
         <ul>
           <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> or <kbd>A</kbd><kbd>D</kbd> move the piece left or right.</li>
           <li><kbd>&#8593;</kbd> or <kbd>W</kbd> rotates the piece clockwise.</li>
-          <li>Hold <kbd>&#8595;</kbd> or <kbd>S</kbd> to soft-drop &mdash; a gentle, slower fall.</li>
+          <li>Hold <kbd>&#8595;</kbd> or <kbd>S</kbd> to drop the piece faster &mdash; applies to the current piece only.</li>
           <li><kbd>Space</kbd> pauses &mdash; it also starts a game after a run ends; <kbd>R</kbd> starts a new one &mdash; or use the on-screen pad on touch devices.</li>
         </ul>
         <h3>Rules</h3>

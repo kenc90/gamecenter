@@ -6,11 +6,13 @@
 
 html, body { height: 100%; }
 body.tetris-app {
+  height: 100vh;                           /* exact viewport: header + stage only */
+  height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;                    /* no horizontal scroll on small screens */
+  overflow: hidden;                        /* the app itself never scrolls */
   --spad: clamp(10px, 2.5vh, 26px);
   /* Cyberpunk backdrop: near-black indigo with a magenta/cyan glow up top. */
   background:
@@ -113,12 +115,13 @@ body.tetris-app *, body.tetris-app *::before, body.tetris-app *::after { box-siz
 
 /* The well keeps a 1:2 (w:h) aspect. Cap its height to the viewport so nothing
    scrolls, and shrink the block size on narrow screens via the canvas scaling.
-   The 300px budget covers every row that shares the screen: top bar (~78) +
-   gaps (~36) + one-line touch pad (~44) + hint (~26) + caption (~16) + stage
-   padding (~52) + slack — so no content is pushed off-screen on short windows. */
+   The header is a full-width bar OUTSIDE the stage now, so the 235px budget
+   only covers what shares the stage with the well: gaps (~24) + touch pad
+   (~40) + hint (~26) + caption (~16) + stage padding (~52) + slack — which
+   leaves the game area much taller than before. */
 .board-wrap {
   position: relative;
-  height: min(calc(100vh - 300px), calc((100vw - var(--spad) * 2 - 16px) * 0.62), 560px);
+  height: min(calc(100vh - 235px), calc((100vw - var(--spad) * 2 - 16px) * 0.62), 620px);
   min-height: 260px;                    /* stay playable; stage scrolls if needed */
   aspect-ratio: 1 / 2;
   border-radius: 10px;
@@ -266,11 +269,11 @@ kbd {
   .topbar { padding: 7px 12px; }
   .topbar__logo { width: 28px; height: 28px; font-size: 12px; }
   .board-status { font-size: 11px; }
-  /* Bigger well: it's no longer beside the panel, so allow ~90% of the
-     viewport width (instead of 62%), and the height budget clears the compact
-     header + strip-below panel + touch pad + caption (~235px). */
+  /* Bigger well: the header sits outside the stage at full width, and the
+     panel is a thin strip below, so only ~185px of stage chrome must be
+     reserved — and the well may span 94% of the viewport width. */
   .board-wrap {
-    height: min(calc(100vh - 235px), calc((100vw - var(--spad) * 2) * 0.9), 560px);
+    height: min(calc(100vh - 185px), calc((100vw - var(--spad) * 2) * 0.94), 620px);
     min-height: 220px;
   }
 }

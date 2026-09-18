@@ -71,6 +71,7 @@
     return out;
   }
   function gravityMs() { return Math.max(60, 850 - (level - 1) * 75); }
+  function softMs() { return Math.max(30, gravityMs() / 20); }   // fast, ~20x fall
 
   // ---------- Persistence ----------
   function save() {
@@ -140,6 +141,7 @@
     draw();
   }
   function lockPiece() {
+    softDrop = false;                                  // never carries to the next piece
     cells(cur, cur.r, cur.x, cur.y).forEach(function (c) {
       if (c[1] >= 0) grid[c[1]][c[0]] = SHAPES[cur.k].c;
     });
@@ -302,11 +304,14 @@
       }
     }
   }
-  function softToggle(on) {
-    if (on && !alive) return;
-    softDrop = on && !paused;
-    acc = Math.max(acc, gravityMs());                  // react immediately
+  // Drop (fast fall) engages for ONE piece only: the accumulator is reset so
+  // the speed-up starts fresh (no burst of stored gravity time), and releasing
+  // the key (or the piece locking) disengages it — see lockPiece + keydown.
+  function softOn() {
+    if (!alive || paused) return;
+    if (!softDrop) { softDrop = true; acc = softMs(); lastTime = 0; }
   }
+  function softOff() { softDrop = false; }
 
   // ---------- Loop ----------
   function loop(t) {
@@ -320,9 +325,9 @@
     if (!lastTime) lastTime = t;
     acc += t - lastTime;
     lastTime = t;
-    // Soft drop is a gentle ~6x gravity (never faster than one cell per 90ms),
-    // so holding Down nudges the piece down controllably instead of slamming it.
-    var iv = softDrop ? Math.max(90, gravityMs() / 6) : gravityMs();
+    // Drop is a fast ~20x gravity (never faster than one cell per 30ms),
+    // so holding Down sends the piece down quickly but still trackable.
+    var iv = softDrop ? softMs() : gravityMs();
     while (acc >= iv) { acc -= iv; step(); if (!alive || clearFlash) break; }
     render();
   }
@@ -380,7 +385,7 @@
     else if (k === "ArrowRight" || k === "d" || k === "D") { e.preventDefault(); move(1); }
     else if (k === "ArrowUp" || k === "w" || k === "W") { e.preventDefault(); rotate(1); }
     else if (k === "x" || k === "X") { e.preventDefault(); rotate(-1); }
-    else if (k === "ArrowDown" || k === "s" || k === "S") { e.preventDefault(); softToggle(true); }
+    else if (k === "ArrowDown" || k === "s" || k === "S") { e.preventDefault(); if (!e.repeat) softOn(); }
     else if (k === " ") {
       // Space is the pause / start key.
       e.preventDefault();
@@ -392,10 +397,11 @@
   });
   document.addEventListener("keyup", function (e) {
     var k = e.key;
-    if (k === "ArrowDown" || k === "s" || k === "S") softToggle(false);
+    if (k === "ArrowDown" || k === "s" || k === "S") softOff();
   });
 
-  // Touch pad: taps fire once, holds auto-repeat for left/right/down.
+  // Touch pad: taps fire once, holds auto-repeat for left/right; the ▼ key
+  // simply holds the fast drop engaged while the finger stays down.
   Array.prototype.forEach.call(document.querySelectorAll(".tpad__btn"), function (b) {
     var act = b.dataset.act, holdTimer = null, holdInt = null;
     function fire() {
@@ -412,13 +418,13 @@
           holdInt = setInterval(fire, 110);
         }, 300);
       } else if (act === "down") {
-        softToggle(true);
+        softOn();
       }
     });
     function release() {
       clearTimeout(holdTimer); clearInterval(holdInt);
       holdTimer = holdInt = null;
-      if (act === "down") softToggle(false);
+      if (act === "down") softOff();
     }
     b.addEventListener("pointerup", release);
     b.addEventListener("pointercancel", release);
