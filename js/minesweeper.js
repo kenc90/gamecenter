@@ -114,8 +114,8 @@
     const cfg = LEVELS[level];
     cols = cfg.cols; rows = cfg.rows; totalMines = cfg.mines;
 
-    fieldEl.style.gridTemplateColumns = `repeat(${cols}, 20px)`;
-    fieldEl.style.gridTemplateRows = `repeat(${rows}, 20px)`;
+    fieldEl.style.gridTemplateColumns = `repeat(${cols}, var(--cell))`;
+    fieldEl.style.gridTemplateRows = `repeat(${rows}, var(--cell))`;
     fieldEl.innerHTML = "";
     fieldEl.classList.remove("locked");
 
@@ -147,6 +147,23 @@
     renderFace("normal");
     windowEl.classList.remove("win");
     markActiveLevel();
+    layout();
+  }
+
+  // Compute the largest cell size (in px) that lets the current grid fit
+  // within the viewport, then expose it as the --cell custom property.
+  function layout() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    // Reserve space for window chrome, title bar, menu, top panel and bevels.
+    const padX = 48;
+    const padY = 128;
+    const availW = Math.max(120, vw - padX);
+    const availH = Math.max(120, vh - padY);
+    // Border thickness (2px each side) is fixed, so subtract it per cell.
+    let size = Math.floor(Math.min((availW - cols * 3) / cols, (availH - rows * 3) / rows));
+    size = Math.max(12, Math.min(size, 46));
+    fieldEl.style.setProperty("--cell", size + "px");
   }
 
   function placeMines(safeIndex) {
@@ -525,4 +542,13 @@
   mineDigits = buildLed(mineCounterEl);
   timerDigits = buildLed(timerEl);
   buildBoard();
+
+  // Keep the board fitted to the viewport (does not reset game state).
+  let resizeRaf = null;
+  function scheduleLayout() {
+    if (resizeRaf) return;
+    resizeRaf = requestAnimationFrame(() => { resizeRaf = null; layout(); });
+  }
+  window.addEventListener("resize", scheduleLayout);
+  window.addEventListener("orientationchange", scheduleLayout);
 })();

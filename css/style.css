@@ -17,6 +17,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px;
+  overflow: auto;
   background: #3a6ea5;
   background:
     radial-gradient(120% 90% at 50% 110%, #7ab648 0%, #4a8a2c 32%, rgba(74,138,44,0) 55%),
@@ -30,6 +31,8 @@ body {
   background: #ece9d8;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
   overflow: hidden;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 .xp-window.flash { animation: winFlash 320ms ease-in-out; }
@@ -213,13 +216,14 @@ body {
 .field {
   display: grid;
   background: #c0c0c0;
+  --cell: 20px;
 }
 
 .cell {
-  width: 20px; height: 20px;
+  width: var(--cell); height: var(--cell);
   display: flex; align-items: center; justify-content: center;
   font-family: Verdana, Tahoma, sans-serif;
-  font-size: 13px; font-weight: bold;
+  font-size: calc(var(--cell) * 0.62); font-weight: bold;
   line-height: 1;
   cursor: default;
   border-top: 2px solid #fff;
@@ -237,15 +241,15 @@ body {
 }
 .cell.revealed.mine-hit { background: #f00; }
 
-.cell svg { display: block; width: 16px; height: 16px; }
+.cell svg { display: block; width: calc(var(--cell) * 0.8); height: calc(var(--cell) * 0.8); }
 
 .cell.question { color: #b00; }
 
 .cell.wrong { position: relative; }
 .cell.wrong::after {
   content: "";
-  position: absolute; left: 2px; top: 8px;
-  width: 16px; height: 2px; background: #d00;
+  position: absolute; left: 10%; top: 46%;
+  width: 80%; height: 2px; background: #d00;
   transform: rotate(45deg);
   pointer-events: none;
 }
@@ -291,15 +295,17 @@ body {
   z-index: 300;
 }
 .dialog {
-  min-width: 320px; max-width: 460px;
+  width: min(460px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  display: flex; flex-direction: column;
   background: #ece9d8;
   border: 1px solid #0831d9;
   border-radius: 8px 8px 0 0;
   box-shadow: 0 8px 30px rgba(0,0,0,.5);
   overflow: hidden;
 }
-.dialog .title-bar { border-radius: 6px 6px 0 0; }
-.dialog-content { padding: 16px; color: #000; }
+.dialog .title-bar { border-radius: 6px 6px 0 0; flex: 0 0 auto; }
+.dialog-content { padding: 16px; color: #000; overflow: auto; }
 .dialog-content h2 { font-size: 14px; margin: 0 0 10px; }
 .dialog-content p { margin: 0 0 8px; line-height: 1.5; }
 .dialog-content ul { margin: 0 0 8px; padding-left: 18px; line-height: 1.6; }
@@ -310,6 +316,7 @@ body {
 .dialog-buttons {
   display: flex; justify-content: flex-end; gap: 8px;
   padding: 0 16px 14px;
+  flex: 0 0 auto;
 }
 .xp-btn {
   min-width: 75px;
@@ -323,3 +330,17 @@ body {
 .xp-btn:hover { background: linear-gradient(#fff, #ece9d8); border-color: #2a5f9e; }
 .xp-btn:active { background: #d6d3ce; }
 .xp-btn.primary { background: linear-gradient(#fefefe, #e9f0fb); }
+
+/* ---- Responsive chrome: shrink fixed UI on small screens ---- */
+@media (max-width: 640px), (max-height: 640px) {
+  .desktop { padding: 8px; }
+  .game-body { padding: 4px; }
+  .bevel { padding: 4px; }
+  .top-panel { margin-bottom: 5px; padding: 3px 4px; }
+}
+
+/* Keep tap/click targets comfortable and avoid iOS zoom on inputs */
+@media (hover: none) and (pointer: coarse) {
+  .menu-label { padding: 8px 12px; }
+  .tb-btn { width: 30px; height: 30px; }
+}
