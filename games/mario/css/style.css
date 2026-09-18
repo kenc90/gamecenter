@@ -1,0 +1,248 @@
+/* =====================================================================
+   Super Plumber — fixed bright "retro sky" theme.
+   This game deliberately ignores the center's light/dark mode, so it does
+   NOT use the shared --gc-surface/text/accent tokens; every color below is
+   hardcoded (same approach the Chess & Tetris pages take).
+   ===================================================================== */
+:root {
+  --mb-sky:   #5c94fc;   /* classic SMB sky blue */
+  --mb-sky2:  #8fc0ff;
+  --mb-grass: #3fbf2f;
+  --mb-dirt:  #c65c17;
+  --mb-brick: #b5451b;
+  --mb-gold:  #f7d51d;
+  --mb-red:   #e23b2e;
+  --mb-ink:   #1a1330;
+  --mb-white: #ffffff;
+}
+
+html, body { height: 100%; }
+body.mario-app {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  --spad: clamp(8px, 2vh, 20px);
+  background: linear-gradient(180deg, #6aa6ff 0%, #5c94fc 45%, #7fc97f 100%);
+  color: var(--mb-white);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* The back chip comes from shared base.css (fixed bottom-left, themed), so
+   it behaves exactly like every other game page here — no local override. */
+
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; margin: -1px;
+  padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  flex: none;
+  display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap;
+  padding: 12px clamp(12px, 3vw, 28px);
+  padding-top: max(12px, env(safe-area-inset-top));
+  background: rgba(0, 0, 0, .22);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(255, 255, 255, .25);
+  z-index: 20;
+}
+.topbar__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.topbar__logo {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: linear-gradient(140deg, var(--mb-red), #b81f3f);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .3);
+}
+.topbar__logo svg { width: 22px; height: 22px; }
+.topbar__title {
+  margin: 0; font-size: clamp(19px, 3.4vw, 26px); letter-spacing: .02em; white-space: nowrap;
+  text-transform: uppercase; font-weight: 800;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .35);
+}
+.topbar__controls { display: flex; align-items: center; gap: 10px 18px; margin-left: auto; }
+.topbar__btns { display: flex; gap: 8px; }
+.btn__ico { display: none; align-items: center; justify-content: center; }
+.btn__ico svg { width: 16px; height: 16px; display: block; }
+
+/* ---------- Stage selector popover ---------- */
+.stagepick { position: relative; }
+.stagemenu {
+  position: absolute; top: 100%; right: 0; z-index: 40; margin-top: 6px;
+  min-width: 172px; padding: 6px;
+  display: flex; flex-direction: column; gap: 4px;
+  border: 2px solid rgba(255, 255, 255, .55); border-radius: 14px;
+  background: rgba(16, 12, 40, .96);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .45);
+}
+.stagemenu[hidden] { display: none; }        /* guard: explicit display beats [hidden] */
+.stagemenu__item {
+  appearance: none; cursor: pointer; font: inherit; text-align: left;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border: 0; border-radius: 9px;
+  background: transparent; color: #eaf1ff; font-size: 13px; font-weight: 700;
+  letter-spacing: .02em; text-transform: none;
+}
+.stagemenu__item:hover { background: rgba(255, 255, 255, .12); }
+.stagemenu__item.is-current { background: var(--mb-gold); color: #4a2e00; }
+.stagemenu__no {
+  flex: none; min-width: 34px; text-align: center; font-weight: 900;
+  font-size: 12px; padding: 2px 6px; border-radius: 7px;
+  background: rgba(255, 255, 255, .16);
+}
+.stagemenu__item.is-current .stagemenu__no { background: rgba(0, 0, 0, .18); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 800;
+  letter-spacing: .03em; text-transform: uppercase;
+  padding: 9px 16px; border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, .7);
+  background: rgba(255, 255, 255, .16); color: #fff;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .25);
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+}
+.btn:hover:not(:disabled) { background: rgba(255, 255, 255, .28); }
+.btn:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, .25); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(255, 255, 255, .6); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn--primary {
+  background: linear-gradient(140deg, var(--mb-red), #b81f3f);
+  border-color: #fff; color: #fff;
+}
+.btn--primary:hover:not(:disabled) { filter: brightness(1.08); background: linear-gradient(140deg, #ff4a3d, #c81f45); }
+
+/* ---------- Stage + board ---------- */
+.stage {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center;
+  justify-content: safe center;
+  gap: 12px;
+  padding: var(--spad);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.board-wrap {
+  position: relative;
+  /* 800x448 canvas ≈ 25:14. Keep it inside the viewport with no scrollbar. */
+  width: min(100%, calc((100vh - 210px) * 1.7857));
+  max-width: 900px;
+  aspect-ratio: 25 / 14;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--mb-sky);
+  border: 4px solid rgba(0, 0, 0, .35);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(255, 255, 255, .25);
+}
+#screen { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+/* ---------- Overlay ---------- */
+.overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center; padding: 20px;
+  background: rgba(10, 8, 30, .55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.overlay[hidden] { display: none; }
+.overlay__msg {
+  font-size: clamp(20px, 4vw, 34px); font-weight: 900; letter-spacing: .02em;
+  color: #fff; text-shadow: 3px 3px 0 rgba(0, 0, 0, .4);
+}
+.overlay__sub {
+  margin-top: -6px; font-size: clamp(12px, 2.4vw, 16px); font-weight: 700;
+  letter-spacing: .04em; color: #eaf1ff; text-shadow: 1px 1px 0 rgba(0, 0, 0, .4);
+}
+.overlay__sub b { color: var(--mb-gold); }
+.overlay__btns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+/* Victory variant: gold banner + lighter backdrop so the fireworks show. */
+.overlay--win { background: rgba(10, 8, 30, .42); }
+.overlay--win .overlay__msg {
+  color: var(--mb-gold);
+  font-size: clamp(30px, 6.5vw, 56px);
+  -webkit-text-stroke: 2px #7a4a05;
+  text-shadow: 0 4px 0 rgba(0, 0, 0, .35), 0 0 26px rgba(247, 213, 29, .55);
+  animation: mbPop .5s ease;
+}
+.overlay--win .btn--primary { background: linear-gradient(140deg, var(--mb-gold), #e8a013); border-color: #fff; color: #4a2e00; }
+@keyframes mbPop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+
+/* ---------- Hint line ---------- */
+.hintline { margin: 0; font-size: 13px; color: #eaf1ff; text-shadow: 1px 1px 0 rgba(0, 0, 0, .3); }
+kbd {
+  display: inline-block; min-width: 20px; padding: 1px 6px; margin: 0 1px;
+  font-family: inherit; font-size: 12px; font-weight: 700; text-align: center;
+  color: #222; background: #fff; border-radius: 6px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .3);
+}
+
+/* ---------- Touch pad ---------- */
+.touchpad {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px;
+  width: min(92vw, 420px); user-select: none; touch-action: none;
+}
+.tpad__btn {
+  appearance: none; cursor: pointer; font: inherit; font-weight: 900;
+  height: 52px; border-radius: 14px;
+  font-size: 20px; color: #fff;
+  border: 2px solid rgba(255, 255, 255, .7);
+  background: rgba(0, 0, 0, .22);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .3);
+  touch-action: none;
+}
+.tpad__btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, .3); background: rgba(0, 0, 0, .35); }
+.tpad__btn--jump { grid-column: 2; padding: 0 26px; font-size: 15px; text-transform: uppercase; letter-spacing: .05em; background: rgba(226, 59, 46, .55); }
+@media (hover: hover) and (pointer: fine) { .touchpad { display: none; } }
+
+/* ---------- Rules modal ---------- */
+.modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; }
+.modal[hidden] { display: none; }
+.modal__backdrop { position: absolute; inset: 0; background: rgba(8, 6, 24, .6); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.modal__panel {
+  position: relative; width: min(92vw, 460px); max-height: 86vh; overflow: auto;
+  background: linear-gradient(160deg, #123a7a, #0b1f45);
+  color: #eaf1ff; border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, .3);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
+}
+.modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid rgba(255, 255, 255, .18);
+}
+.modal__head h2 { margin: 0; font-size: 18px; text-transform: uppercase; letter-spacing: .03em; }
+.modal__x { appearance: none; border: 0; background: none; color: #eaf1ff; font-size: 26px; line-height: 1; cursor: pointer; padding: 0 4px; }
+.modal__body { padding: 8px 20px 4px; font-size: 14px; line-height: 1.55; }
+.modal__body h3 { margin: 16px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--mb-gold); }
+.modal__body ul { margin: 0; padding-left: 20px; }
+.modal__body li { margin: 4px 0; }
+.modal__lead { margin: 12px 0; }
+.modal__body b { color: var(--mb-gold); }
+.modal__body kbd { color: #222; }
+.modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 620px) {
+  .topbar { flex-wrap: nowrap; }
+  .topbar__title { font-size: 17px; }
+  .btn { padding: 8px 11px; min-width: 40px; display: inline-flex; align-items: center; justify-content: center; }
+  .btn__lbl { display: none; }
+  .btn__ico { display: inline-flex; line-height: 1; }
+}
+@media (max-width: 640px), (max-height: 620px) {
+  .stage { gap: 8px; }
+  .hintline { display: none; }
+  .board-wrap { width: min(100%, calc((100vh - 150px) * 1.7857)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .tpad__btn { transition: none; }
+  .overlay--win .overlay__msg { animation: none; }
+}

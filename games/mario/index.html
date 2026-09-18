@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Super Plumber</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- This game uses a fixed bright "retro sky" theme and intentionally ignores
+     the center's light/dark mode, so no theme bootstrap script is loaded. -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="mario-app gc-body">
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <!-- Live status for screen readers. -->
+  <p class="visually-hidden" id="status" aria-live="polite">Press Start (or Space) to play.</p>
+
+  <!-- Full-width header pinned to the very top so the play area can use every
+       remaining pixel. -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="6" cy="9" r="3.4"/>
+          <circle cx="18" cy="9" r="3.4"/>
+          <path d="M6 12.4v1.2M18 12.4v1.2"/>
+          <path d="M3.2 6.2v1.6M8.8 6.2v1.6M15.2 6.2v1.6M20.8 6.2v1.6"/>
+          <path d="M9 15h6" stroke-dasharray="1.4 2"/>
+        </svg>
+      </span>
+      <h1 class="topbar__title">Super Plumber</h1>
+    </div>
+    <div class="topbar__controls">
+      <div class="topbar__btns">
+        <div class="stagepick" id="stagePick">
+          <button id="stageBtn" class="btn" type="button" title="Select stage" aria-haspopup="true" aria-expanded="false"><span class="btn__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"/><path d="M6 4h11l-2.2 3.4L17 11H6z" fill="currentColor" stroke="none"/></svg></span><span class="btn__lbl" id="stageLbl">Stage 1-1</span></button>
+          <div class="stagemenu" id="stageMenu" hidden role="menu" aria-label="Select stage"></div>
+        </div>
+        <button id="newGame" class="btn btn--primary" type="button" title="New game"><span class="btn__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></span><span class="btn__lbl">New Game</span></button>
+        <button id="pauseBtn" class="btn" type="button" aria-pressed="false" title="Pause / resume"><span class="btn__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg></span><span class="btn__lbl">Pause</span></button>
+        <button id="rulesBtn" class="btn" type="button" title="How to play"><span class="btn__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.4 9.2a2.7 2.7 0 0 1 5.27.78c0 1.8-2.67 2.7-2.67 4"/><path d="M12 17.5v.01"/></svg></span><span class="btn__lbl">Rules</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="board-wrap">
+      <canvas id="screen" width="800" height="448" aria-label="Super Plumber stage" role="img"></canvas>
+      <div class="overlay" id="overlay" hidden>
+        <div class="overlay__msg" id="overlayMsg">Press Space (or Start) to play</div>
+        <div class="overlay__sub" id="overlaySub" hidden></div>
+        <div class="overlay__btns">
+          <button class="btn btn--primary" id="overNew" type="button">Start</button>
+          <button class="btn" id="overNext" type="button" hidden>Next Stage</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="hintline">
+      <kbd>&#8592;</kbd><kbd>&#8594;</kbd> move &middot; <kbd>&#8593;</kbd>/<kbd>Space</kbd> jump &middot;
+      <kbd>Shift</kbd> run &middot; <kbd>P</kbd> pause
+    </p>
+
+    <!-- Touch controls for phones / tablets -->
+    <div class="touchpad" role="group" aria-label="Plumber controls">
+      <button class="tpad__btn" data-act="left"  type="button" aria-label="Move left">&#9664;</button>
+      <button class="tpad__btn tpad__btn--jump" data-act="jump" type="button" aria-label="Jump">Jump</button>
+      <button class="tpad__btn" data-act="right" type="button" aria-label="Move right">&#9654;</button>
+    </div>
+  </main>
+
+  <!-- Rules / How to play modal -->
+  <div class="modal" id="rulesModal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="modal__body">
+        <p class="modal__lead"><b>Goal:</b> run and jump through the stage, grab coins, bonk
+          question blocks from below, stomp the grumpy mushrooms, and reach the flagpole
+          to unlock the next stage.</p>
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>&#8592;</kbd> / <kbd>&#8594;</kbd> or <kbd>A</kbd><kbd>D</kbd> to run left or right.</li>
+          <li><kbd>&#8593;</kbd>, <kbd>W</kbd> or <kbd>Space</kbd> to jump &mdash; hold it longer to jump higher.</li>
+          <li>Hold <kbd>Shift</kbd> to sprint.</li>
+          <li><kbd>P</kbd> pauses; <kbd>R</kbd> restarts the stage; <kbd>Esc</kbd> closes menus.</li>
+          <li>On touch devices use the on-screen pad.</li>
+        </ul>
+        <h3>Stages</h3>
+        <ul>
+          <li>Five stages: 1-1 through 1-5, each harder than the last.</li>
+          <li>Reach the flagpole to finish a stage and take your score into the next one.</li>
+          <li>Use the <b>Stage</b> button in the header to jump straight to any stage.</li>
+        </ul>
+        <h3>Tips</h3>
+        <ul>
+          <li>Jump on an enemy to squash it; touch it from the side and you lose a life.</li>
+          <li>Falling into a pit also costs a life &mdash; you start with 3.</li>
+          <li>Your progress and best score are saved in this browser.</li>
+        </ul>
+      </div>
+      <div class="modal__foot">
+        <button class="btn btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/mario.js"></script>
+</body>
+</html>
