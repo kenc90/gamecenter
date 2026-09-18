@@ -552,8 +552,15 @@ body {
 }
 :root[data-theme="vista"] .tb-btn.close { color: #40100a; }
 
-/* Covered tiles are light blue */
-:root[data-theme="vista"] .cell:not(.revealed) { background: #7fb4e4; }
+/* Covered tiles: light blue with a white translucent glass triangle in the
+   bottom-right corner. The triangle is a background layer (not a pseudo-element
+   or clip-path), so it adds no extra boxes per cell. */
+:root[data-theme="vista"] .cell:not(.revealed) {
+  background:
+    linear-gradient(315deg, rgba(255,255,255,.5), rgba(255,255,255,0) 65%) right bottom / 45% 45% no-repeat,
+    linear-gradient(#a9d1f0, #528abe);
+}
+:root[data-theme="vista"] .cell:not(.revealed).flag { color: #000; }
 
 /* ---------- Cyberpunk (neon) ---------- */
 :root[data-theme="cyberpunk"] {
