@@ -113,6 +113,7 @@ body.gc-body *::after { box-sizing: border-box; }
 
 /* ---- Game card ---- */
 .gc-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -171,6 +172,26 @@ body.gc-body *::after { box-sizing: border-box; }
   background: linear-gradient(90deg, var(--gc-accent), var(--gc-accent-2));
   vertical-align: middle;
 }
+
+/* ---- Favourite star (top-right of each card) ---- */
+.gc-fav {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--gc-surface);
+  background: color-mix(in srgb, var(--gc-surface) 82%, transparent);
+  box-shadow: var(--gc-shadow);
+  color: var(--gc-text-muted);
+  cursor: pointer;
+  transition: transform .12s ease, color .15s ease;
+}
+.gc-fav svg { width: 20px; height: 20px; display: block; }
+.gc-fav svg path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
+.gc-fav:hover { transform: scale(1.12); color: var(--gc-accent); }
+.gc-fav:focus-visible { outline: none; box-shadow: var(--gc-ring), var(--gc-shadow); }
+.gc-fav[aria-pressed="true"] { color: #f5b301; }
+.gc-fav[aria-pressed="true"] svg path { fill: currentColor; stroke: #e0a200; }
 
 .gc-footer {
   max-width: 1080px;
