@@ -1,0 +1,332 @@
+/* ===== Solitaire (Klondike) — game UI =====
+   Chrome shared with the center comes from ../../shared/css/base.css.
+   Everything here is scoped under .sol / .felt so it never leaks. Card
+   geometry is driven by the custom properties on .board, which JS reads
+   back (via a measured .slot) to position the stacked tableau cards. */
+
+/* Card/back/slot colours live on :root so the floating drag layer — which is
+   appended to <body>, outside .sol — inherits them too. Without this the
+   cloned card's `background: var(--card-face)` resolves to transparent. */
+:root {
+  --card-face: #fdfdfb;
+  --card-edge: #c9cdd4;
+  --card-red: #d21e2b;
+  --card-black: #1b1f27;
+  --back-1: #2456c8;
+  --back-2: #1a3f96;
+  --slot: rgba(255, 255, 255, .12);
+  --slot-line: rgba(255, 255, 255, .28);
+}
+
+.sol {
+  --felt-1: #0b5d3b;
+  --felt-2: #083f29;
+  --felt-line: rgba(255, 255, 255, .06);
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(120% 100% at 50% -10%, #12764c 0%, var(--felt-1) 45%, var(--felt-2) 100%);
+  color: #eaf3ee;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.sol *, .sol *::before, .sol *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+/* Body needs the same font stack as .sol: the drag layer is a <body> child, so
+   without this the floating card's text falls back to the browser default serif. */
+body { background: var(--felt-2); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+/* ---------- Top bar ---------- */
+.sol-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 10px clamp(12px, 3vw, 28px);
+  background: rgba(0, 0, 0, .22);
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .25);
+}
+.sol-bar__brand { display: flex; align-items: center; gap: 9px; }
+.sol-bar__brand svg { display: block; }
+.sol-bar__title { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+.sol-bar__stats { display: flex; gap: 16px; margin-left: 6px; font-size: 13px; color: #cfe3d8; }
+.sol-bar__stats .stat b { color: #fff; font-variant-numeric: tabular-nums; margin-left: 3px; }
+.sol-bar__controls { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+
+.sol-btn {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: rgba(255, 255, 255, .08);
+  color: #eaf3ee;
+  font: inherit; font-size: 13px; font-weight: 600;
+  padding: 7px 13px;
+  border-radius: 9px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .15s ease, border-color .15s ease, transform .05s ease;
+}
+.sol-btn:hover { background: rgba(255, 255, 255, .16); }
+.sol-btn:active { transform: translateY(1px); }
+.sol-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(120, 200, 160, .5); }
+.sol-btn:disabled { opacity: .4; cursor: default; }
+.sol-btn--primary {
+  background: linear-gradient(#3fbf7a, #2ba25f);
+  border-color: #2ba25f;
+  color: #06210f;
+}
+.sol-btn--primary:hover { background: linear-gradient(#4ad187, #2fb06a); }
+
+/* ---------- Felt + board grid ---------- */
+.felt {
+  flex: 1;
+  overflow: auto;
+  padding: clamp(14px, 3.5vh, 34px) clamp(12px, 4vw, 40px) 60px;
+  background-image:
+    repeating-linear-gradient(45deg, var(--felt-line) 0 2px, transparent 2px 6px);
+}
+.board {
+  --cw: clamp(48px, 11.5vw, 92px);
+  --ch: calc(var(--cw) * 1.42);
+  --gap: clamp(10px, 2.2vw, 22px);
+  width: calc(7 * var(--cw) + 6 * var(--gap));
+  margin: 0 auto;
+}
+
+/* Both rows share the same 7-column rhythm so piles line up vertically. */
+.upper {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cw));
+  column-gap: var(--gap);
+  row-gap: calc(var(--ch) * 0.12);
+  margin-bottom: calc(var(--ch) * 0.22);
+}
+.upper .spacer { visibility: hidden; }
+
+.slot {
+  position: relative;
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: calc(var(--cw) * 0.09);
+}
+.slot--stock, .slot--waste, .slot--foundation {
+  box-shadow: inset 0 0 0 2px var(--slot-line);
+  background: var(--slot);
+}
+/* Ghost suit marker on empty foundation slots. */
+.slot--foundation::after {
+  content: attr(data-glyph);
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cw) * 0.5);
+  color: rgba(255, 255, 255, .16);
+  pointer-events: none;
+}
+/* Once a real card sits in the slot, drop the ghost glyph. */
+.slot--foundation:not(:empty)::after { display: none; }
+/* Recycle glyph when stock is empty. */
+.slot--stock[data-empty="replay"]::after {
+  content: "↻";
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cw) * 0.55);
+  color: rgba(255, 255, 255, .5);
+}
+
+/* ---------- Tableau ---------- */
+.tab {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cw));
+  gap: var(--gap);
+  align-items: start;
+}
+.col {
+  position: relative;
+  width: var(--cw);
+  min-height: var(--ch);
+}
+.col::before {
+  /* faint placeholder outline for an empty column */
+  content: "";
+  position: absolute; inset: 0 0 auto 0;
+  height: var(--ch);
+  border-radius: calc(var(--cw) * 0.09);
+  box-shadow: inset 0 0 0 2px var(--slot-line);
+  background: var(--slot);
+  opacity: .5;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  position: absolute;
+  left: 0;
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: calc(var(--cw) * 0.09);
+  background: var(--card-face);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35), inset 0 0 0 1px var(--card-edge);
+  user-select: none;
+  touch-action: none;
+  color: var(--card-black);
+}
+.card--red { color: var(--card-red); }
+.card--up { cursor: grab; }
+.card--down { cursor: default; }
+
+.card__corner {
+  position: absolute;
+  line-height: 1;
+  font-weight: 700;
+  font-size: calc(var(--cw) * 0.24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.card__corner .r { font-size: calc(var(--cw) * 0.28); }
+.card__corner .s { font-size: calc(var(--cw) * 0.22); }
+.card__tl { top: calc(var(--cw) * 0.07); left: calc(var(--cw) * 0.09); }
+.card__br { bottom: calc(var(--cw) * 0.07); right: calc(var(--cw) * 0.09); transform: rotate(180deg); }
+.card__pip {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cw) * 0.6);
+  opacity: .9;
+}
+
+/* Face-down back */
+.card--down {
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, .12) 0 4px, transparent 4px 8px),
+    linear-gradient(150deg, var(--back-1), var(--back-2));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(255, 255, 255, .55), inset 0 0 0 5px var(--back-2);
+}
+.card--down .card__corner, .card--down .card__pip { display: none; }
+
+/* Highlight a selected / hinted destination or source */
+/* Hide the cards left behind in the source pile while one is being dragged. */
+.card--moving { visibility: hidden; }
+.slot--drop, .col--drop { outline: 3px solid #ffdf6b; outline-offset: 2px; border-radius: calc(var(--cw) * 0.09); }
+.card--hint { animation: hintPulse .6s ease-in-out 3; }
+@keyframes hintPulse {
+  50% { box-shadow: 0 0 0 3px #ffdf6b, 0 1px 2px rgba(0, 0, 0, .35); }
+}
+
+/* Floating drag layer sits above everything and follows the pointer. */
+.drag-layer {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 900;
+  pointer-events: none;
+  will-change: transform;
+}
+.drag-layer .card { position: absolute; box-shadow: 0 10px 22px rgba(0, 0, 0, .45); cursor: grabbing; }
+
+/* ---------- Win overlay ---------- */
+.win {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(3, 24, 14, .6);
+  backdrop-filter: blur(3px);
+}
+.win[hidden] { display: none; }
+.win__card {
+  width: min(90vw, 360px);
+  text-align: center;
+  padding: 28px 26px 24px;
+  border-radius: 18px;
+  background: linear-gradient(#ffffff, #eef3ef);
+  color: #12351f;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+  animation: pop .35s ease;
+}
+@keyframes pop { from { transform: scale(.85); opacity: 0; } }
+.win__spark { font-size: 44px; }
+.win__card h2 { margin: 4px 0 6px; font-size: 26px; }
+.win__card p { margin: 0 0 18px; color: #476450; font-size: 14px; }
+.win__actions { display: flex; gap: 10px; justify-content: center; }
+.win__actions .sol-btn--primary { color: #06210f; }
+
+/* ---------- Rules modal ---------- */
+.modal {
+  position: fixed; inset: 0; z-index: 1100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal[hidden] { display: none; }
+.modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(2, 16, 10, .35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.modal__panel {
+  position: relative;
+  width: min(94vw, 520px);
+  max-height: 86vh;
+  display: flex; flex-direction: column;
+  /* Frosted glass: translucent tint + heavy backdrop blur so the felt shows through. */
+  background: rgba(10, 46, 32, .38);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  color: #eaf3ee;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .22);
+  animation: pop .28s ease;
+}
+.modal__head {
+  display: flex; align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.modal__head h2 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+.modal__x {
+  margin-left: auto;
+  border: 0; background: transparent; cursor: pointer;
+  font-size: 26px; line-height: 1; color: #a9c6b6;
+  padding: 0 4px;
+}
+.modal__x:hover { color: #fff; }
+.modal__body { padding: 14px 20px 4px; overflow: auto; font-size: 14px; line-height: 1.6; color: #dcece2; }
+.modal__lead { margin: 4px 0 12px; color: #eaf3ee; }
+.modal__body h3 {
+  margin: 16px 0 6px; font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: #ffdf6b;
+}
+.modal__body ul { margin: 0 0 6px; padding-left: 20px; }
+.modal__body li { margin: 3px 0; }
+.modal__body b { color: #fff; }
+.modal__note {
+  margin: 14px 0; padding: 9px 12px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .12);
+  color: #d3e8db; font-size: 13px;
+}
+kbd {
+  font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace;
+  padding: 1px 6px; border-radius: 5px;
+  color: #eaf3ee;
+  background: rgba(0, 0, 0, .28);
+  border: 1px solid rgba(255, 255, 255, .22);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
+.modal__foot {
+  display: flex; justify-content: flex-end;
+  padding: 12px 20px 16px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+.modal__foot .sol-btn--primary { color: #06210f; }
+
+/* Small screens: tighten chrome */
+@media (max-width: 560px) {
+  .sol-bar__stats { order: 3; width: 100%; margin-left: 0; }
+  .sol-bar__controls { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card--hint { animation: none; }
+  .win__card, .modal__panel { animation: none; }
+}
