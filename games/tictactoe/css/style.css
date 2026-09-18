@@ -28,7 +28,7 @@
 }
 .seg--sm { padding: 5px 12px; font-size: 12.5px; }
 .seg:hover { color: var(--gc-text); }
-.seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
+.seg[aria-selected="true"] { background: var(--gc-accent); color: var(--gc-on-accent); box-shadow: var(--gc-shadow); }
 .seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
 
 /* Board */

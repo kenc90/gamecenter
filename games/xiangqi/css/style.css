@@ -1,9 +1,9 @@
 /* ===== Chinese Chess (Xiangqi) — game UI =====
-   Solitaire-style layout: a frosted top bar carries the title, live status and
-   every control; the (9-wide x 10-tall) board grows to fill the rest of the
-   viewport. Chrome follows the shared --gc-* tokens (light/dark aware); the
-   board keeps its own warm parchment palette + drawn line lattice for
-   legibility in either theme. */
+   Solitaire-style layout with a frosted-glass chrome that deliberately does
+   NOT follow the light/dark theme: every surface uses fixed translucent
+   colours layered over a warm brown "felt", so the look is identical no
+   matter the OS preference. The board keeps its own warm parchment palette
+   and drawn line lattice for legibility. */
 
 html, body { height: 100%; }
 body.xiangqi-app {
@@ -11,22 +11,27 @@ body.xiangqi-app {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;               /* no horizontal scroll on small screens */
+  /* Stage side padding lives in one var so the board can size itself to fit. */
+  --spad: clamp(10px, 2.5vh, 26px);
   /* Solitaire-style "felt", but in brown: a warm radial base the stage sits on.
      Selector is body.xiangqi-app so it outranks base.css's body.gc-body background. */
   background: radial-gradient(120% 100% at 50% -10%, #7c5330 0%, #5e3d22 45%, #3d2815 100%);
+  color: #f4ead9;
+  font-family: var(--gc-font, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
 }
+body.xiangqi-app *, body.xiangqi-app *::before, body.xiangqi-app *::after { box-sizing: border-box; }
 
-/* ---------- Top bar (transparent / frosted) ---------- */
+/* ---------- Top bar (frosted glass over the felt) ---------- */
 .topbar {
   flex: none;
   display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap;
   padding: 10px clamp(12px, 3vw, 28px);
-  background: var(--gc-surface);
-  background: color-mix(in srgb, var(--gc-surface) 78%, transparent);
+  background: rgba(0, 0, 0, .24);
   backdrop-filter: blur(12px) saturate(150%);
   -webkit-backdrop-filter: blur(12px) saturate(150%);
-  border-bottom: 1px solid var(--gc-border);
-  box-shadow: var(--gc-shadow);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, .28);
   z-index: 20;
 }
 .topbar__brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -36,58 +41,75 @@ body.xiangqi-app {
   background: radial-gradient(circle at 40% 35%, #fff7e6, #eccf94);
   color: #b3261e; font-size: 21px; line-height: 1;
   font-family: "PingFang SC", "Microsoft YaHei", "Heiti SC", system-ui, sans-serif;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(0, 0, 0, .12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(0, 0, 0, .12);
 }
-.topbar__title { margin: 0; font-size: clamp(18px, 3.4vw, 24px); letter-spacing: -.02em; white-space: nowrap; }
-.topbar__status { margin: 0; font-size: 13.5px; font-weight: 600; color: var(--gc-text-muted); min-height: 1.2em; }
+.topbar__title { margin: 0; font-size: clamp(18px, 3.4vw, 24px); letter-spacing: -.02em; white-space: nowrap; color: #f7eede; }
 .topbar__controls { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
 .topbar__btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* ---------- Segmented control (mode / difficulty) ---------- */
 .segmented {
   display: inline-flex; gap: 4px; padding: 4px;
-  background: var(--gc-surface-2); border: 1px solid var(--gc-border); border-radius: 12px;
+  background: rgba(0, 0, 0, .28); border: 1px solid rgba(255, 255, 255, .14); border-radius: 12px;
 }
 .segmented[hidden] { display: none; }
 .seg {
   appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
-  padding: 7px 14px; border: 0; border-radius: 9px; background: transparent; color: var(--gc-text-muted);
+  padding: 7px 14px; border: 0; border-radius: 9px; background: transparent; color: rgba(255, 255, 255, .72);
   transition: background .15s ease, color .15s ease;
 }
 .seg--sm { padding: 6px 11px; font-size: 13px; }
-.seg:hover { color: var(--gc-text); }
-.seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
-.seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.seg:hover { color: #fff; }
+.seg[aria-selected="true"] {
+  /* Frosted light-glass chip: translucent white fill + real backdrop blur, with
+     inset edge highlights so it reads as a raised glass tile, not flat white. */
+  background: rgba(255, 255, 255, .22);
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), inset 0 0 0 1px rgba(255, 255, 255, .22), 0 3px 10px rgba(0, 0, 0, .3);
+}
+.seg:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(240, 198, 116, .55); }
 
-/* ---------- Buttons ---------- */
+/* ---------- Buttons (glass) ---------- */
 .btn {
   appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
   padding: 9px 15px; border-radius: 10px;
-  border: 1px solid var(--gc-border); background: var(--gc-surface); color: var(--gc-text);
+  border: 1px solid rgba(255, 255, 255, .20); background: rgba(255, 255, 255, .10); color: #f4ead9;
   transition: transform .06s ease, background .15s ease, border-color .15s ease;
 }
-.btn:hover:not(:disabled) { border-color: var(--gc-accent); }
+.btn:hover:not(:disabled) { background: rgba(255, 255, 255, .18); border-color: rgba(255, 255, 255, .34); }
 .btn:active:not(:disabled) { transform: translateY(1px); }
-.btn:focus-visible { outline: none; box-shadow: var(--gc-ring); }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
-.btn--primary { background: var(--gc-accent); border-color: var(--gc-accent); color: var(--gc-on-accent); }
-.btn--primary:hover { filter: brightness(1.05); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(240, 198, 116, .55); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn--primary { background: linear-gradient(#f0c674, #cf9b45); border-color: #cf9b45; color: #3a2410; }
+.btn--primary:hover:not(:disabled) { background: linear-gradient(#f6d184, #d8a950); }
 
 /* ---------- Stage + board ---------- */
 .stage {
   flex: 1 1 auto; min-height: 0;
-  display: grid; place-items: center;
-  padding: clamp(10px, 2.5vh, 26px);
-  overflow: auto;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px;
+  padding: var(--spad);
+  overflow: hidden;                 /* never show a scrollbar here */
   /* faint diagonal weave over the brown felt, mirroring Solitaire's surface */
   background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, .05) 0 2px, transparent 2px 6px);
+  /* 9:10 board: derive width from whichever axis binds — the viewport WIDTH
+     (minus stage padding twice and a 16px scrollbar allowance) or the height
+     left after the top bar + the caption line under the board (chrome ≈ 174px). */
+  --bw: min(calc(100vw - var(--spad) * 2 - 16px), calc((100vh - 174px) * 0.9), 540px);
 }
 .board-wrap {
-  /* 9:10 board: derive width from whichever axis binds — viewport width or the
-     height left after the top bar (chrome ≈ 140px). */
-  --bw: min(94vw, calc((100vh - 140px) * 0.9), 540px);
   position: relative;
   width: var(--bw); height: calc(var(--bw) * 10 / 9);
+}
+/* Small, single-line "X to move" caption right-aligned under the board. */
+.board-status {
+  width: var(--bw); margin: 0;
+  font-size: 12px; font-weight: 600; line-height: 1.2; text-align: right;
+  color: #d8c3a3; text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .board {
   position: relative;
@@ -98,7 +120,7 @@ body.xiangqi-app {
   padding: 6px;
   background: linear-gradient(160deg, #f5e3b8, #e8cd93);
   border: 4px solid #6b4a24; border-radius: 8px;
-  box-shadow: var(--gc-shadow-hi);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
   user-select: none; touch-action: manipulation;
 }
 .board-lines { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); z-index: 0; pointer-events: none; }
@@ -135,29 +157,39 @@ body.xiangqi-app {
 .modal__panel {
   position: relative; z-index: 1; width: min(94vw, 520px);
   padding: 0; border-radius: 16px;
-  background: var(--gc-surface);
-  background: color-mix(in srgb, var(--gc-surface) 82%, transparent);
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
-  color: var(--gc-text);
-  border: 1px solid var(--gc-border); box-shadow: var(--gc-shadow-hi);
+  /* Frosted glass: translucent warm tint + heavy backdrop blur so the felt shows through. */
+  background: rgba(30, 20, 12, .55);
+  backdrop-filter: blur(26px) saturate(140%);
+  -webkit-backdrop-filter: blur(26px) saturate(140%);
+  color: #f4ead9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .7), 0 2px 6px rgba(0, 0, 0, .5);
+  border: 1px solid rgba(255, 255, 255, .18);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .2);
 }
-.modal__head { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--gc-border); }
+.modal__head { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid rgba(255, 255, 255, .12); }
 .modal__head h2 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
-.modal__x { margin-left: auto; border: 0; background: transparent; cursor: pointer; font-size: 26px; line-height: 1; color: var(--gc-text-muted); padding: 0 4px; }
-.modal__x:hover { color: var(--gc-text); }
-.modal__body { padding: 6px 20px 4px; font-size: 14px; line-height: 1.6; color: var(--gc-text-muted); }
-.modal__lead { margin: 10px 0 12px; color: var(--gc-text); }
-.modal__body h3 { margin: 16px 0 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--gc-accent); }
+.modal__x { margin-left: auto; border: 0; background: transparent; cursor: pointer; font-size: 26px; line-height: 1; color: #d8c3a3; padding: 0 4px; }
+.modal__x:hover { color: #fff; }
+.modal__body { padding: 6px 20px 4px; font-size: 14px; line-height: 1.6; color: #e6d6bd; }
+.modal__lead { margin: 10px 0 12px; color: #f7eede; }
+.modal__body h3 { margin: 16px 0 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #f0c674; }
 .modal__body ul { margin: 0 0 6px; padding-left: 20px; }
 .modal__body li { margin: 3px 0; }
-.modal__body b { color: var(--gc-text); }
-kbd { font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace; padding: 1px 6px; border-radius: 5px; color: var(--gc-text); background: var(--gc-surface-2); border: 1px solid var(--gc-border); }
+.modal__body b { color: #fff; }
+kbd { font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace; padding: 1px 6px; border-radius: 5px; color: #f4ead9; background: rgba(0, 0, 0, .3); border: 1px solid rgba(255, 255, 255, .22); }
 .modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
 
-/* Small screens: stack the brand / control rows. */
+/* ---------- Back-to-center link (glass chip, theme-independent) ---------- */
+.gc-back {
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(0, 0, 0, .35);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: #f4ead9; box-shadow: 0 2px 10px rgba(0, 0, 0, .35); opacity: .85;
+}
+.gc-back:hover { opacity: 1; color: #fff; }
+
+/* Small screens: let the control row drop below the brand row. */
 @media (max-width: 620px) {
-  .topbar__status { width: 100%; order: 3; margin-left: 44px; }
   .topbar__controls { margin-left: 0; width: 100%; }
 }
 

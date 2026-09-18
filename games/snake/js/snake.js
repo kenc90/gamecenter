@@ -8,9 +8,9 @@
   var BEST_KEY = "gc-snake-best";
   var SAVE_KEY = "gc-snake-save";
   var SPEED_KEY = "gc-snake-speed";
-  // Base step interval (ms) per speed tier; the snake still accelerates a little
-  // as it grows, but always relative to the tier the player picked.
-  var SPEEDS = { slow: 195, normal: 150, fast: 105 };
+  // Step interval (ms) per speed tier. The snake moves at a constant pace set
+  // by the chosen tier — eating dots does NOT speed it up.
+  var SPEEDS = { slow: 200, normal: 150, fast: 110, super: 80, crazy: 55 };
 
   // LCD palette (fixed — a Nokia screen isn't theme-dependent).
   var C_BG = "#9db854", C_GRID = "rgba(28,42,8,.10)", C_PIXEL = "#1c2a08";
@@ -68,7 +68,7 @@
       var o = JSON.parse(localStorage.getItem(SAVE_KEY));
       if (!o || !o.snake || !o.snake.length) return false;
       snake = o.snake; dir = o.dir; food = o.food; score = o.score | 0;
-      stepMs = o.stepMs || baseStep;
+      stepMs = baseStep;             // constant pace, from the saved speed tier
       turnQueue = [];
       alive = true; paused = false;
       return true;
@@ -76,18 +76,36 @@
   }
 
   // ---------- Game setup ----------
-  function newGame() {
+  function resetBoard() {
     var cy = (ROWS >> 1), cx = (COLS >> 1) - 1;
     snake = [{ x: cx + 2, y: cy }, { x: cx + 1, y: cy }, { x: cx, y: cy }];
     dir = { x: 1, y: 0 };
     turnQueue = [];
     score = 0; stepMs = baseStep;
-    alive = true; paused = false;
+    paused = false;
     spawnFood();
+  }
+  function newGame() {
+    resetBoard();
+    alive = true;
     overlayEl.hidden = true;
     setPauseBtn();
     statusEl.textContent = "Eat the dots, don't hit the walls or yourself.";
     save();
+    draw();
+  }
+  // Fresh load with no saved run: draw the starting board but stay idle until
+  // the player starts (Space / R / New Game / the Start button).
+  function showReady() {
+    resetBoard();
+    alive = false;
+    setPauseBtn();
+    var btn = document.getElementById("overNew");
+    if (btn) btn.textContent = "Start";
+    overlayMsgEl.textContent = "Press Space (or Start) to play";
+    overlayEl.hidden = false;
+    statusEl.textContent = "Press Space or tap Start to begin.";
+    renderHUD();
     draw();
   }
 
@@ -132,8 +150,8 @@
     if (eating) {
       score += 10;
       if (score > best) { best = score; try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {} }
-      // Nudge faster as it grows, never below ~half the chosen tier's interval.
-      stepMs = Math.max(Math.round(baseStep * 0.5), baseStep - (snake.length - 3) * 3);
+      // Constant pace: eating only grows the snake and scores — speed stays at
+      // whatever tier the player selected (see setSpeed / baseStep).
       spawnFood();
     } else {
       snake.pop();
@@ -146,6 +164,8 @@
   function gameOver() {
     alive = false;
     clearSave();
+    var btn = document.getElementById("overNew");
+    if (btn) btn.textContent = "Play again";
     overlayMsgEl.textContent = "Game over — " + score + " pts";
     overlayEl.hidden = false;
     statusEl.textContent = "Ouch! Press Space (or R / New Game) to try again.";
@@ -260,7 +280,7 @@
   loadBest();
   loadSpeed();
   reflectSpeed();
-  if (!loadSaved()) newGame();
+  if (!loadSaved()) showReady();   // fresh load waits for the player to start
   renderHUD();
   setPauseBtn();
   draw();

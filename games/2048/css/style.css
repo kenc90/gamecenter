@@ -49,6 +49,8 @@
   border-radius: 14px;
   touch-action: none;
   outline: none;
+  /* Never let a swipe select the tile numbers (or the grid's empty cells). */
+  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
 }
 @media (max-width: 460px) { .board { --cell: min(20vw, 78px); --gap: 9px; } }
 
@@ -67,6 +69,7 @@
   transform: var(--pos, translate(0, 0));
   transition: transform .12s ease-in-out;
   will-change: transform;
+  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
 }
 .tile--2 { background: #eee4da; color: #776e65; }
 .tile--4 { background: #ede0c8; color: #776e65; }

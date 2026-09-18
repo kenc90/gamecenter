@@ -18,7 +18,7 @@ html, body { overflow-x: hidden; }
 .segmented { display: inline-flex; padding: 4px; gap: 4px; background: var(--gc-surface-2); border: 1px solid var(--gc-border); border-radius: 999px; }
 .seg { appearance: none; border: 0; cursor: pointer; font: inherit; font-size: 13.5px; font-weight: 600; padding: 7px 16px; border-radius: 999px; background: transparent; color: var(--gc-text-muted); transition: background .15s ease, color .15s ease; }
 .seg:hover { color: var(--gc-text); }
-.seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
+.seg[aria-selected="true"] { background: var(--gc-accent); color: var(--gc-on-accent); box-shadow: var(--gc-shadow); }
 .seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
 
 /* Play area: stacked (numpad below the board) by default... */

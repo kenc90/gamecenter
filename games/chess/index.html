@@ -5,13 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Chess</title>
 <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
-<!-- Apply a saved light/dark mode before first paint (shares the center's key). -->
-<script>
-  try {
-    var m = localStorage.getItem("gc-mode");
-    if (m === "light" || m === "dark") document.documentElement.setAttribute("data-mode", m);
-  } catch (e) {}
-</script>
+<!-- This game uses a fixed glassy brown theme and intentionally ignores the
+     center's light/dark mode, so no theme bootstrap script is loaded. -->
 <!-- Shared center chrome loads first so this game's own styles always win. -->
 <link rel="stylesheet" href="../../shared/css/base.css" />
 <link rel="stylesheet" href="css/style.css" />
@@ -24,7 +19,6 @@
     <div class="topbar__brand">
       <span class="topbar__logo" aria-hidden="true">&#9822;</span>
       <h1 class="topbar__title">Chess</h1>
-      <p class="topbar__status" id="status">White to move.</p>
     </div>
 
     <div class="topbar__controls">
@@ -59,6 +53,8 @@
         </div>
       </div>
     </div>
+    <!-- Live "X to move" caption, centered under the board. -->
+    <p class="board-status" id="status" aria-live="polite">White to move.</p>
   </main>
 
   <!-- Rules / How to play modal -->
