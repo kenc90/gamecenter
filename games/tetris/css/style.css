@@ -69,8 +69,12 @@ body.tetris-app *, body.tetris-app *::before, body.tetris-app *::after { box-siz
   -webkit-text-fill-color: transparent; color: transparent;
   filter: drop-shadow(0 0 8px rgba(5, 217, 232, .35));
 }
-.topbar__controls { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+.topbar__controls { display: flex; align-items: center; gap: 10px 18px; margin-left: auto; flex-wrap: wrap; }
 .topbar__btns { display: flex; gap: 8px; flex-wrap: wrap; }
+/* Button icons are hidden on wide screens; the small-screen block swaps the
+   text labels for them so the controls keep their place on the right. */
+.btn__ico { display: none; align-items: center; justify-content: center; }
+.btn__ico svg { width: 16px; height: 16px; display: block; }
 
 /* ---------- Buttons (neon outline glass) ---------- */
 .btn {
@@ -242,9 +246,14 @@ kbd {
 .modal__body b { color: var(--np-yellow); }
 .modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
 
-/* Small screens: let the control row drop below the brand row. */
+/* Small screens: the controls stay pinned to the RIGHT on the same row — the
+   buttons shrink to icons instead of dropping below the brand. */
 @media (max-width: 620px) {
-  .topbar__controls { margin-left: 0; width: 100%; }
+  .topbar { flex-wrap: nowrap; }
+  .topbar__title { font-size: 18px; }
+  .btn { padding: 8px 11px; min-width: 40px; text-align: center; display: inline-flex; align-items: center; justify-content: center; }
+  .btn__lbl { display: none; }
+  .btn__ico { display: inline-flex; line-height: 1; }
 }
 
 /* Phones / narrow windows: the game well must DOMINATE. The side panel drops

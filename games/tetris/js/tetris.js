@@ -56,6 +56,10 @@
   var rulesBtn = document.getElementById("rulesBtn");
   var rulesModal = document.getElementById("rulesModal");
 
+  // What the overlay's big button does: newGame() for ready/game-over,
+  // resumeSaved() when a stored run is reloaded and shown paused.
+  var overlayAction = null;
+
   canvas.width = COLS * CELL;
   canvas.height = ROWS * CELL;
 
@@ -91,7 +95,8 @@
       if (!o || !o.grid || !o.cur || !o.nextKind) return false;
       grid = o.grid; cur = o.cur; bag = o.bag || []; nextKind = o.nextKind;
       score = o.score | 0; lines = o.lines | 0; level = o.level | 1;
-      alive = true; paused = false; clearFlash = null;
+      // Come back PAUSED — the player must consciously continue.
+      alive = true; paused = true; clearFlash = null;
       return true;
     } catch (e) { return false; }
   }
@@ -244,6 +249,7 @@
     resetBoard();
     alive = true;
     overlayEl.hidden = true;
+    overlayAction = null;
     setPauseBtn();
     say("Stack the falling blocks, clear the lines.");
     save();
@@ -256,10 +262,29 @@
     overlayEl.hidden = false;
     var btn = document.getElementById("overNew");
     if (btn) btn.textContent = "Start";
+    overlayAction = newGame;
     overlayMsgEl.textContent = "Press Space (or Start) to play";
     setPauseBtn();
     say("Press Space or tap Start to begin.");
     renderHUD(); drawNext(); draw();
+  }
+
+  // A saved run was reloaded: show the frozen board behind a "Continue"
+  // overlay so nothing falls until the player clicks / presses Space.
+  function showResume() {
+    overlayEl.hidden = false;
+    var btn = document.getElementById("overNew");
+    if (btn) btn.textContent = "Continue";
+    overlayAction = resumeSaved;
+    overlayMsgEl.textContent = "Welcome back — paused";
+    setPauseBtn();
+    say("Saved game restored. Press Space or tap Continue to resume.");
+    renderHUD(); drawNext(); draw();
+  }
+  function resumeSaved() {
+    overlayEl.hidden = true;
+    overlayAction = null;
+    setPaused(false);
   }
 
   function gameOver() {
@@ -268,6 +293,7 @@
     clearSave();
     var btn = document.getElementById("overNew");
     if (btn) btn.textContent = "Play again";
+    overlayAction = newGame;
     overlayMsgEl.textContent = "Game over — " + score + " pts";
     overlayEl.hidden = false;
     say("Game over! Press Space (or R / New Game) to try again.");
@@ -277,6 +303,7 @@
   function togglePause() { if (alive) setPaused(!paused); }
   function setPaused(p) {
     paused = p;
+    if (!p) { overlayEl.hidden = true; overlayAction = null; }  // resume clears any pause overlay
     setPauseBtn();
     save();
     say(p ? "Paused — press Space to resume." : "Stack the falling blocks, clear the lines.");
@@ -284,8 +311,17 @@
     draw();
   }
   function setPauseBtn() {
-    pauseBtn.textContent = paused ? "Resume" : "Pause";
+    var lbl = pauseBtn.querySelector(".btn__lbl");
+    var ico = pauseBtn.querySelector(".btn__ico");
+    if (lbl) lbl.textContent = paused ? "Resume" : "Pause";
+    if (ico) {
+      // Swap the inline SVG glyph: ❚❚ pause bars while playing, ▶ while paused.
+      ico.innerHTML = paused
+        ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 5.5v13l11-6.5z"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg>';
+    }
     pauseBtn.setAttribute("aria-pressed", String(!!paused));
+    pauseBtn.setAttribute("title", paused ? "Resume" : "Pause");
   }
 
   // ---------- Player actions ----------
@@ -455,7 +491,7 @@
   });
 
   newBtn.addEventListener("click", function () { newGame(); });
-  document.getElementById("overNew").addEventListener("click", function () { newGame(); });
+  document.getElementById("overNew").addEventListener("click", function () { if (overlayAction) overlayAction(); });
   pauseBtn.addEventListener("click", togglePause);
 
   // ---------- Rules modal ----------
@@ -469,7 +505,9 @@
 
   // ---------- Boot ----------
   loadBest();
-  if (!loadSaved()) showReady();   // fresh load waits for the player to start
+  // A saved run comes back paused behind a Continue overlay; a fresh load
+  // waits on the Start screen. Either way, nothing auto-starts.
+  if (loadSaved()) showResume(); else showReady();
   renderHUD();
   setPauseBtn();
   drawNext();
