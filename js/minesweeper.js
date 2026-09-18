@@ -108,29 +108,56 @@
     renderLed(timerDigits, String(Math.min(999, time)).padStart(3, " "));
   }
 
-  // ---------- Smiley faces (SVG for cross-platform consistency) ----------
-  function face(inner) {
-    return `<svg viewBox="0 0 26 26" width="26" height="26" aria-hidden="true">`
+  // ---------- Smiley faces (theme-aware SVG) ----------
+  let faceState = "normal";
+
+  function classicFace(state) {
+    const eyes = `<circle cx="9" cy="10.5" r="1.7" fill="#3a2a00"/>`
+      + `<circle cx="17" cy="10.5" r="1.7" fill="#3a2a00"/>`;
+    const smile = `<path d="M7 15 Q13 20.5 19 15" fill="none" stroke="#3a2a00" stroke-width="1.8" stroke-linecap="round"/>`;
+    let inner;
+    if (state === "worried") inner = eyes + `<ellipse cx="13" cy="16.8" rx="2.8" ry="3.6" fill="#3a2a00"/>`;
+    else if (state === "dead") inner =
+      `<g stroke="#3a2a00" stroke-width="1.7" stroke-linecap="round" fill="none">`
+      + `<path d="M7 8.6 l4 4 M11 8.6 l-4 4"/><path d="M15 8.6 l4 4 M19 8.6 l-4 4"/></g>`
+      + `<ellipse cx="13" cy="17" rx="2.6" ry="3.2" fill="#3a2a00"/>`;
+    else if (state === "cool") inner =
+      `<g fill="#141414"><rect x="4.6" y="9" width="7" height="4.6" rx="2"/>`
+      + `<rect x="14.4" y="9" width="7" height="4.6" rx="2"/>`
+      + `<rect x="11" y="10.4" width="4" height="1.4"/></g>` + smile;
+    else inner = eyes + smile;
+    return `<svg viewBox="0 0 26 26" width="26" height="26" class="face-classic" aria-hidden="true">`
       + `<circle cx="13" cy="13" r="11.5" fill="#ffd23f" stroke="#8a6d00" stroke-width="1"/>`
       + inner + `</svg>`;
   }
-  const EYES = `<circle cx="9" cy="10.5" r="1.7" fill="#3a2a00"/>`
-    + `<circle cx="17" cy="10.5" r="1.7" fill="#3a2a00"/>`;
-  const SMILE = `<path d="M7 15 Q13 20.5 19 15" fill="none" stroke="#3a2a00" stroke-width="1.8" stroke-linecap="round"/>`;
-  const FACES = {
-    normal: face(EYES + SMILE),
-    worried: face(EYES + `<ellipse cx="13" cy="16.8" rx="2.8" ry="3.6" fill="#3a2a00"/>`),
-    dead: face(
-      `<g stroke="#3a2a00" stroke-width="1.7" stroke-linecap="round" fill="none">`
-      + `<path d="M7 8.6 l4 4 M11 8.6 l-4 4"/><path d="M15 8.6 l4 4 M19 8.6 l-4 4"/></g>`
-      + `<ellipse cx="13" cy="17" rx="2.6" ry="3.2" fill="#3a2a00"/>`),
-    cool: face(
-      `<g fill="#141414"><rect x="4.6" y="9" width="7" height="4.6" rx="2"/>`
-      + `<rect x="14.4" y="9" width="7" height="4.6" rx="2"/>`
-      + `<rect x="11" y="10.4" width="4" height="1.4"/></g>` + SMILE),
-  };
+
+  function cyberFace(state) {
+    const cyan = "#0affff", mag = "#ff2b6b";
+    const eyes = `<rect x="7.4" y="7.6" width="2.6" height="6" rx="1.2" fill="${cyan}"/>`
+      + `<rect x="16" y="7.6" width="2.6" height="6" rx="1.2" fill="${cyan}"/>`;
+    const smile = `<path d="M7.5 15 Q13 19.5 18.5 15" fill="none" stroke="${mag}" stroke-width="1.8" stroke-linecap="round"/>`;
+    let inner;
+    if (state === "worried") inner = eyes + `<rect x="10.4" y="15" width="5.2" height="4.2" rx="1" fill="${cyan}"/>`;
+    else if (state === "dead") inner =
+      `<g stroke="${mag}" stroke-width="1.9" stroke-linecap="round" fill="none">`
+      + `<path d="M7 8 l4.6 4.6 M11.6 8 l-4.6 4.6"/><path d="M14.4 8 l4.6 4.6 M19 8 l-4.6 4.6"/>`
+      + `<path d="M8 17.5 l2 -1.6 l2 1.6 l2 -1.6 l2 1.6"/></g>`;
+    else if (state === "cool") inner =
+      `<rect x="4.6" y="8.2" width="16.8" height="4.4" rx="1.8" fill="${cyan}"/>`
+      + `<rect x="6" y="9.2" width="14" height="1" rx="0.5" fill="rgba(255,255,255,.7)"/>` + smile;
+    else inner = eyes + smile;
+    return `<svg viewBox="0 0 26 26" width="26" height="26" class="face-cyber" aria-hidden="true">`
+      + `<circle cx="13" cy="13" r="11.5" fill="#0b1220" stroke="${cyan}" stroke-width="1.4"/>`
+      + `<circle cx="13" cy="13" r="9" fill="none" stroke="${mag}" stroke-width="0.5" opacity=".45"/>`
+      + inner + `</svg>`;
+  }
+
+  function faceSvg(state, t) {
+    return t === "cyberpunk" ? cyberFace(state) : classicFace(state);
+  }
   function renderFace(state) {
-    smileyEl.innerHTML = FACES[state] || FACES.normal;
+    faceState = state;
+    smileyEl.innerHTML = faceSvg(state, theme);
     smileyEl.setAttribute("data-face", state);
   }
 
@@ -235,8 +262,13 @@
     <line x1="8" y1="1" x2="8" y2="15"/><line x1="1" y1="8" x2="15" y2="8"/>
     <line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></g>
     <circle cx="8" cy="8" r="4.2" fill="currentColor"/><circle class="hl" cx="6.4" cy="6.4" r="1.2"/></svg>`;
-  const FLAG_SVG = `<svg viewBox="0 0 16 16" class="flag"><rect x="3" y="2.5" width="2" height="11" fill="currentColor"/>
+  const FLAG_CLASSIC = `<svg viewBox="0 0 16 16" class="flag"><rect x="3" y="2.5" width="2" height="11" fill="currentColor"/>
     <path d="M5 3 L13 5.5 L5 8 Z" fill="#d40000"/><rect x="2" y="13" width="6" height="1.6" fill="currentColor"/></svg>`;
+  const FLAG_CYBER = `<svg viewBox="0 0 16 16" class="flag flag-cyber">
+    <rect x="3" y="2" width="1.6" height="11.5" fill="#0affff"/>
+    <path d="M4.6 2.4 L13.5 5.2 L4.6 8 Z" fill="#ff2b6b" stroke="#0affff" stroke-width="0.6" stroke-linejoin="round"/>
+    <rect x="1.6" y="13.2" width="6.4" height="1.8" rx="0.6" fill="#0affff"/></svg>`;
+  function flagSvg(t) { return t === "cyberpunk" ? FLAG_CYBER : FLAG_CLASSIC; }
 
   function paintCell(i) {
     const cell = cells[i];
@@ -253,7 +285,7 @@
         el.dataset.n = cell.adj;
       }
     } else {
-      if (cell.flag === FLAG.FLAG) el.innerHTML = FLAG_SVG;
+      if (cell.flag === FLAG.FLAG) el.innerHTML = flagSvg(theme);
       else if (cell.flag === FLAG.QUESTION) { el.textContent = "?"; el.classList.add("question"); }
     }
   }
@@ -294,7 +326,7 @@
       } else if (!cell.mine && cell.flag === FLAG.FLAG) {
         // wrong flag
         cell.el.className = "cell wrong";
-        cell.el.innerHTML = FLAG_SVG;
+        cell.el.innerHTML = flagSvg(theme);
       }
     }
     paintCell(i);
@@ -542,13 +574,15 @@
 
   function setLevel(l) { if (LEVELS[l]) { level = l; buildBoard(); saveGame(); setStatus(godMode ? "New game — God Mode ON." : "New game — first click is always safe."); } }
 
-  // Theme is applied by setting data-theme on <html>; no rebuild needed.
+  // Theme is applied by setting data-theme on <html>; flags/faces are repainted.
   function setTheme(t) {
     if (!THEMES.includes(t)) return;
     theme = t;
     document.documentElement.setAttribute("data-theme", t);
     try { localStorage.setItem("ms-theme", t); } catch {}
     markChecked();
+    renderFace(faceState);
+    for (let i = 0; i < cells.length; i++) paintCell(i);
   }
 
   // Group-aware checkmark rendering for menu items (difficulty + theme).
@@ -618,7 +652,7 @@
   const THEME_LABELS = { xp: "Windows XP", vista: "Windows Vista", classic: "Classic 95", cyberpunk: "Cyberpunk" };
   function showAbout() {
     openDialog("About Minesweeper", `
-      <div class="icon-row" style="font-size:22px">${FACES.cool}</div>
+      <div class="icon-row" style="font-size:22px">${faceSvg("cool", theme)}</div>
       <p><b>Minesweeper</b></p>
       <p>An HTML5 tribute to the classic Windows game, with multiple themes.</p>
       <p style="color:#666">Theme: <b>${THEME_LABELS[theme] || theme}</b><br />
@@ -636,7 +670,7 @@
   }
 
   function showExit() {
-    overlayMsgEl.innerHTML = `${FACES.cool} Thanks for playing Minesweeper! <a href="#" onclick="location.reload()">Play again</a>`;
+    overlayMsgEl.innerHTML = `${faceSvg("cool", theme)} Thanks for playing Minesweeper! <a href="#" onclick="location.reload()">Play again</a>`;
     overlayEl.hidden = false;
   }
   overlayEl.addEventListener("click", () => { overlayEl.hidden = true; });

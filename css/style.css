@@ -633,6 +633,15 @@ body {
 }
 :root[data-theme="cyberpunk"] .title-text { text-transform: uppercase; letter-spacing: 2px; }
 :root[data-theme="cyberpunk"] .led-digit .seg.on { box-shadow: 0 0 5px var(--led-color); }
+
+/* Neon glow: numbers, flags, mines, and the smiley face */
+:root[data-theme="cyberpunk"] .cell.revealed[data-n] {
+  font-weight: 700;
+  text-shadow: 0 0 4px currentColor, 0 0 9px currentColor;
+}
+:root[data-theme="cyberpunk"] .cell .flag { filter: drop-shadow(0 0 3px #0affff); }
+:root[data-theme="cyberpunk"] .cell .mine { filter: drop-shadow(0 0 2px currentColor); }
+:root[data-theme="cyberpunk"] .smiley svg { filter: drop-shadow(0 0 3px rgba(10, 255, 255, .9)); }
 :root[data-theme="cyberpunk"] .xp-window,
 :root[data-theme="cyberpunk"] .cell { position: relative; }
 :root[data-theme="cyberpunk"] .xp-window::before {
