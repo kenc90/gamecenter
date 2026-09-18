@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Minesweeper</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="desktop">
+    <div class="xp-window" id="gameWindow">
+      <!-- Title bar -->
+      <div class="title-bar">
+        <div class="title-bar-inner">
+          <span class="title-icon">
+            <svg viewBox="0 0 16 16" width="16" height="16">
+              <rect x="1" y="1" width="14" height="14" fill="#c0c0c0" stroke="#7b7b7b"/>
+              <circle cx="8" cy="8" r="3.2" fill="#000"/>
+              <g stroke="#000" stroke-width="1">
+                <line x1="8" y1="2.5" x2="8" y2="13.5"/>
+                <line x1="2.5" y1="8" x2="13.5" y2="8"/>
+                <line x1="4" y1="4" x2="12" y2="12"/>
+                <line x1="12" y1="4" x2="4" y2="12"/>
+              </g>
+              <circle cx="8" cy="8" r="3.2" fill="none" stroke="#000"/>
+            </svg>
+          </span>
+          <span class="title-text">Minesweeper</span>
+        </div>
+        <div class="title-buttons">
+          <button class="tb-btn minimize" title="Minimize" id="btnMin">&#8209;</button>
+          <button class="tb-btn maximize" title="Maximize" id="btnMax">&#9633;</button>
+          <button class="tb-btn close" title="Close" id="btnClose">&#10005;</button>
+        </div>
+      </div>
+
+      <!-- Menu bar -->
+      <div class="menu-bar" id="menuBar">
+        <div class="menu-item" data-menu="game">
+          <span class="menu-label"><u>G</u>ame</span>
+          <div class="menu-dropdown">
+            <button data-action="new"><u>N</u>ew</button>
+            <hr />
+            <button data-action="easy"><u>E</u>asy</button>
+            <button data-action="medium">M<u>a</u>ximum</button>
+            <button data-action="expert"><u>E</u>xpert</button>
+            <hr />
+            <button data-action="best-times"><u>B</u>est Times...</button>
+            <hr />
+            <button data-action="exit">E<u>x</u>it</button>
+          </div>
+        </div>
+        <div class="menu-item" data-menu="help">
+          <span class="menu-label"><u>H</u>elp</span>
+          <div class="menu-dropdown">
+            <button data-action="how-to-play"><u>H</u>ow to Play</button>
+            <hr />
+            <button data-action="about">About Minesweeper</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body / content -->
+      <div class="game-body">
+        <div class="bevel">
+          <!-- Top panel: counters, smiley, timer -->
+          <div class="top-panel">
+            <div class="led-display" id="mineCounter" aria-label="Mines remaining"></div>
+            <button class="smiley" id="smiley" title="New game" tabindex="-1"></button>
+            <div class="led-display" id="timer" aria-label="Time"></div>
+          </div>
+
+          <!-- Mine field -->
+          <div class="field-bevel">
+            <div class="field" id="field"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Close / flash overlay -->
+    <div class="overlay" id="overlay" hidden>
+      <div class="overlay-msg" id="overlayMsg"></div>
+    </div>
+  </div>
+
+  <div id="modal-root"></div>
+
+  <script src="js/minesweeper.js"></script>
+</body>
+</html>
