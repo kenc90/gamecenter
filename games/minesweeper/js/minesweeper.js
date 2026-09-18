@@ -26,6 +26,8 @@
   const statusBar = document.getElementById("statusBar");
   const matrixCanvas = document.getElementById("matrixRain");
   const windowTitleEl = document.getElementById("windowTitle");
+  const btnCloseEl = document.getElementById("btnClose");
+  const backLinkEl = document.querySelector("a.gc-back");
 
   // ---------- Game state ----------
   let level = "expert";
@@ -798,6 +800,15 @@
     overlayEl.hidden = false;
   }
   overlayEl.addEventListener("click", () => { overlayEl.hidden = true; });
+
+  // ---------- Window controls ----------
+  // Close returns to the game center. The target is read from the shared back
+  // link so the centre's path is declared in exactly one place (index.html).
+  btnCloseEl.addEventListener("click", () => {
+    // assign() leaves a history entry, so the browser Back button comes back to
+    // the board; the game itself is persisted in ms-game either way.
+    window.location.assign(backLinkEl ? backLinkEl.href : "../../index.html");
+  });
 
   // ---------- Menu behavior ----------
   const menuBar = document.getElementById("menuBar");
