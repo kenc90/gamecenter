@@ -11,7 +11,7 @@
 
   const FLAG = { NONE: 0, FLAG: 1, QUESTION: 2 };
 
-  const THEMES = ["xp", "vista", "classic", "cyberpunk"];
+  const THEMES = ["xp", "vista", "classic", "cyberpunk", "virus", "ocean", "crayon"];
 
   // ---------- DOM refs ----------
   const fieldEl = document.getElementById("field");
@@ -649,7 +649,7 @@
       </ul>`, [{ label: "OK", primary: true }]);
   }
 
-  const THEME_LABELS = { xp: "Windows XP", vista: "Windows Vista", classic: "Classic 95", cyberpunk: "Cyberpunk" };
+  const THEME_LABELS = { xp: "Windows XP", vista: "Windows Vista", classic: "Classic 95", cyberpunk: "Cyberpunk", virus: "Virus", ocean: "Ocean", crayon: "Crayon" };
   function showAbout() {
     openDialog("About Minesweeper", `
       <div class="icon-row" style="font-size:22px">${faceSvg("cool", theme)}</div>

@@ -710,3 +710,212 @@ body {
 }
 :root[data-theme="classic"] .tb-btn { box-shadow: none; color: #000; }
 :root[data-theme="classic"] .menu-dropdown { box-shadow: 2px 2px 0 rgba(0,0,0,.4); }
+
+/* ---------- Virus (toxic biohazard) ---------- */
+:root[data-theme="virus"] {
+  --desktop-bg: #031a06;
+  --desktop-bg2:
+    radial-gradient(120% 100% at 50% 0%, #0a3d12 0%, #04170a 55%, #010a03 100%);
+  --font: "Share Tech Mono", Consolas, monospace;
+
+  --win-border: #1f7a2e;
+  --win-radius: 2px;
+  --win-bg: #06180b;
+  --win-shadow: 0 0 0 1px rgba(60,255,110,.25), 0 0 26px rgba(40,220,90,.35), 0 8px 30px rgba(0,0,0,.6);
+
+  --tb-h: 28px;
+  --tb-bg: linear-gradient(90deg, #052e0d, #0c5a1c 50%, #052e0d);
+  --tb-border: #2fae45;
+  --tb-text: #b6ffbf;
+  --tb-text-shadow: 0 0 8px rgba(80,255,120,.9);
+  --tb-sheen: linear-gradient(rgba(150,255,170,.18), rgba(150,255,170,0) 45%);
+  --tb-btn-normal: linear-gradient(#0d5019, #062a0d);
+  --tb-btn-close: linear-gradient(#7a1414, #3a0808);
+  --tb-btn-border: rgba(120,255,150,.5);
+  --tb-btn-radius: 2px;
+
+  --menu-bg: #06180b;
+  --menu-border: #1f7a2e;
+  --menu-text: #a6f5b0;
+  --menu-hover-bg: #1f9e3a;
+  --menu-hover-text: #04170a;
+  --dropdown-bg: #08210e;
+  --dropdown-border: #2fae45;
+
+  --body-bg: #06180b;
+  --panel-bg: #0a2410;
+  --bevel-light: #1f7a2e;
+  --bevel-dark: #010a03;
+  --field-bg: #04140a;
+
+  --cell-face: #0c2c14;
+  --cell-border-light: #1f6b2c;
+  --cell-border-dark: #020c04;
+  --cell-revealed-border: #14401d;
+  --led-color: #4dff7c;
+  --led-color-off: rgba(77,255,124,.14);
+  --led-bg: #020a04;
+
+  --n1: #38ff7e; --n2: #a6ff3d; --n3: #ffe14d; --n4: #4dffd2;
+  --n5: #ff9e3d; --n6: #7cffb2; --n7: #d4ff4d; --n8: #6bffde;
+
+  --mine-hit-bg: #3a0d0d;
+  --mine-color: #79ff9a;
+  --mine-hl: #0a2410;
+  --question-color: #ffe14d;
+  --wrong-color: #ff5a5a;
+  --win-glow: rgba(90,255,140,.6);
+
+  --overlay-bg: rgba(0,10,3,.7);
+  --dialog-text: #c7ffcf;
+  --dialog-border-cell: #1f7a2e;
+  --btn-bg: linear-gradient(#0d3a17, #06180b);
+  --btn-border: #2fae45;
+  --btn-text: #b6ffbf;
+}
+:root[data-theme="virus"] .cell.revealed[data-n] {
+  font-weight: 700;
+  text-shadow: 0 0 4px currentColor, 0 0 9px currentColor;
+}
+:root[data-theme="virus"] .led-digit .seg.on { box-shadow: 0 0 5px var(--led-color); }
+:root[data-theme="virus"] .title-text { text-transform: uppercase; letter-spacing: 1px; }
+:root[data-theme="virus"] .cell .mine { filter: drop-shadow(0 0 2px currentColor); }
+:root[data-theme="virus"] .cell.flag { color: var(--mine-color); }
+
+/* ---------- Ocean (aqua / seafoam) ---------- */
+:root[data-theme="ocean"] {
+  --desktop-bg: #0a3d62;
+  --desktop-bg2:
+    radial-gradient(130% 100% at 50% 0%, #2e7fb5 0%, #14568a 45%, #0a3d62 100%);
+  --font: "Quicksand", "Segoe UI", Tahoma, sans-serif;
+
+  --win-border: #0b6ea8;
+  --win-radius: 10px 10px 0 0;
+  --win-bg: #dff1f7;
+  --win-shadow: 0 8px 28px rgba(4,30,50,.5);
+
+  --tb-h: 30px;
+  --tb-bg: linear-gradient(#3aa0d8 0%, #1f7fbf 45%, #166aa5 55%, #0f5c93 100%);
+  --tb-border: #0b6ea8;
+  --tb-text: #ffffff;
+  --tb-text-shadow: 0 1px 2px rgba(0,40,70,.6);
+  --tb-sheen: linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,0) 50%);
+  --tb-btn-normal: linear-gradient(#7fd0f0, #2f8fc7);
+  --tb-btn-close: linear-gradient(#ff9a7a, #e0552f);
+  --tb-btn-border: #eaf7ff;
+  --tb-btn-radius: 6px;
+
+  --menu-bg: #eaf6fb;
+  --menu-border: #b7dcea;
+  --menu-text: #0a3d5c;
+  --menu-hover-bg: #2f8fc7;
+  --menu-hover-text: #ffffff;
+  --dropdown-bg: #f2fbff;
+  --dropdown-border: #9ccfe2;
+
+  --body-bg: #eaf6fb;
+  --panel-bg: #cfe9f2;
+  --bevel-light: #ffffff;
+  --bevel-dark: #8bb9cb;
+  --field-bg: #a9d4e4;
+
+  --cell-face: #bfe2ee;
+  --cell-border-light: #ffffff;
+  --cell-border-dark: #6fa6bd;
+  --cell-revealed-border: #97c2d3;
+  --led-color: #0e6b8f;
+  --led-color-off: rgba(14,107,143,.14);
+  --led-bg: #d7eef6;
+
+  --n1: #0a5aa8; --n2: #0f8a5f; --n3: #d84315; --n4: #6a2ea8;
+  --n5: #a8320f; --n6: #0f8a8a; --n7: #123a5c; --n8: #5a7a8a;
+
+  --mine-hit-bg: #ff6a4d;
+  --mine-color: #0a2a3c;
+  --mine-hl: #ffffff;
+  --question-color: #0a5aa8;
+  --wrong-color: #c62828;
+  --win-glow: rgba(180,240,255,.9);
+
+  --overlay-bg: rgba(6,40,60,.35);
+  --dialog-text: #0a3d5c;
+  --dialog-border-cell: #9ccfe2;
+  --btn-bg: linear-gradient(#f2fbff, #cfe9f2);
+  --btn-border: #2f8fc7;
+  --btn-text: #0a3d5c;
+}
+:root[data-theme="ocean"] .cell { border-radius: 4px; }
+:root[data-theme="ocean"] .cell:not(.revealed) {
+  background:
+    linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0) 45%),
+    #bfe2ee;
+}
+
+/* ---------- Crayon (hand-drawn paper) ---------- */
+:root[data-theme="crayon"] {
+  --desktop-bg: #f6ecd6;
+  --desktop-bg2:
+    radial-gradient(120% 100% at 50% 0%, #fff7e6 0%, #f2e4c6 60%, #e8d5ab 100%);
+  --font: "Patrick Hand", "Comic Sans MS", "Segoe Print", cursive;
+
+  --win-border: #e07a1f;
+  --win-radius: 14px 14px 10px 10px;
+  --win-bg: #fffaf0;
+  --win-shadow: 4px 5px 0 rgba(0,0,0,.18);
+
+  --tb-h: 34px;
+  --tb-bg: linear-gradient(90deg, #ff6b6b, #ffa94d 25%, #ffe066 50%, #6bcb77 72%, #4dabf7 100%);
+  --tb-border: #e07a1f;
+  --tb-text: #4a2c00;
+  --tb-text-shadow: 1px 1px 0 rgba(255,255,255,.6);
+  --tb-sheen: none;
+  --tb-btn-normal: #fffaf0;
+  --tb-btn-close: #ff8787;
+  --tb-btn-border: #4a2c00;
+  --tb-btn-radius: 8px;
+
+  --menu-bg: #fffaf0;
+  --menu-border: #d9b38c;
+  --menu-text: #4a2c00;
+  --menu-hover-bg: #ffd43b;
+  --menu-hover-text: #4a2c00;
+  --dropdown-bg: #fffdf7;
+  --dropdown-border: #d98b3f;
+
+  --body-bg: #fffaf0;
+  --panel-bg: #ffedcf;
+  --bevel-light: #ffffff;
+  --bevel-dark: #d9a86c;
+  --field-bg: #f3d9a8;
+
+  --cell-face: #ffe9c2;
+  --cell-border-light: #fff6e6;
+  --cell-border-dark: #cf9b52;
+  --cell-revealed-border: #d9b38c;
+  --led-color: #e8590c;
+  --led-color-off: rgba(232,89,12,.12);
+  --led-bg: #fff3dd;
+
+  --n1: #1971c2; --n2: #2f9e44; --n3: #e03131; --n4: #6741d9;
+  --n5: #e8590c; --n6: #0c8599; --n7: #862e9c; --n8: #5c3b17;
+
+  --mine-hit-bg: #ffc9c9;
+  --mine-color: #343a40;
+  --mine-hl: #ffffff;
+  --question-color: #e8590c;
+  --wrong-color: #e03131;
+  --win-glow: rgba(255,224,102,.9);
+
+  --overlay-bg: rgba(120,80,20,.2);
+  --dialog-text: #4a2c00;
+  --dialog-border-cell: #d9b38c;
+  --btn-bg: #fff3dd;
+  --btn-border: #d98b3f;
+  --btn-text: #4a2c00;
+}
+:root[data-theme="crayon"] .cell { border-radius: 6px; }
+:root[data-theme="crayon"] .cell:not(.revealed) {
+  border: 2px solid #cf9b52;
+  background: #ffe9c2;
+}
+:root[data-theme="crayon"] .title-text { letter-spacing: .5px; }
