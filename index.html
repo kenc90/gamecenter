@@ -399,6 +399,81 @@
           <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
         </span>
       </a>
+
+      <a class="gc-card" href="games/tetris/index.html">
+        <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Tetris preview">
+            <defs>
+              <linearGradient id="tetrisBg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#1b0a4e"/>
+                <stop offset=".55" stop-color="#0b0224"/>
+                <stop offset="1" stop-color="#05010d"/>
+              </linearGradient>
+              <linearGradient id="tetrisSheen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff" stop-opacity=".16"/>
+                <stop offset=".45" stop-color="#fff" stop-opacity=".03"/>
+                <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+              </linearGradient>
+              <filter id="tetrisGlow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="2.6" result="b"/>
+                <feMerge>
+                  <feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <clipPath id="tetrisClip"><rect x="12" y="12" width="96" height="96" rx="16"/></clipPath>
+            </defs>
+            <g clip-path="url(#tetrisClip)">
+              <!-- deep-indigo well -->
+              <rect x="12" y="12" width="96" height="96" fill="url(#tetrisBg)"/>
+              <!-- faint neon grid: clean 20u cells (6x6) -->
+              <g stroke="#b026ff" stroke-opacity=".18" stroke-width="1">
+                <path d="M32 12V108M52 12V108M72 12V108M92 12V108M12 32H108M12 52H108M12 72H108M12 92H108"/>
+              </g>
+              <!-- settled stack on the SAME 20u grid as the guide lines: one
+                   cell per block, never doubled. -->
+              <g stroke="#05010d" stroke-width="1.5">
+                <g fill="#fcee0a">
+                  <rect x="12" y="48" width="20" height="20"/><rect x="12" y="68" width="20" height="20"/>
+                  <rect x="12" y="88" width="20" height="20"/>
+                </g>
+                <g fill="#ff2a6d">
+                  <rect x="32" y="88" width="20" height="20"/>
+                  <rect x="72" y="88" width="20" height="20"/>
+                </g>
+                <g fill="#b026ff">
+                  <rect x="52" y="68" width="20" height="20"/><rect x="72" y="68" width="20" height="20"/>
+                  <rect x="52" y="88" width="20" height="20"/><rect x="92" y="88" width="16" height="20"/>
+                </g>
+                <g fill="#01ffc3">
+                  <rect x="92" y="68" width="16" height="20"/>
+                </g>
+              </g>
+              <!-- falling S piece, floating in open air above the right side
+                   of the stack — clear of every settled block, no overlap -->
+              <g fill="#05d9e8" stroke="#05010d" stroke-width="1.5" filter="url(#tetrisGlow)">
+                <rect x="72" y="12" width="20" height="20"/><rect x="92" y="12" width="16" height="20"/>
+                <rect x="52" y="32" width="20" height="20"/><rect x="72" y="32" width="20" height="20"/>
+              </g>
+              <!-- glass sheen -->
+              <rect x="12" y="12" width="96" height="96" fill="url(#tetrisSheen)"/>
+            </g>
+            <rect x="12" y="12" width="96" height="96" rx="16" fill="none" stroke="#05d9e8" stroke-opacity=".65" stroke-width="2.5"/>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            Tetris
+            <span class="gc-badge">Neon Stacker</span>
+          </span>
+          <span class="gc-card__desc">
+            Stack neon blocks in a cyberpunk well and torch whole rows before
+            the tower reaches the top. Seven shapes, a randomised bag, ghost-piece
+            previews and a hard drop on the spacebar &mdash; chase the level-10 speed run.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
     </div>
   </main>
 
