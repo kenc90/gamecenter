@@ -1,0 +1,117 @@
+/* ===== Sudoku — game UI ===== */
+:root { --cs: min(9.4vw, 56px); }
+/* Safety: never allow a horizontal scrollbar from sub-pixel rounding. */
+html, body { overflow-x: hidden; }
+.wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px;
+  padding: clamp(22px, 5vw, 44px) 18px 40px;
+}
+.head { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.title { margin: 0; font-size: clamp(26px, 6vw, 34px); letter-spacing: -.02em; }
+.meta { display: flex; gap: 14px; font-size: 13.5px; color: var(--gc-text-muted); }
+.meta__item b { color: var(--gc-text); font-variant-numeric: tabular-nums; }
+
+.segmented { display: inline-flex; padding: 4px; gap: 4px; background: var(--gc-surface-2); border: 1px solid var(--gc-border); border-radius: 999px; }
+.seg { appearance: none; border: 0; cursor: pointer; font: inherit; font-size: 13.5px; font-weight: 600; padding: 7px 16px; border-radius: 999px; background: transparent; color: var(--gc-text-muted); transition: background .15s ease, color .15s ease; }
+.seg:hover { color: var(--gc-text); }
+.seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
+.seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+
+/* Play area: stacked (numpad below the board) by default... */
+.game { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+
+/* Board */
+.board {
+  --cs: min(9.4vw, 56px);
+  display: grid;
+  grid-template-columns: repeat(9, var(--cs));
+  grid-template-rows: repeat(9, var(--cs));
+  width: calc(9 * var(--cs));
+  border: 2px solid var(--gc-text);
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.cell {
+  appearance: none; border: 0; margin: 0; cursor: pointer;
+  width: var(--cs); height: var(--cs);
+  display: flex; align-items: center; justify-content: center;
+  font: inherit; font-size: calc(var(--cs) * 0.5); font-weight: 600;
+  color: var(--gc-accent);
+  background: var(--gc-surface);
+  border-right: 1px solid var(--gc-border);
+  border-bottom: 1px solid var(--gc-border);
+  transition: background .1s ease;
+}
+/* 3×3 box separators */
+.cell[data-c="2"], .cell[data-c="5"] { border-right: 2px solid var(--gc-text); }
+.cell[data-c="8"] { border-right: 0; }
+.cell[data-r="2"], .cell[data-r="5"] { border-bottom: 2px solid var(--gc-text); }
+.cell[data-r="8"] { border-bottom: 0; }
+
+.cell--given { color: var(--gc-text); font-weight: 800; cursor: default; background: var(--gc-surface-2); }
+.cell--peer { background: color-mix(in srgb, var(--gc-accent) 8%, var(--gc-surface)); }
+.cell--same { background: color-mix(in srgb, var(--gc-accent) 18%, var(--gc-surface)); }
+.cell--selected { background: color-mix(in srgb, var(--gc-accent) 30%, var(--gc-surface)); }
+.cell--error { color: #e5484d; background: color-mix(in srgb, #e5484d 14%, var(--gc-surface)); }
+.cell:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--gc-accent); }
+.cell--new { animation: cellpop .18s ease; }
+@keyframes cellpop { from { transform: scale(.6); } }
+
+/* Side panel — in stacked mode it spans the board width with one row of 9 */
+.panel { display: flex; flex-direction: column; gap: 12px; align-items: stretch; width: calc(9 * var(--cs)); max-width: 100%; }
+.pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; }
+.digit {
+  appearance: none; cursor: pointer; font: inherit;
+  width: 100%; height: var(--cs);
+  font-size: calc(var(--cs) * 0.5); font-weight: 700; color: var(--gc-accent);
+  background: var(--gc-surface); border: 1px solid var(--gc-border); border-radius: 10px;
+  transition: background .12s ease, border-color .12s ease, transform .06s ease;
+}
+.digit:hover { border-color: var(--gc-accent); }
+.digit:active { transform: translateY(1px); }
+.digit:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.digit--done { opacity: .38; }
+
+.actions { display: flex; gap: 8px; }
+.btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
+  padding: 10px 14px; border-radius: 10px; flex: 1;
+  border: 1px solid var(--gc-border); background: var(--gc-surface); color: var(--gc-text);
+  transition: transform .06s ease, border-color .15s ease;
+}
+.btn:hover { border-color: var(--gc-accent); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.btn--primary { background: var(--gc-accent); border-color: var(--gc-accent); color: var(--gc-on-accent); flex: none; }
+
+.sub { margin: 0; color: var(--gc-text-muted); font-size: 13px; text-align: center; }
+
+/* Overlay */
+.overlay { position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center; background: rgba(6, 12, 20, .55); backdrop-filter: blur(3px); padding: 16px; }
+.overlay[hidden] { display: none; }
+.overlay__card { width: min(92vw, 360px); text-align: center; padding: 26px 24px; border-radius: 16px; background: var(--gc-surface); border: 1px solid var(--gc-border); box-shadow: var(--gc-shadow-hi); animation: cardpop .3s ease; }
+@keyframes cardpop { from { transform: scale(.9); opacity: 0; } }
+.overlay__card h2 { margin: 0 0 6px; font-size: 26px; }
+.overlay__card p { margin: 0 0 18px; color: var(--gc-text-muted); }
+.overlay__actions { display: flex; gap: 10px; justify-content: center; }
+.overlay__actions .btn { flex: none; }
+
+/* Wide screens: numpad sits right next to the board as a 3×3 grid. */
+@media (min-width: 760px) {
+  .game { flex-direction: row; align-items: flex-start; justify-content: center; gap: 24px; }
+  .panel { width: auto; }
+  .pad { grid-template-columns: repeat(3, var(--cs)); }
+  .digit { width: var(--cs); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell--new, .overlay__card { animation: none; }
+  .cell, .digit, .btn { transition: none; }
+}

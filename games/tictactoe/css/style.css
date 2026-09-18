@@ -1,0 +1,97 @@
+/* ===== Tic Tac Toe — game UI =====
+   Colours come from the center's shared --gc-* tokens (base.css), so this
+   page follows light/dark automatically. Only layout/sizing lives here. */
+
+.wrap {
+  max-width: 460px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(24px, 6vw, 48px) 20px 40px;
+  text-align: center;
+}
+.head .title { margin: 0; font-size: clamp(26px, 6vw, 34px); letter-spacing: -.02em; }
+.head .sub { margin: 4px 0 0; color: var(--gc-text-muted); font-weight: 600; min-height: 1.4em; }
+
+/* Mode / difficulty segmented controls */
+.segmented { display: inline-flex; padding: 4px; gap: 4px; background: var(--gc-surface-2); border: 1px solid var(--gc-border); border-radius: 999px; }
+.segmented--sub { margin-top: -8px; }
+.seg {
+  appearance: none; border: 0; cursor: pointer;
+  font: inherit; font-size: 13.5px; font-weight: 600;
+  padding: 8px 16px; border-radius: 999px;
+  background: transparent; color: var(--gc-text-muted);
+  transition: background .15s ease, color .15s ease;
+}
+.seg--sm { padding: 5px 12px; font-size: 12.5px; }
+.seg:hover { color: var(--gc-text); }
+.seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
+.seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+
+/* Board */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: min(90vw, 340px);
+  aspect-ratio: 1 / 1;
+}
+.cell {
+  appearance: none;
+  border: 1px solid var(--gc-border);
+  border-radius: 16px;
+  background: var(--gc-surface);
+  box-shadow: var(--gc-shadow);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  /* minmax(0,1fr) already pins the track; aspect-ratio keeps each box square
+     and overflow:hidden guarantees content can never resize the cell. */
+  width: 100%; height: 100%; min-width: 0; min-height: 0;
+  overflow: hidden;
+  font: inherit;
+  font-size: clamp(38px, 16vw, 60px);
+  line-height: 1;
+  color: var(--gc-text);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+}
+.cell:not(.cell--filled):hover { transform: translateY(-2px); border-color: var(--gc-accent); box-shadow: var(--gc-shadow-hi); }
+.cell:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.cell:disabled { cursor: default; }
+.cell--x { color: var(--gc-accent); }
+.cell--o { color: var(--gc-accent-2); }
+.cell--win { background: color-mix(in srgb, var(--gc-accent) 14%, var(--gc-surface)); border-color: var(--gc-accent); animation: pop .25s ease; }
+.cell--hint { animation: pop .25s ease; }
+@keyframes pop { from { transform: scale(.82); } }
+
+/* Scoreboard */
+.scores { display: flex; gap: 10px; width: 100%; }
+.score {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 8px;
+  background: var(--gc-surface); border: 1px solid var(--gc-border); border-radius: 12px;
+}
+.score__k { font-size: 12px; color: var(--gc-text-muted); font-weight: 600; }
+.score__v { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Controls */
+.controls { display: flex; gap: 10px; }
+.btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
+  padding: 10px 18px; border-radius: 10px;
+  border: 1px solid var(--gc-border); background: var(--gc-surface); color: var(--gc-text);
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover { border-color: var(--gc-accent); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.btn--primary { background: var(--gc-accent); border-color: var(--gc-accent); color: var(--gc-on-accent); }
+.btn--primary:hover { filter: brightness(1.05); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cell, .cell--win, .cell--hint { transition: none; animation: none; transform: none; }
+}

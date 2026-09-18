@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sudoku</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<script>
+  try {
+    var m = localStorage.getItem("gc-mode");
+    if (m === "light" || m === "dark") document.documentElement.setAttribute("data-mode", m);
+  } catch (e) {}
+</script>
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="gc-body">
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <main class="wrap">
+    <header class="head">
+      <h1 class="title">Sudoku</h1>
+      <div class="meta">
+        <span class="meta__item">⏱ <b id="timer">00:00</b></span>
+        <span class="meta__item">Mistakes <b id="mistakes">0/3</b></span>
+        <span class="meta__item"><b id="diffLabel">Medium</b></span>
+      </div>
+    </header>
+
+    <div class="segmented" role="tablist" aria-label="Difficulty">
+      <button id="diffEasy" class="seg" type="button">Easy</button>
+      <button id="diffMedium" class="seg" type="button" aria-selected="true">Medium</button>
+      <button id="diffHard" class="seg" type="button">Hard</button>
+    </div>
+
+    <div class="game">
+      <div class="board" id="board" role="grid" aria-label="Sudoku grid"></div>
+
+      <aside class="panel">
+        <div class="pad" id="pad" role="group" aria-label="Number pad">
+          <button class="digit" data-v="1" type="button">1</button>
+          <button class="digit" data-v="2" type="button">2</button>
+          <button class="digit" data-v="3" type="button">3</button>
+          <button class="digit" data-v="4" type="button">4</button>
+          <button class="digit" data-v="5" type="button">5</button>
+          <button class="digit" data-v="6" type="button">6</button>
+          <button class="digit" data-v="7" type="button">7</button>
+          <button class="digit" data-v="8" type="button">8</button>
+          <button class="digit" data-v="9" type="button">9</button>
+        </div>
+        <div class="actions">
+          <button id="eraseBtn" class="btn" type="button">Erase</button>
+          <button id="hintBtn" class="btn" type="button">Hint</button>
+          <button id="undoBtn" class="btn" type="button">Undo</button>
+        </div>
+        <button id="newBtn" class="btn btn--primary" type="button">New Game</button>
+      </aside>
+    </div>
+
+    <p class="sub">Fill every row, column and 3×3 box with 1–9. Click a cell and type or tap a number.</p>
+  </main>
+
+  <!-- Win / game-over overlay -->
+  <div class="overlay" id="overlay" hidden>
+    <div class="overlay__card" role="dialog" aria-modal="true">
+      <h2 id="overTitle">Solved!</h2>
+      <p id="overMsg">Nicely done.</p>
+      <div class="overlay__actions">
+        <button class="btn btn--primary" id="overNew" type="button">Play again</button>
+        <a class="btn" href="../../index.html">Game Center</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/sudoku.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>2048</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<script>
+  try {
+    var m = localStorage.getItem("gc-mode");
+    if (m === "light" || m === "dark") document.documentElement.setAttribute("data-mode", m);
+  } catch (e) {}
+</script>
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="gc-body">
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <main class="wrap">
+    <header class="head">
+      <h1 class="title">2048</h1>
+      <div class="scoreboard">
+        <div class="score"><span class="score__k">Score</span><span class="score__v" id="score">0</span></div>
+        <div class="score"><span class="score__k">Best</span><span class="score__v" id="best">0</span></div>
+      </div>
+    </header>
+    <p class="sub">Join the numbers to reach <b>2048</b>. Use arrow keys / WASD, or swipe.</p>
+
+    <div class="controls">
+      <button id="newGame" class="btn btn--primary" type="button">New Game</button>
+      <button id="undo" class="btn" type="button">Undo</button>
+    </div>
+
+    <div class="board" id="board" tabindex="0" aria-label="2048 game board">
+      <div class="grid" id="grid"></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="overlay" id="overlay" hidden>
+        <div class="overlay__msg" id="overlayMsg">Game over</div>
+        <div class="overlay__actions">
+          <button class="btn btn--primary" id="overNew" type="button">Try again</button>
+          <button class="btn" id="keepGoing" type="button" hidden>Keep going</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/game2048.js"></script>
+</body>
+</html>

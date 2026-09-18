@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Tic Tac Toe</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Apply a saved light/dark mode before first paint (shares the center's key). -->
+<script>
+  try {
+    var m = localStorage.getItem("gc-mode");
+    if (m === "light" || m === "dark") document.documentElement.setAttribute("data-mode", m);
+  } catch (e) {}
+</script>
+<!-- Shared center chrome loads first so this game's own styles always win. -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="gc-body">
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <main class="wrap">
+    <header class="head">
+      <h1 class="title">Tic Tac Toe</h1>
+      <p class="sub" id="status">Your move — X</p>
+    </header>
+
+    <!-- Mode + difficulty -->
+    <div class="segmented" role="tablist" aria-label="Game mode">
+      <button id="modePvp" class="seg" role="tab" aria-selected="true" type="button">2 Players</button>
+      <button id="modeAi" class="seg" role="tab" aria-selected="false" type="button">vs Computer</button>
+    </div>
+    <div class="segmented segmented--sub" id="diffRow" hidden>
+      <button id="diffEasy" class="seg seg--sm" type="button">Easy</button>
+      <button id="diffHard" class="seg seg--sm" type="button">Unbeatable</button>
+    </div>
+
+    <!-- Board -->
+    <div class="board" id="board" role="grid" aria-label="Tic tac toe board">
+      <button class="cell" data-i="0" role="gridcell" aria-label="cell 1"></button>
+      <button class="cell" data-i="1" role="gridcell" aria-label="cell 2"></button>
+      <button class="cell" data-i="2" role="gridcell" aria-label="cell 3"></button>
+      <button class="cell" data-i="3" role="gridcell" aria-label="cell 4"></button>
+      <button class="cell" data-i="4" role="gridcell" aria-label="cell 5"></button>
+      <button class="cell" data-i="5" role="gridcell" aria-label="cell 6"></button>
+      <button class="cell" data-i="6" role="gridcell" aria-label="cell 7"></button>
+      <button class="cell" data-i="7" role="gridcell" aria-label="cell 8"></button>
+      <button class="cell" data-i="8" role="gridcell" aria-label="cell 9"></button>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="scores">
+      <div class="score"><span class="score__k" id="xLabel">You (X)</span><span class="score__v" id="xScore">0</span></div>
+      <div class="score"><span class="score__k">Draws</span><span class="score__v" id="dScore">0</span></div>
+      <div class="score"><span class="score__k" id="oLabel">CPU (O)</span><span class="score__v" id="oScore">0</span></div>
+    </div>
+
+    <div class="controls">
+      <button id="newRound" class="btn btn--primary" type="button">New Round</button>
+      <button id="resetScores" class="btn" type="button">Reset Scores</button>
+    </div>
+  </main>
+
+  <script src="js/tictactoe.js"></script>
+</body>
+</html>

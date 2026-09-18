@@ -157,6 +157,129 @@
           <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
         </span>
       </a>
+
+      <a class="gc-card" href="games/tictactoe/index.html">
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Tic tac toe board preview">
+            <g stroke="#c3ccda" stroke-width="4" stroke-linecap="round">
+              <line x1="46" y1="14" x2="46" y2="106"/>
+              <line x1="74" y1="14" x2="74" y2="106"/>
+              <line x1="14" y1="46" x2="106" y2="46"/>
+              <line x1="14" y1="74" x2="106" y2="74"/>
+            </g>
+            <g fill="none" stroke-width="7" stroke-linecap="round">
+              <g stroke="#3b6ff0">
+                <path d="M22 22 L38 38 M38 22 L22 38"/>
+                <path d="M82 50 L98 66 M98 50 L82 66"/>
+                <path d="M50 82 L66 98 M66 82 L50 98"/>
+              </g>
+              <g stroke="#7b3bf0">
+                <circle cx="60" cy="30" r="9"/>
+                <circle cx="30" cy="60" r="9"/>
+                <circle cx="90" cy="90" r="9"/>
+              </g>
+            </g>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            Tic Tac Toe
+            <span class="gc-badge">2P · vs AI</span>
+          </span>
+          <span class="gc-card__desc">
+            The timeless noughts and crosses. Play a friend or face an
+            unbeatable minimax computer. Scores and preferences are saved.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
+
+      <a class="gc-card" href="games/2048/index.html">
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="2048 tiles preview">
+            <defs>
+              <linearGradient id="g2048" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffe07a"/>
+                <stop offset="1" stop-color="#edc22e"/>
+              </linearGradient>
+            </defs>
+            <!-- warm board -->
+            <rect x="8" y="8" width="104" height="104" rx="16" fill="#bbada0"/>
+            <!-- four equal tiles -->
+            <rect x="16" y="16" width="40" height="40" rx="8" fill="#eee4da"/>
+            <rect x="64" y="16" width="40" height="40" rx="8" fill="#f2b179"/>
+            <rect x="16" y="64" width="40" height="40" rx="8" fill="#f67c5f"/>
+            <rect x="64" y="64" width="40" height="40" rx="8" fill="url(#g2048)"/>
+            <g font-family="system-ui, sans-serif" font-weight="800" text-anchor="middle" dominant-baseline="central">
+              <text x="36" y="36" font-size="24" fill="#776e65">2</text>
+              <text x="84" y="36" font-size="24" fill="#f9f6f2">8</text>
+              <text x="36" y="84" font-size="21" fill="#f9f6f2">32</text>
+              <text x="84" y="84" font-size="14" fill="#776e65">2048</text>
+            </g>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            2048
+            <span class="gc-badge">Swipe · Merge</span>
+          </span>
+          <span class="gc-card__desc">
+            Slide and merge matching tiles to reach 2048. Smooth animations,
+            undo, a persistent best score and keyboard or touch-swipe controls.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
+
+      <a class="gc-card" href="games/sudoku/index.html">
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Sudoku grid preview">
+            <!-- paper -->
+            <rect x="14" y="14" width="92" height="92" rx="9" fill="#fff"/>
+            <!-- thin cell grid lines -->
+            <g stroke="#e3e8f1" stroke-width="1">
+              <path d="M24.2 16V104M34.4 16V104M54.8 16V104M65 16V104M85.4 16V104M95.6 16V104"/>
+              <path d="M16 24.2H104M16 34.4H104M16 54.8H104M16 65H104M16 85.4H104M16 95.6H104"/>
+            </g>
+            <!-- highlighted selected box (centre) -->
+            <rect x="44.6" y="44.6" width="30.6" height="30.6" fill="#3b6ff0" fill-opacity=".10"/>
+            <!-- thick box separators -->
+            <g stroke="#93a1b5" stroke-width="1.6">
+              <path d="M44.6 16V104M75.2 16V104M16 44.6H104M16 75.2H104"/>
+            </g>
+            <!-- outer frame -->
+            <rect x="14" y="14" width="92" height="92" rx="9" fill="none" stroke="#334155" stroke-width="2.4"/>
+            <!-- givens (dark) — snapped to cell centres, vertically centred -->
+            <g font-family="system-ui, sans-serif" font-size="10" font-weight="600" text-anchor="middle" dominant-baseline="central" fill="#1f2a37">
+              <text x="39.6" y="19.1">5</text>
+              <text x="70.2" y="19.1">1</text>
+              <text x="19.1" y="29.3">3</text>
+              <text x="100.9" y="39.6">8</text>
+              <text x="29.3" y="49.8">7</text>
+              <text x="90.7" y="60">2</text>
+              <text x="39.6" y="80.4">6</text>
+              <text x="80.4" y="90.7">9</text>
+            </g>
+            <!-- player entries (accent) inside the highlighted centre box -->
+            <g font-family="system-ui, sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#3b6ff0">
+              <text x="49.8" y="49.8" font-size="10">5</text>
+              <text x="60" y="60" font-size="11">4</text>
+              <text x="70.2" y="70.2" font-size="10">8</text>
+            </g>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            Sudoku
+            <span class="gc-badge">Easy · Med · Hard</span>
+          </span>
+          <span class="gc-card__desc">
+            Fill the grid so every row, column and box holds 1-9. Uniquely
+            solvable puzzles, hints, error checks, undo and a resumable timer.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
     </div>
   </main>
 
