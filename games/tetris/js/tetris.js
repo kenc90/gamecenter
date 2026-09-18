@@ -343,18 +343,22 @@
   }
   function finishClear() {
     var n = clearFlash.length;
-    // Remove flashed rows (ascending order so earlier splices don't shift
-    // the later indexes). Every row above them must FALL — so empty rows are
-    // unshifted back on TOP; appending at the bottom would leave the stack
-    // floating with an empty floor.
-    clearFlash.slice().sort(function (a, b) { return a - b; }).forEach(function (y) {
-      grid.splice(y, 1);
-    });
-    while (grid.length < ROWS) {
+    // Remove the flashed rows by rebuilding the well (filtering by a set), so
+    // it's correct no matter how many rows clear at once — splicing several
+    // indexes shifts the later ones and would drop the wrong rows, leaving a
+    // full row lingering to clear on a later piece.
+    var cleared = {};
+    clearFlash.forEach(function (y) { cleared[y] = true; });
+    var kept = [];
+    for (var y = 0; y < ROWS; y++) if (!cleared[y]) kept.push(grid[y]);
+    // Everything above a clear must FALL, so fresh empty rows go on TOP.
+    var empties = [];
+    for (var k = 0; k < n; k++) {
       var row = [];
       for (var x = 0; x < COLS; x++) row.push(null);
-      grid.unshift(row);
+      empties.push(row);
     }
+    grid = empties.concat(kept);
     clearFlash = null;
     score += [0, 100, 300, 500, 800][n] * level;
     lines += n;
