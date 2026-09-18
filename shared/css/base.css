@@ -92,7 +92,7 @@ body.gc-body *::after { box-sizing: border-box; }
 }
 .gc-brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -.01em; }
 .gc-brand svg { display: block; }
-.gc-brand b {
+.gc-brand span {
   background: linear-gradient(90deg, var(--gc-accent), var(--gc-accent-2));
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
