@@ -359,7 +359,11 @@
   function save() {
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
-        snap: snapshot(), hist: hist.map(cloneState), meta: { moveList: meta.moveList, capturedW: meta.capturedW, capturedB: meta.capturedB },
+        snap: snapshot(),
+        // hist entries are snapshots shaped { g, meta } — clone them as such
+        // (passing them to cloneState would throw and silently abort the save).
+        hist: hist.map(function (h) { return { g: cloneState(h.g), meta: JSON.parse(JSON.stringify(h.meta)) }; }),
+        meta: { moveList: meta.moveList, capturedW: meta.capturedW, capturedB: meta.capturedB },
         mode: mode, diff: diff, flipped: flipped
       }));
     } catch (e) {}
