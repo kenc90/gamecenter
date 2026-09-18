@@ -22,6 +22,8 @@
   --felt-1: #0b5d3b;
   --felt-2: #083f29;
   --felt-line: rgba(255, 255, 255, .06);
+  /* Felt side padding lives in one var so the board can size itself to fit. */
+  --fpad: clamp(12px, 4vw, 40px);
 
   min-height: 100vh;
   display: flex;
@@ -82,14 +84,17 @@ body { background: var(--felt-2); font-family: system-ui, -apple-system, "Segoe 
 .felt {
   flex: 1;
   overflow: auto;
-  padding: clamp(14px, 3.5vh, 34px) clamp(12px, 4vw, 40px) 60px;
+  padding: clamp(14px, 3.5vh, 34px) var(--fpad) 60px;
   background-image:
     repeating-linear-gradient(45deg, var(--felt-line) 0 2px, transparent 2px 6px);
 }
 .board {
-  --cw: clamp(48px, 11.5vw, 92px);
+  /* Size cards so 7 columns + gaps + the felt side padding always fit the
+     viewport (minus a 16px buffer for the vertical scrollbar). This removes the
+     horizontal scrollbar on small screens instead of a fixed 48px floor. */
+  --gap: clamp(6px, 2.4vw, 22px);
+  --cw: min(92px, calc((100vw - 6 * var(--gap) - 2 * var(--fpad) - 16px) / 7));
   --ch: calc(var(--cw) * 1.42);
-  --gap: clamp(10px, 2.2vw, 22px);
   width: calc(7 * var(--cw) + 6 * var(--gap));
   margin: 0 auto;
 }
