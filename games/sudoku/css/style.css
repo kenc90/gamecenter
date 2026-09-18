@@ -81,7 +81,7 @@ html, body { overflow-x: hidden; }
 .actions { display: flex; gap: 8px; }
 .btn {
   appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
-  padding: 10px 14px; border-radius: 10px; flex: 1;
+  padding: 10px 14px; border-radius: 10px; flex: 1; white-space: nowrap;
   border: 1px solid var(--gc-border); background: var(--gc-surface); color: var(--gc-text);
   transition: transform .06s ease, border-color .15s ease;
 }
@@ -103,12 +103,12 @@ html, body { overflow-x: hidden; }
 .overlay__actions { display: flex; gap: 10px; justify-content: center; }
 .overlay__actions .btn { flex: none; }
 
-/* Wide screens: numpad sits right next to the board as a 3×3 grid. */
-@media (min-width: 760px) {
+/* Wide screens: numpad sits beside the board as a 3×3 grid and stretches to the
+   exact same width as the action-button row below it (both fill the panel). */
+@media (min-width: 820px) {
   .game { flex-direction: row; align-items: flex-start; justify-content: center; gap: 24px; }
-  .panel { width: auto; }
-  .pad { grid-template-columns: repeat(3, var(--cs)); }
-  .digit { width: var(--cs); }
+  .panel { width: 240px; }
+  .pad { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (prefers-reduced-motion: reduce) {
