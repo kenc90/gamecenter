@@ -27,9 +27,10 @@ html, body { height: 100%; margin: 0; overflow: hidden; }
   --tb-text: #fff;
   --tb-text-shadow: 1px 1px 1px rgba(0,0,0,.55);
   --tb-sheen: linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,0) 50%);
-  --tb-btn-normal: linear-gradient(#5c95f2, #1b5cd6);
-  --tb-btn-close: linear-gradient(#f1a180, #d84b2b 45%, #c3341a);
-  --tb-btn-border: #fff;
+  /* XP: blue minimize/maximize, red-orange close. */
+  --tb-btn-normal: linear-gradient(#9ac8f7 0%, #4f96e8 14%, #2c7ede 55%, #1d6ac8 88%, #1660b6 100%);
+  --tb-btn-close: linear-gradient(#f7bda1 0%, #ec8054 14%, #d74d22 55%, #c84018 88%, #b8370f 100%);
+  --tb-btn-border: rgba(255,255,255,.92);
   --tb-btn-radius: 3px;
 
   --menu-bg: #ece9d8;
@@ -151,21 +152,37 @@ body {
   text-shadow: var(--tb-text-shadow);
   white-space: nowrap;
 }
-.title-buttons { display: flex; align-items: center; gap: 2px; }
+/* ---- Caption (min / max / close) buttons ----
+   Base is deliberately NEUTRAL: equal sizes, a real gap, plain shadow. The
+   non-Windows themes only set colours, so they must not inherit XP chrome. */
+.title-buttons { display: flex; align-items: center; gap: 2px; padding-right: 3px; }
 .tb-btn {
   width: 21px; height: 21px;
+  padding: 0;
   border: 1px solid var(--tb-btn-border);
   border-radius: var(--tb-btn-radius);
   color: var(--tb-text);
-  font-size: 11px; line-height: 1;
   cursor: default;
   display: inline-flex; align-items: center; justify-content: center;
-  box-shadow: inset 0 0 3px rgba(0,0,0,.35);
+  box-shadow: 0 1px 2px rgba(0,0,0,.35);
 }
+.tb-btn svg { width: 10px; height: 10px; display: block; }
 .tb-btn.minimize, .tb-btn.maximize { background: var(--tb-btn-normal); }
-.tb-btn.close { background: var(--tb-btn-close); font-weight: bold; }
+.tb-btn.close { background: var(--tb-btn-close); }
 .tb-btn:active { filter: brightness(.85); }
 .tb-btn:hover { filter: brightness(1.12); }
+
+/* XP Luna: glossy pills, a wider close offset from the pair, and white glyphs
+   carrying a hard 1px shadow. */
+:root[data-theme="xp"] .tb-btn {
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.22),
+    inset 0 -4px 6px rgba(0,0,0,.25),
+    inset 0 3px 5px rgba(255,255,255,.18),
+    0 1px 2px rgba(0,0,0,.4);
+}
+:root[data-theme="xp"] .tb-btn svg { filter: drop-shadow(0 1px 0 rgba(0,0,0,.45)); }
+:root[data-theme="xp"] .tb-btn.close { width: 24px; margin-left: 3px; }
 
 /* ---- Menu bar ---- */
 .menu-bar {
@@ -480,7 +497,10 @@ body {
 /* Keep tap/click targets comfortable on touch devices */
 @media (hover: none) and (pointer: coarse) {
   .menu-label { padding: 8px 12px; }
-  .tb-btn { width: 30px; height: 30px; }
+  /* Doubled class + attribute lifts this above the per-theme caption sizes, so
+     touch targets survive the Vista/Classic width and height overrides. */
+  :root[data-theme] .title-buttons .tb-btn.tb-btn { width: 30px; height: 30px; }
+  :root[data-theme] .title-buttons .tb-btn.tb-btn svg { width: 13px; height: 13px; }
 }
 
 /* ============================================================
@@ -520,10 +540,11 @@ body {
   --tb-text-shadow: 0 0 6px rgba(0, 0, 0, .5), 0 1px 1px rgba(0, 0, 0, .6);
   /* No glossy highlight overlay — Vista is plain tinted glass, not shiny. */
   --tb-sheen: none;
-  --tb-btn-normal: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #cfe4f6 45%, #9dc2e4 100%);
-  --tb-btn-close: radial-gradient(120% 120% at 50% 0%, #ffe9df 0%, #f3a988 45%, #cf4a24 100%);
-  --tb-btn-border: rgba(255,255,255,.9);
-  --tb-btn-radius: 6px;
+  /* Aero caption buttons: glossy light-blue glass, red-orange close. */
+  --tb-btn-normal: radial-gradient(120% 130% at 50% 0%, rgba(255,255,255,.95) 0%, rgba(214,235,250,.8) 45%, rgba(150,195,230,.85) 100%);
+  --tb-btn-close: radial-gradient(120% 130% at 50% 0%, rgba(255,236,226,.95) 0%, rgba(247,168,136,.88) 45%, rgba(205,72,34,.92) 100%);
+  --tb-btn-border: rgba(255,255,255,.85);
+  --tb-btn-radius: 4px;
 
   --menu-bg: rgba(255, 255, 255, .12);
   --menu-border: rgba(150,180,210,.7);
@@ -570,11 +591,19 @@ body {
   -webkit-backdrop-filter: blur(16px) saturate(1.1) brightness(1.04);
 }
 :root[data-theme="vista"] .title-bar { border-radius: 7px 7px 0 0; }
+/* Vista/7 Aero: wide, short rounded glass rects, thin dark glyphs with a white
+   glow, and a wider red close — separated by real gaps, unlike XP's flush pair. */
+:root[data-theme="vista"] .title-buttons { gap: 2px; padding-right: 4px; }
 :root[data-theme="vista"] .tb-btn {
-  color: #123;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.45);
+  width: 31px; height: 21px;
+  color: #12324a;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 0 0 1px rgba(255,255,255,.45),
+    0 1px 3px rgba(0,0,0,.5);
 }
-:root[data-theme="vista"] .tb-btn.close { color: #40100a; }
+:root[data-theme="vista"] .tb-btn svg { filter: drop-shadow(0 0 1px rgba(255,255,255,.95)); }
+:root[data-theme="vista"] .tb-btn.close { width: 37px; color: #40100a; }
 
 /* Covered tiles: light blue with a white translucent glass triangle in the
    bottom-right corner. The triangle is a background layer (not a pseudo-element
@@ -684,7 +713,8 @@ body {
   --win-shadow: 2px 2px 8px rgba(0,0,0,.5);
 
   --tb-h: 22px;
-  --tb-bg: linear-gradient(90deg, #000080, #1084d0);
+  /* Win95 active caption: solid navy, no gradient. */
+  --tb-bg: #000080;
   --tb-border: #dfdfdf;
   --tb-text: #fff;
   --tb-text-shadow: none;
@@ -731,7 +761,30 @@ body {
   --btn-border: #dfdfdf;
   --btn-text: #000;
 }
-:root[data-theme="classic"] .tb-btn { box-shadow: none; color: #000; }
+/* Win95 caption buttons: flat silver with a hard 2px 3D bevel that inverts when
+   pressed. No gloss and no hover brightening — the bevel is the whole affordance. */
+:root[data-theme="classic"] .title-buttons { gap: 2px; padding-right: 2px; }
+:root[data-theme="classic"] .tb-btn {
+  width: 18px; height: 16px;
+  border: 1px solid;
+  border-color: #dfdfdf #000 #000 #dfdfdf;
+  border-radius: 0;
+  background: #c0c0c0;
+  color: #000;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+}
+:root[data-theme="classic"] .tb-btn:hover,
+:root[data-theme="classic"] .tb-btn:active { filter: none; }
+:root[data-theme="classic"] .tb-btn:active {
+  border-color: #000 #dfdfdf #dfdfdf #000;
+  box-shadow: inset -1px -1px 0 #fff, inset 1px 1px 0 #808080;
+}
+:root[data-theme="classic"] .tb-btn:active svg { transform: translate(1px, 1px); }
+:root[data-theme="classic"] .tb-btn svg {
+  width: 10px; height: 9px;
+  shape-rendering: crispEdges;
+  filter: none;
+}
 :root[data-theme="classic"] .menu-dropdown { box-shadow: 2px 2px 0 rgba(0,0,0,.4); }
 
 /* ---------- Virus (toxic biohazard) ---------- */

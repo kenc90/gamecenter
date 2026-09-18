@@ -717,7 +717,7 @@
       <div class="dialog" role="dialog" aria-modal="true">
         <div class="title-bar">
           <div class="title-bar-inner"><span class="title-text">${title}</span></div>
-          <div class="title-buttons"><button class="tb-btn close" data-close>&#10005;</button></div>
+          <div class="title-buttons"><button class="tb-btn close" data-close aria-label="Close"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.8 1.8 L8.2 8.2 M8.2 1.8 L1.8 8.2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button></div>
         </div>
         <div class="dialog-content">${bodyHtml}</div>
         <div class="dialog-buttons"></div>
