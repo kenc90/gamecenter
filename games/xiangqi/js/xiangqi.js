@@ -13,8 +13,8 @@
   var FILES9 = "abcdefghi";
 
   var GLYPH = {
-    r: { k: "\u5E26", a: "\u4ED5", b: "\u76F8", n: "\u99AC", r: "\u8ECA", c: "\u70AE", p: "\u5175" },
-    b: { k: "\u5C06", a: "\u58EB", b: "\u8C61", n: "\u99AC", r: "\u8ECA", c: "\u782E", p: "\u5352" }
+    r: { k: "\u5E25", a: "\u4ED5", b: "\u76F8", n: "\u99AC", r: "\u8ECA", c: "\u70AE", p: "\u5175" },
+    b: { k: "\u5C07", a: "\u58EB", b: "\u8C61", n: "\u99AC", r: "\u8ECA", c: "\u782E", p: "\u5352" }
   };
   var LETTER = { k: "K", a: "A", b: "E", n: "H", r: "R", c: "C", p: "P" };
   var VALUE = { k: 10000, r: 900, c: 450, n: 400, b: 100, a: 200, p: 100 };
