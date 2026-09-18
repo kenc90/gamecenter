@@ -127,11 +127,22 @@ body.gc-body *::after { box-sizing: border-box; }
 .gc-card:hover,
 .gc-card:focus-visible {
   transform: translateY(-4px);
-  box-shadow: var(--gc-shadow-hi);
   border-color: var(--gc-accent);
-  border-color: color-mix(in srgb, var(--gc-accent) 45%, var(--gc-border));
+  border-color: color-mix(in srgb, var(--gc-accent) 55%, var(--gc-border));
+  /* Plain value first as a fallback if color-mix() is unsupported. */
+  box-shadow: var(--gc-shadow-hi);
+  box-shadow:
+    var(--gc-shadow-hi),
+    0 0 0 1px color-mix(in srgb, var(--gc-accent) 45%, transparent),
+    0 10px 30px color-mix(in srgb, var(--gc-accent) 32%, transparent),
+    0 8px 44px color-mix(in srgb, var(--gc-accent-2) 26%, transparent);
 }
-.gc-card:focus-visible { outline: none; box-shadow: var(--gc-ring), var(--gc-shadow-hi); }
+.gc-card:focus-visible {
+  outline: none;
+  box-shadow: var(--gc-ring),
+    0 10px 30px color-mix(in srgb, var(--gc-accent) 32%, transparent),
+    0 8px 44px color-mix(in srgb, var(--gc-accent-2) 26%, transparent);
+}
 .gc-card__art {
   display: flex; align-items: center; justify-content: center;
   padding: 26px;
