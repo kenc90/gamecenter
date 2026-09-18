@@ -133,18 +133,18 @@
 
   function cyberFace(state) {
     const cyan = "#0affff", mag = "#ff2b6b";
-    const eyes = `<rect x="7.4" y="7.6" width="2.6" height="6" rx="1.2" fill="${cyan}"/>`
-      + `<rect x="16" y="7.6" width="2.6" height="6" rx="1.2" fill="${cyan}"/>`;
-    const smile = `<path d="M7.5 15 Q13 19.5 18.5 15" fill="none" stroke="${mag}" stroke-width="1.8" stroke-linecap="round"/>`;
+    const eyes = `<rect x="7.4" y="7.2" width="2.6" height="5" rx="1.2" fill="${cyan}"/>`
+      + `<rect x="16" y="7.2" width="2.6" height="5" rx="1.2" fill="${cyan}"/>`;
+    const smile = `<path d="M7.5 16.5 Q13 21 18.5 16.5" fill="none" stroke="${cyan}" stroke-width="1.8" stroke-linecap="round"/>`;
     let inner;
-    if (state === "worried") inner = eyes + `<rect x="10.4" y="15" width="5.2" height="4.2" rx="1" fill="${cyan}"/>`;
+    if (state === "worried") inner = eyes + `<rect x="10.4" y="16" width="5.2" height="4.2" rx="1" fill="${cyan}"/>`;
     else if (state === "dead") inner =
       `<g stroke="${mag}" stroke-width="1.9" stroke-linecap="round" fill="none">`
       + `<path d="M7 8 l4.6 4.6 M11.6 8 l-4.6 4.6"/><path d="M14.4 8 l4.6 4.6 M19 8 l-4.6 4.6"/>`
-      + `<path d="M8 17.5 l2 -1.6 l2 1.6 l2 -1.6 l2 1.6"/></g>`;
+      + `<path d="M9 18.5 l2 -1.6 l2 1.6 l2 -1.6 l2 1.6"/></g>`;
     else if (state === "cool") inner =
-      `<rect x="4.6" y="8.2" width="16.8" height="4.4" rx="1.8" fill="${cyan}"/>`
-      + `<rect x="6" y="9.2" width="14" height="1" rx="0.5" fill="rgba(255,255,255,.7)"/>` + smile;
+      `<rect x="4.6" y="8" width="16.8" height="4.4" rx="1.8" fill="${cyan}"/>`
+      + `<rect x="6" y="9" width="14" height="1" rx="0.5" fill="rgba(255,255,255,.7)"/>` + smile;
     else inner = eyes + smile;
     return `<svg viewBox="0 0 26 26" width="26" height="26" class="face-cyber" aria-hidden="true">`
       + `<circle cx="13" cy="13" r="11.5" fill="#0b1220" stroke="${cyan}" stroke-width="1.4"/>`
