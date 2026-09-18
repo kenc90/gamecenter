@@ -152,8 +152,31 @@
       + inner + `</svg>`;
   }
 
+  function virusFace(state) {
+    const g = "#4dff7c", y = "#ffe14d", red = "#ff5a5a";
+    const eyes = `<rect x="7.4" y="7.2" width="2.6" height="5" rx="1.2" fill="${g}"/>`
+      + `<rect x="16" y="7.2" width="2.6" height="5" rx="1.2" fill="${g}"/>`;
+    const smile = `<path d="M7.5 16.5 Q13 21 18.5 16.5" fill="none" stroke="${g}" stroke-width="1.8" stroke-linecap="round"/>`;
+    let inner;
+    if (state === "worried") inner = eyes + `<rect x="10.4" y="16" width="5.2" height="4.2" rx="1" fill="${y}"/>`;
+    else if (state === "dead") inner =
+      `<g stroke="${red}" stroke-width="1.9" stroke-linecap="round" fill="none">`
+      + `<path d="M7 8 l4.6 4.6 M11.6 8 l-4.6 4.6"/><path d="M14.4 8 l4.6 4.6 M19 8 l-4.6 4.6"/>`
+      + `<path d="M9 18.5 l2 -1.6 l2 1.6 l2 -1.6 l2 1.6"/></g>`;
+    else if (state === "cool") inner =
+      `<rect x="4.6" y="8" width="16.8" height="4.4" rx="1.8" fill="${g}"/>`
+      + `<rect x="6" y="9" width="14" height="1" rx="0.5" fill="rgba(255,255,255,.7)"/>` + smile;
+    else inner = eyes + smile;
+    return `<svg viewBox="0 0 26 26" width="26" height="26" class="face-virus" aria-hidden="true">`
+      + `<circle cx="13" cy="13" r="11.5" fill="#06180b" stroke="${g}" stroke-width="1.4"/>`
+      + `<circle cx="13" cy="13" r="9" fill="none" stroke="${y}" stroke-width="0.5" opacity=".5"/>`
+      + inner + `</svg>`;
+  }
+
   function faceSvg(state, t) {
-    return t === "cyberpunk" ? cyberFace(state) : classicFace(state);
+    if (t === "cyberpunk") return cyberFace(state);
+    if (t === "virus") return virusFace(state);
+    return classicFace(state);
   }
   function renderFace(state) {
     faceState = state;
@@ -262,13 +285,29 @@
     <line x1="8" y1="1" x2="8" y2="15"/><line x1="1" y1="8" x2="15" y2="8"/>
     <line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></g>
     <circle cx="8" cy="8" r="4.2" fill="currentColor"/><circle class="hl" cx="6.4" cy="6.4" r="1.2"/></svg>`;
+  // Virus particle: radial spikes tipped with glycoprotein knobs around a body.
+  const spoke = (a) => `<g transform="rotate(${a} 8 8)"><line x1="8" y1="4.2" x2="8" y2="2.4"/><circle cx="8" cy="1.7" r="1.1"/></g>`;
+  const MINE_VIRUS = `<svg viewBox="0 0 16 16" class="mine mine-virus">`
+    + `<g class="spikes" stroke="currentColor" stroke-width="1.3" fill="currentColor">`
+    + [0, 45, 90, 135, 180, 225, 270, 315].map(spoke).join("") + `</g>`
+    + `<circle cx="8" cy="8" r="4.4" fill="currentColor"/><circle class="hl" cx="6.5" cy="6.5" r="1.2"/></svg>`;
+  function mineSvg(t) { return t === "virus" ? MINE_VIRUS : MINE_SVG; }
+
   const FLAG_CLASSIC = `<svg viewBox="0 0 16 16" class="flag"><rect x="3" y="2.5" width="2" height="11" fill="currentColor"/>
     <path d="M5 3 L13 5.5 L5 8 Z" fill="#d40000"/><rect x="2" y="13" width="6" height="1.6" fill="currentColor"/></svg>`;
   const FLAG_CYBER = `<svg viewBox="0 0 16 16" class="flag flag-cyber">
     <rect x="3" y="2" width="1.6" height="11.5" fill="#0affff"/>
     <path d="M4.6 2.4 L13.5 5.2 L4.6 8 Z" fill="#ff2b6b" stroke="#0affff" stroke-width="0.6" stroke-linejoin="round"/>
     <rect x="1.6" y="13.2" width="6.4" height="1.8" rx="0.6" fill="#0affff"/></svg>`;
-  function flagSvg(t) { return t === "cyberpunk" ? FLAG_CYBER : FLAG_CLASSIC; }
+  const FLAG_VIRUS = `<svg viewBox="0 0 16 16" class="flag flag-virus">
+    <rect x="3" y="2" width="1.8" height="11.5" fill="#79ff9a"/>
+    <path d="M4.8 2.4 L13 5 L4.8 7.6 Z" fill="#ffe14d" stroke="#1f7a2e" stroke-width="0.6" stroke-linejoin="round"/>
+    <rect x="1.6" y="13.2" width="6.4" height="1.8" rx="0.6" fill="#79ff9a"/></svg>`;
+  function flagSvg(t) {
+    if (t === "cyberpunk") return FLAG_CYBER;
+    if (t === "virus") return FLAG_VIRUS;
+    return FLAG_CLASSIC;
+  }
 
   function paintCell(i) {
     const cell = cells[i];
@@ -278,7 +317,7 @@
     if (cell.revealed) {
       el.classList.add("revealed");
       if (cell.mine) {
-        el.innerHTML = MINE_SVG;
+        el.innerHTML = mineSvg(theme);
         if (i === firstClickCell) el.classList.add("mine-hit");
       } else if (cell.adj > 0) {
         el.textContent = cell.adj;

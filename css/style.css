@@ -781,6 +781,8 @@ body {
 :root[data-theme="virus"] .title-text { text-transform: uppercase; letter-spacing: 1px; }
 :root[data-theme="virus"] .cell .mine { filter: drop-shadow(0 0 2px currentColor); }
 :root[data-theme="virus"] .cell.flag { color: var(--mine-color); }
+:root[data-theme="virus"] .cell .flag { filter: drop-shadow(0 0 3px #4dff7c); }
+:root[data-theme="virus"] .smiley svg { filter: drop-shadow(0 0 3px rgba(77,255,124,.9)); }
 
 /* ---------- Ocean (aqua / seafoam) ---------- */
 :root[data-theme="ocean"] {
@@ -915,7 +917,11 @@ body {
 }
 :root[data-theme="crayon"] .cell { border-radius: 6px; }
 :root[data-theme="crayon"] .cell:not(.revealed) {
-  border: 2px solid #cf9b52;
-  background: #ffe9c2;
+  border: 2px solid #b06a1f;
+  background: #ffcf85;
+}
+:root[data-theme="crayon"] .cell.revealed {
+  border: 1px solid #d9b38c;
+  background: #fffdf5;
 }
 :root[data-theme="crayon"] .title-text { letter-spacing: .5px; }
