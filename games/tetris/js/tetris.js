@@ -71,7 +71,7 @@
     return out;
   }
   function gravityMs() { return Math.max(60, 850 - (level - 1) * 75); }
-  function softMs() { return Math.max(30, gravityMs() / 20); }   // fast, ~20x fall
+  function softMs() { return Math.max(18, gravityMs() / 40); }   // very fast drop
 
   // ---------- Persistence ----------
   function save() {
@@ -325,7 +325,7 @@
     if (!lastTime) lastTime = t;
     acc += t - lastTime;
     lastTime = t;
-    // Drop is a fast ~20x gravity (never faster than one cell per 30ms),
+    // Drop is a very fast ~40x gravity (never faster than one cell per 18ms),
     // so holding Down sends the piece down quickly but still trackable.
     var iv = softDrop ? softMs() : gravityMs();
     while (acc >= iv) { acc -= iv; step(); if (!alive || clearFlash) break; }
