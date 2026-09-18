@@ -846,11 +846,24 @@ body {
   --btn-border: #2f8fc7;
   --btn-text: #0a3d5c;
 }
-:root[data-theme="ocean"] .cell { border-radius: 4px; }
+/* Ocean tiles are soap bubbles: round, translucent, bright rim + specular
+   highlight. Only background gradients are used (no pseudo-elements/shadows),
+   so it stays fast on large grids. */
+:root[data-theme="ocean"] .field { background: linear-gradient(#6fb0d6, #3f88b5); }
+:root[data-theme="ocean"] .cell {
+  border: none;
+  border-radius: 50%;
+}
 :root[data-theme="ocean"] .cell:not(.revealed) {
   background:
-    linear-gradient(rgba(255,255,255,.5), rgba(255,255,255,0) 45%),
-    #bfe2ee;
+    radial-gradient(circle at 33% 28%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.3) 10%, rgba(255,255,255,0) 24%),
+    radial-gradient(circle at 50% 50%, rgba(200,235,248,.35) 0%, rgba(120,180,215,.5) 55%, rgba(90,160,200,.8) 80%, rgba(235,250,255,.95) 93%, rgba(120,180,215,.5) 100%);
+}
+:root[data-theme="ocean"] .cell.revealed {
+  background: radial-gradient(circle at 50% 42%, #eefaff 0%, #cfe9f2 72%, #a9d4e4 100%);
+}
+:root[data-theme="ocean"] .cell.revealed.mine-hit {
+  background: radial-gradient(circle at 50% 42%, #ffe0d2 0%, #ff8a6a 60%, #ff6a4d 100%);
 }
 
 /* ---------- Crayon (hand-drawn paper) ---------- */
