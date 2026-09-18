@@ -552,6 +552,9 @@ body {
 }
 :root[data-theme="vista"] .tb-btn.close { color: #40100a; }
 
+/* Covered tiles are light blue */
+:root[data-theme="vista"] .cell:not(.revealed) { background: #7fb4e4; }
+
 /* ---------- Cyberpunk (neon) ---------- */
 :root[data-theme="cyberpunk"] {
   --desktop-bg: #05010c;
