@@ -22,10 +22,13 @@
   const overlayEl = document.getElementById("overlay");
   const overlayMsgEl = document.getElementById("overlayMsg");
   const modalRoot = document.getElementById("modal-root");
+  const rollbackBtn = document.getElementById("rollbackBtn");
+  const statusBar = document.getElementById("statusBar");
 
   // ---------- Game state ----------
   let level = "expert";
   let theme = "xp";
+  let godMode = false;
   let cols, rows, totalMines;
   let cells = [];        // flat array of cell objects
   let minesPlaced = false;
@@ -36,6 +39,8 @@
   let revealedCount = 0;
   let time = 0;
   let timerId = null;
+  let checkpoint = null;   // pre-move snapshot for God Mode rollback
+  let canRollback = false;
 
   // ---------- Helpers ----------
   const idx = (c, r) => r * cols + c;
@@ -149,6 +154,9 @@
     updateMineCounter();
     renderFace("normal");
     windowEl.classList.remove("win");
+    canRollback = false;
+    if (rollbackBtn) { rollbackBtn.hidden = true; }
+    smileyEl.title = "New game";
     markChecked();
     layout();
   }
@@ -194,20 +202,24 @@
       cells[i].mine = true;
       placed++;
     }
+    minesPlaced = true;
+    computeAdj();
+  }
+
+  function computeAdj() {
     for (let i = 0; i < cells.length; i++) {
       const c = i % cols, r = Math.floor(i / cols);
       cells[i].adj = neighbors(c, r).filter((n) => cells[n].mine).length;
     }
-    minesPlaced = true;
   }
 
   // ---------- Cell visuals ----------
-  const MINE_SVG = `<svg viewBox="0 0 16 16"><g stroke="#000" stroke-width="1.2">
+  const MINE_SVG = `<svg viewBox="0 0 16 16" class="mine"><g class="spikes" stroke="currentColor" stroke-width="1.4">
     <line x1="8" y1="1" x2="8" y2="15"/><line x1="1" y1="8" x2="15" y2="8"/>
     <line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></g>
-    <circle cx="8" cy="8" r="4.2" fill="#000"/><circle cx="6.4" cy="6.4" r="1.2" fill="#fff"/></svg>`;
-  const FLAG_SVG = `<svg viewBox="0 0 16 16"><rect x="3" y="2.5" width="2" height="11" fill="#000"/>
-    <path d="M5 3 L13 5.5 L5 8 Z" fill="#d40000"/><rect x="2" y="13" width="6" height="1.6" fill="#000"/></svg>`;
+    <circle cx="8" cy="8" r="4.2" fill="currentColor"/><circle class="hl" cx="6.4" cy="6.4" r="1.2"/></svg>`;
+  const FLAG_SVG = `<svg viewBox="0 0 16 16" class="flag"><rect x="3" y="2.5" width="2" height="11" fill="currentColor"/>
+    <path d="M5 3 L13 5.5 L5 8 Z" fill="#d40000"/><rect x="2" y="13" width="6" height="1.6" fill="currentColor"/></svg>`;
 
   function paintCell(i) {
     const cell = cells[i];
@@ -249,7 +261,7 @@
     }
   }
 
-  function explode(i) {
+  function explode(i, reason) {
     firstClickCell = i;
     cells[i].revealed = true;
     gameOver = true;
@@ -270,6 +282,18 @@
     }
     paintCell(i);
     cells[i].el.classList.add("mine-hit");
+
+    clearSave();
+
+    if (godMode && checkpoint) {
+      // God Mode: allow undoing the fatal move instead of ending the game.
+      canRollback = true;
+      rollbackBtn.hidden = false;
+      smileyEl.title = "Rollback (God Mode)";
+      setStatus("Boom! Click \u21a9 Rollback (or the smiley) to undo the fatal move.");
+    } else {
+      setStatus("Boom! You hit a mine.");
+    }
   }
 
   function checkWin() {
@@ -289,6 +313,10 @@
       }
       updateMineCounter();
       recordBestTime();
+      clearSave();
+      setStatus(`You cleared ${cols}\u00d7${rows} in ${time}s! \u2014 ${LEVELS[level].label}`);
+      canRollback = false;
+      rollbackBtn.hidden = true;
     }
   }
 
@@ -314,10 +342,101 @@
   function startTimer() {
     if (timerId) return;
     timerId = setInterval(() => {
-      if (time < 999) { time++; updateTimer(); }
+      if (time < 999) { time++; updateTimer(); saveGame(); }
     }, 1000);
   }
   function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+  // ---------- Status bar ----------
+  function setStatus(msg) { if (statusBar) statusBar.textContent = msg; }
+
+  // ---------- Persistence (resume across refresh) ----------
+  // Compact serialization: cells are [mine, revealed, flag] tuples; adjacencies
+  // are recomputed from mines on restore.
+  function serializeGame() {
+    return {
+      v: 1,
+      level,
+      minesPlaced, gameStarted, gameOver,
+      firstClickCell, time,
+      outcome: !gameOver ? null
+        : (revealedCount === cells.filter((c) => !c.mine).length ? "win" : "lose"),
+      cells: cells.map((c) => [c.mine ? 1 : 0, c.revealed ? 1 : 0, c.flag]),
+    };
+  }
+
+  function saveGame() {
+    try { localStorage.setItem("ms-game", JSON.stringify(serializeGame())); }
+    catch {}
+  }
+  function clearSave() {
+    try { localStorage.removeItem("ms-game"); } catch {}
+  }
+
+  // Rebuild the board for level `l` and repaint from a serialized snapshot.
+  function applyGame(s) {
+    if (!s || !LEVELS[s.level] || !Array.isArray(s.cells)) return false;
+    if (s.level !== level) level = s.level;
+    buildBoard();  // fresh DOM; scalars overridden below
+    if (s.cells.length !== cells.length) { newGame(); return true; }
+
+    for (let j = 0; j < cells.length; j++) {
+      cells[j].mine = !!s.cells[j][0];
+      cells[j].revealed = !!s.cells[j][1];
+      cells[j].flag = s.cells[j][2] | 0;
+    }
+    computeAdj();
+    minesPlaced = !!s.minesPlaced;
+    gameStarted = !!s.gameStarted;
+    gameOver = !!s.gameOver;
+    firstClickCell = s.firstClickCell == null ? -1 : s.firstClickCell;
+    flagCount = cells.reduce((a, c) => a + (c.flag === FLAG.FLAG ? 1 : 0), 0);
+    revealedCount = cells.filter((c) => c.revealed).length;
+    time = Math.min(999, s.time | 0);
+
+    for (let j = 0; j < cells.length; j++) paintCell(j);
+    updateMineCounter();
+    updateTimer();
+
+    if (gameOver) {
+      fieldEl.classList.add("locked");
+      renderFace(s.outcome === "win" ? "cool" : "dead");
+      if (s.outcome === "win") windowEl.classList.add("win");
+      setStatus(s.outcome === "win" ? "You won — press F2 or the smiley for a new game."
+                                     : "You lost — press F2 or the smiley for a new game.");
+    } else {
+      setStatus(minesPlaced ? "Good luck!" : "First click is always safe.");
+      if (minesPlaced) startTimer();
+    }
+    saveGame();
+    return true;
+  }
+
+  // ---------- God Mode ----------
+  function setGodMode(on) {
+    godMode = !!on;
+    try { localStorage.setItem("ms-god", godMode ? "1" : "0"); } catch {}
+    updateGodMenu();
+    if (!godMode) { canRollback = false; rollbackBtn.hidden = true; }
+    setStatus(godMode
+      ? "God Mode ON — fatal moves can be rolled back."
+      : "God Mode off.");
+  }
+  function updateGodMenu() {
+    const b = document.querySelector('button[data-action="god-mode"]');
+    if (b) b.classList.toggle("checked", godMode);
+  }
+
+  function doRollback() {
+    if (!checkpoint) { newGame(); return; }
+    const s = checkpoint;
+    canRollback = false;
+    rollbackBtn.hidden = true;
+    checkpoint = null;
+    applyGame(s);
+    if (minesPlaced && !gameOver) startTimer();
+    setStatus("Rolled back to before the fatal move.");
+  }
 
   // ---------- Input ----------
   fieldEl.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -347,34 +466,44 @@
       else { cell.flag = FLAG.NONE; }
       paintCell(i);
       updateMineCounter();
+      saveGame();
       return;
     }
 
+    // Snapshot the pre-move state so a fatal click can be rolled back.
+    if (minesPlaced) checkpoint = serializeGame();
+
     if (e.button === 1) { // middle click = chord
       e.preventDefault();
-      if (cell.revealed) chord(i);
+      if (cell.revealed) { chord(i); if (!gameOver) saveGame(); }
       return;
     }
 
     if (e.button === 0) {
       renderFace("normal");
       if (cell.flag === FLAG.FLAG) return;
-      if (cell.revealed) { chord(i); return; }
+      if (cell.revealed) { chord(i); if (!gameOver) saveGame(); return; }
 
       if (!minesPlaced) {
         placeMines(i);
+        checkpoint = null; // first move is always safe; nothing to undo
         if (!gameStarted) { gameStarted = true; startTimer(); }
       }
-      if (cell.mine) { explode(i); return; }
+      if (cell.mine) { explode(i, "You uncovered a mine."); return; }
       reveal(i);
       checkWin();
+      if (!gameOver) saveGame();
     }
   });
 
   // prevent middle-click autoscroll
   fieldEl.addEventListener("auxclick", (e) => { if (e.button === 1) e.preventDefault(); });
 
-  smileyEl.addEventListener("click", newGame);
+  smileyEl.addEventListener("click", () => {
+    if (gameOver && canRollback && checkpoint) doRollback();
+    else newGame();
+  });
+  rollbackBtn.addEventListener("click", () => { if (canRollback) doRollback(); });
 
   // ---------- Best times ----------
   function bestKey() { return `ms-best-${level}`; }
@@ -392,9 +521,9 @@
   }
 
   // ---------- Menu / dialogs ----------
-  function newGame() { buildBoard(); }
+  function newGame() { buildBoard(); saveGame(); setStatus(godMode ? "New game — God Mode ON." : "New game — first click is always safe."); }
 
-  function setLevel(l) { if (LEVELS[l]) { level = l; buildBoard(); } }
+  function setLevel(l) { if (LEVELS[l]) { level = l; buildBoard(); saveGame(); setStatus(godMode ? "New game — God Mode ON." : "New game — first click is always safe."); } }
 
   // Theme is applied by setting data-theme on <html>; no rebuild needed.
   function setTheme(t) {
@@ -463,16 +592,22 @@
         <li>Click an uncovered number with the correct flags around it to
         <b>chord</b> (uncover neighbors at once).</li>
         <li>The first click is always safe. Click the smiley to start a new game.</li>
+        <li>Your game is <b>saved automatically</b> — refresh the page to keep playing.</li>
+        <li>Turn on <b>Game &rarr; God Mode</b> to roll back a fatal move
+        (press <b>R</b> or click the smiley after stepping on a mine).</li>
       </ul>`, [{ label: "OK", primary: true }]);
   }
 
+  const THEME_LABELS = { xp: "Windows XP", vista: "Windows Vista", classic: "Classic 95", cyberpunk: "Cyberpunk" };
   function showAbout() {
     openDialog("About Minesweeper", `
       <div class="icon-row" style="font-size:22px">${FACES.cool}</div>
       <p><b>Minesweeper</b></p>
-      <p>An HTML5 tribute to the classic Windows XP game.</p>
-      <p style="color:#666">You are playing: <b>${LEVELS[level].label}</b>
-      (${cols}&times;${rows}, ${totalMines} mines)</p>`,
+      <p>An HTML5 tribute to the classic Windows game, with multiple themes.</p>
+      <p style="color:#666">Theme: <b>${THEME_LABELS[theme] || theme}</b><br />
+      You are playing: <b>${LEVELS[level].label}</b>
+      (${cols}&times;${rows}, ${totalMines} mines)<br />
+      God Mode: <b>${godMode ? "ON" : "off"}</b></p>`,
       [{ label: "OK", primary: true }]);
   }
 
@@ -540,6 +675,8 @@
       case "how-to-play": showHowToPlay(); break;
       case "about": showAbout(); break;
       case "best-times": showBestTimes(); break;
+      case "god-mode": setGodMode(!godMode); break;
+      case "rollback": if (canRollback) doRollback(); break;
       default:
         if (action && action.startsWith("theme-")) setTheme(action.slice(6));
     }
@@ -562,6 +699,8 @@
     else if (k === "1") setLevel("easy");
     else if (k === "2") setLevel("medium");
     else if (k === "3") setLevel("expert");
+    else if (k === "r" && canRollback) { e.preventDefault(); doRollback(); }
+    else if (k === "g" && e.ctrlKey) { e.preventDefault(); setGodMode(!godMode); }
     else if (k === "b" && e.ctrlKey) { e.preventDefault(); showBestTimes(); }
   });
 
@@ -576,7 +715,22 @@
   } catch {}
   document.documentElement.setAttribute("data-theme", theme);
 
-  buildBoard();
+  // Restore God Mode preference.
+  try { godMode = localStorage.getItem("ms-god") === "1"; } catch {}
+  updateGodMenu();
+
+  // Resume the previous game if one was saved; otherwise start fresh.
+  let restored = false;
+  try {
+    const raw = localStorage.getItem("ms-game");
+    const s = raw && JSON.parse(raw);
+    if (s && s.v === 1) restored = applyGame(s);
+  } catch {}
+  if (!restored) {
+    buildBoard();
+    saveGame();
+    setStatus("Welcome! Left-click to reveal, right-click to flag.");
+  }
 
   // Keep the board fitted to the viewport (does not reset game state).
   let resizeRaf = null;

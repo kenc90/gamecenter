@@ -51,6 +51,8 @@
             <hr />
             <button data-action="best-times"><u>B</u>est Times...</button>
             <hr />
+            <button data-action="god-mode"><u>G</u>od Mode</button>
+            <hr />
             <button data-action="exit">E<u>x</u>it</button>
           </div>
         </div>
@@ -86,8 +88,10 @@
           <!-- Mine field -->
           <div class="field-bevel">
             <div class="field" id="field"></div>
+            <button class="rollback-btn" id="rollbackBtn" hidden title="Undo the fatal move">&#8617; Rollback</button>
           </div>
         </div>
+        <div class="status-bar" id="statusBar">Ready</div>
       </div>
     </div>
 

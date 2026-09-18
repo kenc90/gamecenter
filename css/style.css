@@ -26,6 +26,7 @@ html, body { height: 100%; margin: 0; overflow: hidden; }
   --tb-border: #0831d9;
   --tb-text: #fff;
   --tb-text-shadow: 1px 1px 1px rgba(0,0,0,.55);
+  --tb-sheen: linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,0) 50%);
   --tb-btn-normal: linear-gradient(#5c95f2, #1b5cd6);
   --tb-btn-close: linear-gradient(#f1a180, #d84b2b 45%, #c3341a);
   --tb-btn-border: #fff;
@@ -57,6 +58,8 @@ html, body { height: 100%; margin: 0; overflow: hidden; }
   --n5: #7f0000; --n6: #007f7f; --n7: #000000; --n8: #808080;
 
   --mine-hit-bg: #f00;
+  --mine-color: #000;
+  --mine-hl: #fff;
   --question-color: #b00;
   --wrong-color: #d00;
   --win-glow: rgba(255, 255, 180, 0.9);
@@ -106,6 +109,7 @@ body {
 }
 
 .title-bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -115,6 +119,13 @@ body {
   border-bottom: 1px solid var(--tb-border);
 }
 .title-bar-inner { display: flex; align-items: center; gap: 5px; overflow: hidden; }
+/* Glossy highlight overlay — themed via --tb-sheen (none by default) */
+.title-bar::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: var(--tb-sheen, none);
+  pointer-events: none;
+}
 .title-icon { display: inline-flex; width: 16px; height: 16px; }
 .title-icon svg { display: block; }
 .title-text {
@@ -173,6 +184,7 @@ body {
 .menu-item.open .menu-dropdown { display: block; }
 .menu-dropdown button {
   display: block; width: 100%;
+  position: relative;
   text-align: left;
   background: transparent; border: 0;
   padding: 4px 22px;
@@ -272,6 +284,7 @@ body {
 
 /* Mine field */
 .field-bevel {
+  position: relative;
   border-top: 2px solid var(--bevel-dark);
   border-left: 2px solid var(--bevel-dark);
   border-right: 2px solid var(--bevel-light);
@@ -304,6 +317,12 @@ body {
   cursor: default;
 }
 .cell.revealed.mine-hit { background: var(--mine-hit-bg); }
+.cell.revealed { color: var(--mine-color); }
+.cell .mine .hl { fill: var(--mine-hl); }
+.cell.revealed.mine-hit .spikes { stroke: var(--mine-hl); }
+.cell.revealed.mine-hit circle { fill: var(--mine-hl); }
+.cell.revealed.mine-hit .hl { fill: var(--mine-hit-bg); }
+.cell.flag { color: #000; }
 
 .cell svg { display: block; width: calc(var(--cell) * 0.8); height: calc(var(--cell) * 0.8); }
 
@@ -396,6 +415,43 @@ body {
 .xp-btn:hover { filter: brightness(1.05); }
 .xp-btn:active { filter: brightness(.95); }
 
+/* ---- Rollback button (God Mode, shown on loss) ---- */
+.rollback-btn {
+  position: absolute; right: 4px; bottom: 4px;
+  z-index: 10;
+  padding: 4px 10px;
+  font: inherit; font-weight: bold;
+  color: var(--btn-text);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  animation: rollIn 180ms ease-out;
+}
+.rollback-btn:hover { filter: brightness(1.08); }
+.rollback-btn[hidden] { display: none; }
+@keyframes rollIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Status bar ---- */
+.status-bar {
+  margin-top: 6px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: var(--menu-text);
+  background: var(--panel-bg);
+  border-top: 1px solid var(--bevel-dark);
+  border-left: 1px solid var(--bevel-dark);
+  border-right: 1px solid var(--bevel-light);
+  border-bottom: 1px solid var(--bevel-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ---- Responsive chrome: shrink fixed UI on small screens ---- */
 @media (max-width: 640px), (max-height: 640px) {
   .desktop { padding: 8px; }
@@ -423,31 +479,39 @@ body {
 
   --font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
-  --win-border: #1c3a5e;
-  --win-radius: 6px 6px 3px 3px;
-  --win-bg: #eef3f8;
-  --win-shadow: 0 0 0 1px rgba(255,255,255,.35), 0 10px 34px rgba(0,0,0,.55);
+  --win-border: rgba(180, 210, 240, .6);
+  --win-radius: 8px 8px 5px 5px;
+  --win-bg: rgba(203, 223, 245, .52);
+  --win-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.65),
+    0 0 0 1px rgba(40,80,130,.5),
+    0 14px 48px rgba(8, 24, 48, .6);
 
-  --tb-h: 30px;
-  --tb-bg: linear-gradient(rgba(90,135,185,.92), rgba(45,80,130,.94));
-  --tb-border: rgba(20,45,80,.9);
+  --tb-h: 34px;
+  --tb-bg: linear-gradient(
+    rgba(150,196,236,.95) 0%,
+    rgba(96,150,205,.9) 46%,
+    rgba(58,110,172,.92) 51%,
+    rgba(96,150,205,.9) 100%);
+  --tb-border: rgba(160,200,240,.7);
   --tb-text: #fff;
-  --tb-text-shadow: 0 0 6px rgba(0,0,0,.6);
-  --tb-btn-normal: linear-gradient(#dceaf7, #7ea6cc);
-  --tb-btn-close: linear-gradient(#f4c0a8, #cf3f1e);
-  --tb-btn-border: rgba(255,255,255,.7);
-  --tb-btn-radius: 4px;
+  --tb-text-shadow: 0 0 6px rgba(30,90,170,.95), 0 0 2px rgba(0,0,0,.7), 0 1px 1px rgba(0,0,0,.6);
+  --tb-sheen: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.15) 47%, rgba(255,255,255,0) 52%);
+  --tb-btn-normal: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #cfe4f6 45%, #9dc2e4 100%);
+  --tb-btn-close: radial-gradient(120% 120% at 50% 0%, #ffe9df 0%, #f3a988 45%, #cf4a24 100%);
+  --tb-btn-border: rgba(255,255,255,.9);
+  --tb-btn-radius: 6px;
 
-  --menu-bg: #eef3f8;
-  --menu-border: #b6c6d8;
-  --menu-text: #10233a;
+  --menu-bg: rgba(240, 246, 252, .55);
+  --menu-border: rgba(150,180,210,.7);
+  --menu-text: #0b2942;
   --menu-hover-bg: #cde3f7;
   --menu-hover-text: #06182e;
   --dropdown-bg: #f6f9fc;
   --dropdown-border: #7f9db9;
 
-  --body-bg: #eef3f8;
-  --panel-bg: #dfe7f0;
+  --body-bg: transparent;
+  --panel-bg: rgba(224, 233, 244, .85);
   --bevel-light: #ffffff;
   --bevel-dark: #97a9bd;
   --field-bg: #cfd8e4;
@@ -475,6 +539,18 @@ body {
   --btn-border: #5b7f9f;
   --btn-text: #10233a;
 }
+/* Aero glass: real-time backdrop blur + light caption glyphs on glossy pills */
+:root[data-theme="vista"] .xp-window,
+:root[data-theme="vista"] .dialog {
+  backdrop-filter: blur(13px) saturate(1.7) brightness(1.06);
+  -webkit-backdrop-filter: blur(13px) saturate(1.7) brightness(1.06);
+}
+:root[data-theme="vista"] .title-bar { border-radius: 7px 7px 0 0; }
+:root[data-theme="vista"] .tb-btn {
+  color: #123;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.6), 0 1px 2px rgba(0,0,0,.45);
+}
+:root[data-theme="vista"] .tb-btn.close { color: #40100a; }
 
 /* ---------- Cyberpunk (neon) ---------- */
 :root[data-theme="cyberpunk"] {
@@ -496,6 +572,7 @@ body {
   --tb-border: #ff2bf9;
   --tb-text: #00e5ff;
   --tb-text-shadow: 0 0 8px rgba(0,229,255,.9);
+  --tb-sheen: linear-gradient(rgba(0,229,255,.22), rgba(0,229,255,0) 45%);
   --tb-btn-normal: linear-gradient(#123, #08202f);
   --tb-btn-close: linear-gradient(#ff2bf9, #7a0060);
   --tb-btn-border: rgba(0,229,255,.6);
@@ -525,6 +602,8 @@ body {
 
   --n1: #00e5ff; --n2: #39ff14; --n3: #ff2b6b; --n4: #b026ff;
   --n5: #ff9e00; --n6: #00fff0; --n7: #ff2bf9; --n8: #c8c8ff;
+  --mine-color: #0affff;
+  --mine-hl: #0affff;
 
   --mine-hit-bg: #4a0010;
   --question-color: #ff2bf9;
@@ -566,6 +645,7 @@ body {
   --tb-border: #dfdfdf;
   --tb-text: #fff;
   --tb-text-shadow: none;
+  --tb-sheen: none;
   --tb-btn-normal: #c0c0c0;
   --tb-btn-close: #c0c0c0;
   --tb-btn-border: #dfdfdf;
