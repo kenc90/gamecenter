@@ -1,0 +1,146 @@
+/* ===== Chinese Chess (Xiangqi) — game UI =====
+   Chrome follows the shared --gc-* tokens (light/dark aware). The board is a
+   warm parchment with a drawn line lattice (river + palaces) and round tokens,
+   so it keeps its own fixed palette for legibility in either theme. */
+
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: clamp(20px, 5vw, 40px) 16px 48px;
+}
+.head { width: 100%; max-width: 460px; text-align: center; }
+.title { margin: 0; font-size: clamp(24px, 6vw, 32px); letter-spacing: -.02em; }
+.sub { margin: 4px 0 0; color: var(--gc-text-muted); font-weight: 600; min-height: 1.4em; }
+
+/* ---- Segmented control ---- */
+.segmented {
+  display: inline-flex; gap: 4px; padding: 4px;
+  background: var(--gc-surface-2); border: 1px solid var(--gc-border); border-radius: 12px;
+}
+.segmented--sub { margin-top: -6px; }
+.seg {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
+  padding: 8px 16px; border: 0; border-radius: 9px; background: transparent; color: var(--gc-text-muted);
+  transition: background .15s ease, color .15s ease;
+}
+.seg--sm { padding: 6px 12px; font-size: 13px; }
+.seg:hover { color: var(--gc-text); }
+.seg[aria-selected="true"] { background: var(--gc-surface); color: var(--gc-text); box-shadow: var(--gc-shadow); }
+.seg:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+
+/* ---- Layout ---- */
+.game { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+.board-wrap { position: relative; }
+
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  width: min(94vw, 440px);
+  aspect-ratio: 9 / 10;
+  padding: 6px;
+  background: #f0d9a8;
+  background: linear-gradient(160deg, #f5e3b8, #e8cd93);
+  border: 4px solid #6b4a24;
+  border-radius: 8px;
+  box-shadow: var(--gc-shadow-hi);
+  user-select: none;
+  touch-action: manipulation;
+}
+.board-lines { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); z-index: 0; pointer-events: none; }
+
+.pt { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+/* round token on each occupied intersection */
+.tok {
+  width: 84%; height: 84%; max-width: 42px; max-height: 42px; aspect-ratio: 1 / 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  font-size: clamp(15px, 4.4vw, 24px); font-weight: 700; line-height: 1;
+  font-family: "PingFang SC", "Microsoft YaHei", "Heiti SC", system-ui, sans-serif;
+  background: radial-gradient(circle at 40% 35%, #fff7e6, #eccf94);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .4), inset 0 0 0 2px rgba(0, 0, 0, .12);
+  transition: transform .08s ease;
+}
+.pt:hover .tok { transform: scale(1.05); }
+.tok--r { color: #b3261e; }
+.tok--b { color: #1b1b1b; }
+
+/* highlights */
+.pt--sel .tok { box-shadow: 0 0 0 3px #ffce3a, 0 1px 3px rgba(0, 0, 0, .4); }
+.pt--last::before { content: ""; position: absolute; inset: 8%; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(60, 140, 70, .7); }
+.pt--check .tok { box-shadow: 0 0 0 3px #dc322f, 0 1px 3px rgba(0, 0, 0, .4); }
+.dot { position: absolute; width: 30%; height: 30%; border-radius: 50%; background: rgba(30, 60, 30, .32); pointer-events: none; z-index: 0; }
+.dot--cap { width: 92%; height: 92%; background: transparent; border: 3px solid rgba(220, 50, 47, .6); }
+
+/* ---- Side panel ---- */
+.panel { width: min(94vw, 440px); display: flex; flex-direction: column; gap: 12px; }
+.captured { display: flex; flex-direction: column; gap: 4px; font-size: 17px; }
+.captured__row { display: flex; align-items: center; gap: 8px; min-height: 22px; }
+.captured__who { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--gc-text-muted); font-weight: 700; width: 76px; flex: none; }
+.cap { line-height: 1.1; word-break: break-all; }
+.cap .tk { font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+.cap .tk--r { color: #b3261e; }
+.cap .tk--b { color: #1b1b1b; }
+
+.moves {
+  max-height: 170px; overflow: auto;
+  display: grid; grid-template-columns: auto 1fr 1fr; gap: 2px 10px;
+  padding: 10px 12px; font-size: 13.5px; font-variant-numeric: tabular-nums;
+  background: var(--gc-surface); border: 1px solid var(--gc-border); border-radius: 12px;
+}
+.moves__n { color: var(--gc-text-muted); }
+.moves__mv { color: var(--gc-text); }
+.moves:empty { display: none; }
+
+.controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: 14px; font-weight: 600;
+  padding: 10px 16px; border-radius: 10px; flex: 1;
+  border: 1px solid var(--gc-border); background: var(--gc-surface); color: var(--gc-text);
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover:not(:disabled) { border-color: var(--gc-accent); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn--primary { background: var(--gc-accent); border-color: var(--gc-accent); color: var(--gc-on-accent); flex: none; }
+.btn--primary:hover { filter: brightness(1.05); }
+.link-btn { appearance: none; border: 0; background: transparent; cursor: pointer; font: inherit; font-size: 13px; color: var(--gc-accent); padding: 6px; text-decoration: underline; align-self: flex-start; }
+
+/* ---- Rules modal ---- */
+.modal { position: fixed; inset: 0; z-index: 1100; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal[hidden] { display: none; }
+.modal__backdrop { position: absolute; inset: 0; background: rgba(6, 12, 20, .55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.modal__panel {
+  position: relative; width: min(94vw, 520px); max-height: 86vh; overflow: auto;
+  padding: 0; border-radius: 16px;
+  background: var(--gc-surface); color: var(--gc-text);
+  border: 1px solid var(--gc-border); box-shadow: var(--gc-shadow-hi);
+}
+.modal__head { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--gc-border); }
+.modal__head h2 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+.modal__x { margin-left: auto; border: 0; background: transparent; cursor: pointer; font-size: 26px; line-height: 1; color: var(--gc-text-muted); padding: 0 4px; }
+.modal__x:hover { color: var(--gc-text); }
+.modal__body { padding: 6px 20px 4px; font-size: 14px; line-height: 1.6; color: var(--gc-text-muted); }
+.modal__lead { margin: 10px 0 12px; color: var(--gc-text); }
+.modal__body h3 { margin: 16px 0 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--gc-accent); }
+.modal__body ul { margin: 0 0 6px; padding-left: 20px; }
+.modal__body li { margin: 3px 0; }
+.modal__body b { color: var(--gc-text); }
+.modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
+
+/* ---- Wide screens: board beside panel ---- */
+@media (min-width: 820px) {
+  .game { flex-direction: row; align-items: flex-start; justify-content: center; gap: 28px; }
+  .panel { width: 280px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .seg, .tok { transition: none; }
+}
