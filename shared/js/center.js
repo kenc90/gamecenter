@@ -156,3 +156,16 @@
   input.addEventListener("input", apply);
   apply();
 })();
+
+/* ===== Game Center — blank-header click scrolls to top =====
+   The header is sticky, so it is a natural home target. Clicks on real
+   controls inside it (toggle, links, the search label) are ignored. */
+(function () {
+  var header = document.querySelector(".gc-header");
+  if (!header) return;
+  header.addEventListener("click", function (e) {
+    if (e.target.closest("a, button, input, label, select, textarea")) return;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  });
+})();
