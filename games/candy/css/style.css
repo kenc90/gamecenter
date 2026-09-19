@@ -1,0 +1,172 @@
+/* ===== Sweet Crush — game-specific styles =====
+   Generic glass chrome comes from shared/css/glass.css (fixed theme, no
+   light/dark mode). This file styles the board and the candies themselves.
+   Each of the six colours has its own shape, so the board never depends
+   on colour perception alone. All geometry (tile px) is measured in JS —
+   same approach as Slide Puzzle, so nothing divides by a custom property. */
+
+:root {
+  /* Sweet Crush wears candy-pink over the default indigo glass. */
+  --accent-1: #ff5ba0;
+  --accent-2: #ff8ec0;
+  --on-accent: #3d0a21;
+}
+
+.c-app { --fpad: clamp(10px, 3vw, 28px); }
+.c-table { display: flex; align-items: center; justify-content: center; }
+
+/* ---------- Board ---------- */
+.cd-board {
+  position: relative;
+  width: min(94vw, 520px, calc(100vh - 190px));
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  padding: 8px;                /* keep in sync with PAD in candy.js */
+  border-radius: 18px;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .15);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  touch-action: none;          /* drags swap candies, never scroll the page */
+  user-select: none;
+  overflow: hidden;            /* spawned candies slide in from above the edge */
+}
+
+/* Checkered well tiles (created + sized by JS) */
+.cd-cell {
+  position: absolute;
+  border-radius: 22%;
+  background: rgba(255, 255, 255, .05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .05);
+}
+.cd-cell--b { background: rgba(255, 255, 255, .09); }
+
+/* ---------- Candies ---------- */
+.cd {
+  position: absolute;
+  border-radius: 30%;          /* per-shape overrides below */
+  cursor: pointer;
+  box-shadow: 0 3px 7px rgba(0, 0, 0, .35), inset 0 -4px 6px rgba(0, 0, 0, .22), inset 0 3px 5px rgba(255, 255, 255, .45);
+  transition: left .18s ease, top .28s cubic-bezier(.3, .69, .29, 1.05);
+}
+.cd::after {                  /* glossy highlight, kept near the centre so it
+                                 survives the clip-path of shaped candies */
+  content: "";
+  position: absolute;
+  left: 24%; top: 20%;
+  width: 30%; height: 20%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .65);
+  filter: blur(1px);
+  pointer-events: none;
+}
+/* Six colours, six shapes:
+   0 red bubble · 1 orange cushion · 2 yellow gem · 3 green honeycomb
+   4 blue wedge · 5 purple star.
+   Shaped candies are cut out with an SVG mask whose polygon is stroked
+   with stroke-linejoin:round — clip-path polygons can't have rounded
+   corners. box-shadow is swapped for a filter drop-shadow, which hugs
+   the masked outline. */
+.cd--0 { background: radial-gradient(circle at 35% 30%, #ff8b8b, #ff5a5a 55%, #d03440); border-radius: 50%; }
+.cd--1 { background: radial-gradient(circle at 35% 30%, #ffc36b, #ff9e2e 55%, #d97708); border-radius: 30%; }
+.cd--2 {
+  background: radial-gradient(circle at 35% 30%, #ffef8f, #ffd93a 55%, #dfae00);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 7 93 50 50 93 7 50Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 7 93 50 50 93 7 50Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .38));
+}
+.cd--3 {
+  background: radial-gradient(circle at 35% 30%, #86f2ae, #43dd7f 55%, #16a34a);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M29 13.6 71 13.6 92 50 71 86.4 29 86.4 8 50Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M29 13.6 71 13.6 92 50 71 86.4 29 86.4 8 50Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .38));
+}
+.cd--4 {
+  background: radial-gradient(circle at 35% 32%, #8ecbff, #43a7ff 55%, #1471c9);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 18 87 87 13 87Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 18 87 87 13 87Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .38));
+}
+.cd--5 {
+  background: radial-gradient(circle at 38% 36%, #d3a6ff, #b06bff 55%, #7c3aed);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 10 58.8 38 88.4 38 64.4 55.6 73.2 82.8 50 66 26.8 82.8 35.6 55.6 11.6 38 41.2 38Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 10 58.8 38 88.4 38 64.4 55.6 73.2 82.8 50 66 26.8 82.8 35.6 55.6 11.6 38 41.2 38Z' fill='%23fff' stroke='%23fff' stroke-width='14' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  box-shadow: none;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .38));
+}
+
+/* Striped: extra candy stripes over the colour */
+.cd--striped-h::before, .cd--striped-v::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.cd--striped-h::before { background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .55) 0 3px, transparent 3px 9px); }
+.cd--striped-v::before { background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .55) 0 3px, transparent 3px 9px); }
+
+/* Colour bomb: always a dark sphere with rainbow speckles — it resets
+   whatever shape its base colour class applies. */
+.cd--bomb {
+  -webkit-mask: none;
+  mask: none;
+  border-radius: 50%;
+  filter: none;
+  background:
+    radial-gradient(circle at 22% 28%, rgba(255, 90, 90, .95) 0 9%, transparent 10%),
+    radial-gradient(circle at 72% 22%, rgba(67, 167, 255, .95) 0 9%, transparent 10%),
+    radial-gradient(circle at 80% 70%, rgba(67, 221, 127, .95) 0 9%, transparent 10%),
+    radial-gradient(circle at 30% 76%, rgba(255, 217, 58, .95) 0 9%, transparent 10%),
+    radial-gradient(circle at 55% 48%, rgba(176, 107, 255, .9) 0 10%, transparent 11%),
+    radial-gradient(circle at 35% 30%, #5a4668, #2b1e3a 60%, #17101f);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, .5), inset 0 -4px 8px rgba(0, 0, 0, .5), inset 0 3px 6px rgba(255, 255, 255, .28);
+}
+.cd--bomb::after { left: 24%; top: 15%; width: 26%; height: 18%; background: rgba(255, 255, 255, .4); }
+
+/* Selection + hint states. Outline would ignore clip-path shapes, so the
+   selection ring is a gold glow via drop-shadow instead. */
+.cd.is-sel {
+  z-index: 3;
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 4px var(--gold)) drop-shadow(0 0 2px var(--gold)) drop-shadow(0 3px 3px rgba(0, 0, 0, .4));
+}
+.cd.is-hint { animation: cdHint .5s ease-in-out 3; }
+@keyframes cdHint { 50% { transform: scale(1.12); } }
+
+/* Pop: shrink-spin-fade in place */
+.cd.is-clearing {
+  transition: transform .2s ease-in, opacity .2s ease-in;
+  transform: scale(0) rotate(140deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Score popup floating off a big clear */
+.cd-pop {
+  position: absolute;
+  z-index: 4;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .6);
+  pointer-events: none;
+  animation: cdRise .7s ease forwards;
+}
+@keyframes cdRise { to { transform: translateY(-34px); opacity: 0; } }
+
+/* Board shake for bomb-class detonations */
+.cd-board.is-shake { animation: cdShake .3s ease; }
+@keyframes cdShake {
+  25% { transform: translate(-4px, 2px); }
+  50% { transform: translate(4px, -2px); }
+  75% { transform: translate(-2px, -3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cd { transition: none; }
+  .cd.is-clearing { transition: none; transform: none; }
+  .cd.is-hint, .cd-board.is-shake, .cd-pop { animation: none; }
+}

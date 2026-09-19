@@ -528,6 +528,48 @@
           <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
         </span>
       </a>
+      <a class="gc-card" data-category="puzzle" href="games/candy/index.html">
+        <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Sweet Crush preview">
+            <defs>
+              <radialGradient id="candyRed" cx="35%" cy="30%" r="70%">
+                <stop offset="0" stop-color="#ff9c9c"/><stop offset=".55" stop-color="#ff5a5a"/><stop offset="1" stop-color="#c92f3c"/>
+              </radialGradient>
+              <radialGradient id="candyGreen" cx="38%" cy="34%" r="75%">
+                <stop offset="0" stop-color="#9df8c0"/><stop offset=".55" stop-color="#43dd7f"/><stop offset="1" stop-color="#16a34a"/>
+              </radialGradient>
+              <filter id="candyDrop" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1a0b1e" flood-opacity=".45"/>
+              </filter>
+            </defs>
+            <!-- back candy: red bubble, upper left -->
+            <g filter="url(#candyDrop)">
+              <circle cx="44" cy="44" r="35" fill="url(#candyRed)" stroke="#a92231" stroke-width="2.5"/>
+              <ellipse cx="32" cy="30" rx="12" ry="8" fill="#fff" fill-opacity=".55" transform="rotate(-28 32 30)"/>
+            </g>
+            <!-- front candy: green honeycomb hexagon, stacked over it like the chess pieces.
+                 Two stroked paths (round linejoins) = one shape with soft corners:
+                 the wider dark one is the rim, the narrower one the gradient body. -->
+            <g filter="url(#candyDrop)">
+              <path d="M64.4 54.5 91.6 54.5 105.2 78 91.6 101.5 64.4 101.5 50.8 78Z" fill="#15803d" stroke="#15803d" stroke-width="13" stroke-linejoin="round"/>
+              <path d="M64.4 54.5 91.6 54.5 105.2 78 91.6 101.5 64.4 101.5 50.8 78Z" fill="url(#candyGreen)" stroke="url(#candyGreen)" stroke-width="10" stroke-linejoin="round"/>
+              <ellipse cx="70" cy="62" rx="10" ry="6" fill="#fff" fill-opacity=".5" transform="rotate(-24 70 62)"/>
+            </g>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            Sweet Crush
+            <span class="gc-badge">Puzzle</span>
+          </span>
+          <span class="gc-card__desc">
+            Swap sweets to line up three or more, then let the cascades and
+            colour bombs do the sugary violence for you.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
       <a class="gc-card" data-category="arcade" href="games/snake/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
