@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Big 2</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared chrome: base.css for the back link, glass.css for this game's
+     fixed frosted-glass theme (no light/dark mode by design). -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../../shared/css/glass.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, score/message, controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <defs>
+            <path id="b2Spade" d="M12 7.6c-2.4 2.8-3.8 4.4-3.8 6 0 1.5 1.2 2.5 2.5 2.5.8 0 1.5-.4 1.9-1-.2 1.6-.9 2.7-2 3.4h2.8c-1.1-.7-1.8-1.8-2-3.4.4.6 1.1 1 1.9 1 1.3 0 2.5-1 2.5-2.5 0-1.6-1.4-3.2-4-6z"/>
+          </defs>
+          <rect x="4.5" y="2.5" width="15" height="19" rx="2.6" fill="#fff" stroke="#1c2233" stroke-width="1.4"/>
+          <text x="7.5" y="10.1" text-anchor="middle" font-size="6.4" font-weight="800" fill="#1b1f27" font-family="system-ui, sans-serif">2</text>
+          <use href="#b2Spade" transform="translate(12.8 14.2) scale(.95) translate(-12 -13.4)" fill="#1b1f27"/>
+        </svg>
+        <h1 class="c-bar__title">Big 2</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Hand <b id="handNo">—</b></span>
+        <span class="stat">Score <b id="score">0</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="Abandon this hand and deal fresh">New Game</button>
+      </div>
+    </header>
+
+    <!-- Table -->
+    <main class="c-table" id="table">
+      <div class="b2-board" id="board">
+        <!-- The three computer opponents -->
+        <section class="b2-opps" aria-label="Opponents">
+          <div class="b2-seat" id="seat1">
+            <div class="b2-seat__label">Mei <span class="b2-count" id="count1">13</span><span class="b2-flag" id="flag1"></span></div>
+            <div class="b2-backs" id="backs1"></div>
+          </div>
+          <div class="b2-seat" id="seat2">
+            <div class="b2-seat__label">Ravi <span class="b2-count" id="count2">13</span><span class="b2-flag" id="flag2"></span></div>
+            <div class="b2-backs" id="backs2"></div>
+          </div>
+          <div class="b2-seat" id="seat3">
+            <div class="b2-seat__label">Sofia <span class="b2-count" id="count3">13</span><span class="b2-flag" id="flag3"></span></div>
+            <div class="b2-backs" id="backs3"></div>
+          </div>
+        </section>
+
+        <!-- The table: last play + whose it is -->
+        <div class="b2-trick" aria-live="polite">
+          <div class="b2-well b2-well--table" id="trickWell"></div>
+          <div class="b2-trick__caption" id="trickCaption">Waiting to deal…</div>
+        </div>
+
+        <!-- Center readout -->
+        <div class="b2-mid">
+          <div class="b2-status" id="status" role="status">Press Deal</div>
+        </div>
+
+        <!-- Your hand -->
+        <section class="b2-side" aria-label="Your hand">
+          <div class="b2-seat__label">You <span class="b2-count" id="count0">13</span><span class="b2-flag" id="flag0"></span></div>
+          <div class="b2-well b2-well--hand" id="handWell"></div>
+        </section>
+
+        <!-- Actions -->
+        <div class="b2-actions">
+          <button id="playBtn" class="c-btn c-btn--primary" type="button" disabled>Play</button>
+          <button id="passBtn" class="c-btn" type="button" disabled>Pass</button>
+          <button id="dealBtn" class="c-btn c-btn--primary" type="button">Deal</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="c-toast" id="toast" hidden></div>
+
+  <!-- Hand-over result modal -->
+  <div class="c-modal" id="overModal" hidden>
+    <div class="c-modal__backdrop"></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="overTitle">
+      <div class="c-modal__head">
+        <h2 id="overTitle">Hand over</h2>
+        <button class="c-modal__x" type="button" id="overClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body" id="overBody"></div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" id="nextBtn">Next Hand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> be the first to throw away all 13 cards. Big 2 is the
+          Cantonese poker classic where deuces rule everything.
+        </p>
+        <h3>The cards</h3>
+        <ul>
+          <li>Rank order is <b>3 &lt; 4 &lt; … &lt; K &lt; A &lt; 2</b> — the 2 is the biggest card in the game.</li>
+          <li>When two cards tie, suits break it: <b>&diams; &lt; &clubs; &lt; &hearts; &lt; &spades;</b>.</li>
+          <li>The holder of <b>&diams;3</b> opens the hand, and the opening play must contain it.</li>
+        </ul>
+        <h3>Combos</h3>
+        <ul>
+          <li><b>Single, pair, triple</b> — same size, bigger rank wins.</li>
+          <li><b>Five-card ladder</b> — a higher kind beats <b>any</b> lower one: Straight &lt; Flush &lt; Full House &lt; Iron (four-of-a-kind) &lt; Straight Flush.</li>
+          <li>Straights run A-2-3-4-5 (the wheel, lowest) up to 10-J-Q-K-A; the 2 may only appear in the wheel.</li>
+          <li>Singles, pairs and triples are beaten only by <b>bigger combos of the same kind</b> — otherwise pass and wait.</li>
+        </ul>
+        <h3>Play</h3>
+        <ul>
+          <li>Tap cards to lift them, then press <b>Play</b>. <b>Pass</b> skips you.</li>
+          <li>Play travels clockwise. When a combo comes back around unbeaten, its owner wins the trick and leads anything.</li>
+          <li>The <b>first player empty-handed wins the hand instantly</b>. Everyone else eats a penalty: each leftover card is worth its face value (J=11, Q=12, K=13, A=14) and every leftover <b>2 costs 20</b>.</li>
+          <li>Scores pile up across hands — lowest total wins the evening.</li>
+        </ul>
+        <h3>Extras</h3>
+        <ul>
+          <li>Shortcuts: <kbd>Enter</kbd> play &middot; <kbd>P</kbd> pass &middot; <kbd>R</kbd> rules.</li>
+          <li><b>New Game</b> abandons the current hand and deals a fresh one.</li>
+        </ul>
+        <p class="c-modal__note">Your running score — and the hand in progress — are saved in this browser between visits.</p>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/big2.js"></script>
+</body>
+</html>
