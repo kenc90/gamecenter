@@ -251,6 +251,14 @@ body { background: var(--felt-2); font-family: system-ui, -apple-system, "Segoe 
 .win__card p { margin: 0 0 18px; color: #476450; font-size: 14px; }
 .win__actions { display: flex; gap: 10px; justify-content: center; }
 .win__actions .sol-btn--primary { color: #06210f; }
+/* .sol-btn is styled for the dark top bar; re-tune the secondary button
+   so it stays legible on the light win card. */
+.win__actions .sol-btn:not(.sol-btn--primary) {
+  background: rgba(18, 53, 31, .06);
+  border-color: rgba(18, 53, 31, .28);
+  color: #12351f;
+}
+.win__actions .sol-btn:not(.sol-btn--primary):hover { background: rgba(18, 53, 31, .12); }
 
 /* ---------- Rules modal ---------- */
 .modal {
