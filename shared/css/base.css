@@ -116,9 +116,6 @@ body.gc-body *::after { box-sizing: border-box; }
   margin: 0 auto;
   padding: clamp(24px, 6vw, 56px) clamp(16px, 5vw, 48px) 64px;
 }
-.gc-title { margin: 0 0 6px; font-size: clamp(26px, 4.5vw, 38px); letter-spacing: -.02em; }
-.gc-sub { margin: 0 0 32px; color: var(--gc-text-muted); }
-
 .gc-grid {
   display: grid;
   gap: 20px;
@@ -250,9 +247,19 @@ body.gc-body *::after { box-sizing: border-box; }
   border-radius: 999px;
   font-size: 11px; font-weight: 600; letter-spacing: .02em;
   color: var(--gc-on-accent);
-  background: linear-gradient(90deg, var(--gc-accent), var(--gc-accent-2));
+  background: var(--gc-accent);
   vertical-align: middle;
 }
+
+/* Per-category badge hues, keyed off the card's data-category attribute —
+   the same value the filter chips use — so a badge's colour can never
+   drift from the category it filters. Solid fills, dark enough for the
+   white badge text to stay readable. */
+.gc-card[data-category="puzzle"]     .gc-badge { background: #12a06e; } /* green  */
+.gc-card[data-category="card"]       .gc-badge { background: #3568e4; } /* blue   */
+.gc-card[data-category="board"]      .gc-badge { background: #cf7212; } /* amber  */
+.gc-card[data-category="arcade"]     .gc-badge { background: #e22a7b; } /* pink   */
+.gc-card[data-category="platformer"] .gc-badge { background: #7d40e0; } /* violet */
 
 /* ---- Favourite star (top-right of each card) ---- */
 .gc-fav {
