@@ -10,6 +10,7 @@
   const GLYPH = ["\u2660", "\u2665", "\u2666", "\u2663"]; // ♠ ♥ ♦ ♣
   const RED = [false, true, true, false];
   const STATS_KEY = "gc-memory-stats";
+  const SAVE_KEY = "gc-memory-save";   // in-progress board, resumed on reload
   const GRID = { 6: 4, 10: 5, 15: 6 };   // pairs -> columns
   const FLIP_BACK_MS = 800;
 
@@ -87,9 +88,45 @@
     timerId = setInterval(() => {
       seconds++;
       timerEl.textContent = fmt(seconds);
+      saveGame(); // keep the saved clock fresh even without flips
     }, 1000);
   }
   function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+  // ---------- Persistence ----------
+  // Snapshot the whole board after every state change; mid-flip cards are
+  // saved face-down so the open-pair logic can never desync on resume.
+  function saveGame() {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pairs: pairCount, moves: moves, matched: matched, seconds: seconds,
+        cards: cards.map((c) => ({ s: c.suit, r: c.rank, m: c.matched ? 1 : 0 }))
+      }));
+    } catch (e) {}
+  }
+  function loadGame() {
+    let s;
+    try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return false; }
+    if (!s || !GRID[s.pairs] || !Array.isArray(s.cards) || s.cards.length !== s.pairs * 2) return false;
+    matched = s.matched | 0;
+    if (matched >= s.pairs) return false; // finished board — start fresh instead
+    pairCount = s.pairs;
+    moves = s.moves | 0;
+    seconds = s.seconds | 0;
+    cards = s.cards.map((c) => ({
+      key: c.s * 13 + c.r, suit: c.s, rank: c.r, matched: !!c.m, el: null
+    }));
+    segBtns.forEach((b) => {
+      const on = +b.dataset.pairs === pairCount;
+      b.classList.toggle("is-on", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
+    timerEl.textContent = fmt(seconds);
+    render();
+    showBest();
+    if (seconds > 0) startTimer(); // resume the clock on an unfinished game
+    return true;
+  }
 
   // ---------- New game ----------
   function newGame() {
@@ -126,6 +163,11 @@
       btn.className = "m-card" + (RED[card.suit] ? " m-card--red" : "");
       btn.dataset.i = String(i);
       btn.setAttribute("aria-label", "Card " + (i + 1) + ", face down");
+      if (card.matched) {
+        // Restored finished pair: show it face-up and locked from the start.
+        btn.classList.add("is-matched");
+        btn.setAttribute("aria-label", "Matched " + rankLabel(card.rank) + " " + GLYPH[card.suit]);
+      }
       btn.innerHTML =
         '<span class="m-card__inner">' +
           '<span class="m-face m-face--back"></span>' +
@@ -139,6 +181,7 @@
     });
     movesEl.textContent = String(moves);
     pairsEl.textContent = matched + "/" + pairCount;
+    saveGame(); // keep the resumable snapshot in sync with every change
   }
 
   // ---------- Flip logic ----------
@@ -158,11 +201,13 @@
     open = [];
     moves++;
     movesEl.textContent = String(moves);
+    saveGame();
 
     if (a.key === b.key) {
       a.matched = b.matched = true;
       matched++;
       pairsEl.textContent = matched + "/" + pairCount;
+      saveGame();
       [a, b].forEach((c) => {
         c.el.classList.add("is-matched", "just-matched");
         c.el.setAttribute("aria-label", "Matched " + rankLabel(c.rank) + " " + GLYPH[c.suit]);
@@ -194,6 +239,7 @@
   function onWin() {
     won = true;
     stopTimer();
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {} // finished: nothing to resume
     const st = saveWin(pairCount);
     winStats.textContent =
       pairCount + " pairs in " + fmt(seconds) + " with " + moves + " moves" +
@@ -238,5 +284,6 @@
     else if (e.key === "r" || e.key === "R") openRules();
   });
 
-  newGame();
+  // ---------- Boot ----------
+  if (!loadGame()) newGame();
 })();
