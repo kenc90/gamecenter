@@ -39,7 +39,8 @@ body { background: #083f29; }
   align-items: center;
   gap: clamp(8px, 1.8vh, 16px);
   width: 100%;
-  max-width: 780px;
+  /* grows with big monitors instead of stopping at a small-table width */
+  max-width: 1160px;
   margin: 0 auto;
   flex: 1;
   min-height: 0;
@@ -70,9 +71,11 @@ body { background: #083f29; }
 .b2-seat--turn > .b2-seat__label { color: var(--accent-2); }
 .b2-seat--turn .b2-backs, .b2-seat--turn .b2-well--hand { box-shadow: 0 0 0 2px rgba(63, 191, 122, .6), 0 0 16px rgba(63, 191, 122, .25); border-radius: 12px; }
 
-/* Three overlapping card backs per opponent (fewer as cards run out). */
+/* Three overlapping card backs per opponent (fewer as cards run out).
+   Card widths scale with the viewport (vw) but are vh-capped so a short
+   window never overflows; small screens keep the old compact sizes. */
 .b2-backs {
-  --cw: clamp(34px, 6vw, 44px);
+  --cw: clamp(34px, min(6vw, 9vh), 54px);
   --ch: calc(var(--cw) * 1.42);
   position: relative;
   height: var(--ch);
@@ -85,7 +88,7 @@ body { background: #083f29; }
 .b2-trick { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; min-height: 0; flex: 1; justify-content: center; }
 .b2-well { position: relative; transition: box-shadow .2s ease; }
 .b2-well--table {
-  --cw: clamp(46px, 8vw, 62px);
+  --cw: clamp(46px, min(8vw, 13vh), 88px);
   --ch: calc(var(--cw) * 1.42);
   width: 100%;
   min-width: var(--cw);
@@ -121,7 +124,7 @@ body { background: #083f29; }
 /* ---------- Your hand ---------- */
 .b2-side { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
 .b2-well--hand {
-  --cw: clamp(44px, 7.2vw, 58px);
+  --cw: clamp(44px, min(7.2vw, 12vh), 80px);
   --ch: calc(var(--cw) * 1.42);
   min-width: var(--cw);
   height: var(--ch);
