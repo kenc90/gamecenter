@@ -186,35 +186,37 @@
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Spider Solitaire descending run preview">
             <defs>
-              <linearGradient id="spdBack" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#7b3ff2"/>
-                <stop offset="1" stop-color="#45219c"/>
+              <linearGradient id="spdBody" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#6a3bd0"/>
+                <stop offset="1" stop-color="#3a1d78"/>
               </linearGradient>
             </defs>
-            <!-- descending spade run, each card peeking from under the last -->
-            <g stroke="#c3ccda" stroke-width="1.5">
-              <rect x="22" y="70" width="44" height="42" rx="6" fill="#fdfdfb"/>
-              <rect x="28" y="54" width="44" height="42" rx="6" fill="#fdfdfb"/>
-              <rect x="34" y="38" width="44" height="42" rx="6" fill="#fdfdfb"/>
-              <rect x="40" y="22" width="44" height="42" rx="6" fill="#fdfdfb"/>
+            <!-- descending same-suit spade run peeking behind the spider: K, Q -->
+            <g stroke="#c3ccda" stroke-width="1.5" font-family="system-ui, sans-serif" font-weight="700">
+              <g transform="rotate(-8 40 46)">
+                <rect x="16" y="14" width="46" height="62" rx="8" fill="#fdfdfb"/>
+                <text x="23" y="35" font-size="16" fill="#1b1f27" stroke="none">K</text>
+                <text x="23" y="52" font-size="14" fill="#1b1f27" stroke="none">&#9824;</text>
+              </g>
+              <g transform="rotate(7 48 52)">
+                <rect x="26" y="24" width="46" height="62" rx="8" fill="#fdfdfb"/>
+                <text x="33" y="45" font-size="16" fill="#1b1f27" stroke="none">Q</text>
+                <text x="33" y="62" font-size="14" fill="#1b1f27" stroke="none">&#9824;</text>
+              </g>
             </g>
-            <g font-family="system-ui, sans-serif" font-weight="700">
-              <text x="28" y="84" font-size="13" fill="#1b1f27">J</text>
-              <text x="34" y="68" font-size="13" fill="#1b1f27">Q</text>
-              <text x="40" y="52" font-size="13" fill="#1b1f27">K</text>
-              <text x="28" y="84" dx="32" font-size="16" fill="#1b1f27">&#9824;</text>
-              <text x="34" y="68" dx="32" font-size="16" fill="#1b1f27">&#9824;</text>
-              <text x="40" y="52" dx="32" font-size="16" fill="#1b1f27">&#9824;</text>
+            <!-- the spider: eight legs, body and head -->
+            <g stroke="#241145" stroke-width="2.4" stroke-linecap="round" fill="none">
+              <path d="M78 78C66 74 60 68 56 60"/>
+              <path d="M78 84C64 84 58 86 52 86"/>
+              <path d="M78 90C66 96 62 102 60 110"/>
+              <path d="M102 78C112 74 116 68 118 61"/>
+              <path d="M102 84C114 84 118 86 120 86"/>
+              <path d="M102 90C112 96 116 102 118 110"/>
             </g>
-            <!-- deck behind, and the spider itself -->
-            <g transform="rotate(14 92 84)">
-              <rect x="72" y="62" width="40" height="52" rx="6" fill="url(#spdBack)" stroke="#2e1770" stroke-width="1.5"/>
-              <rect x="76" y="66" width="32" height="44" rx="4" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="3 3"/>
-            </g>
-            <g stroke="#1b1f27" stroke-width="2" stroke-linecap="round" fill="none">
-              <circle cx="28" cy="26" r="5" fill="#1b1f27" stroke="none"/>
-              <path d="M23 22 15 14M23 28H12M24 31l-8 7M33 22l8-8M33 28h11M32 31l8 7"/>
-            </g>
+            <ellipse cx="90" cy="92" rx="14" ry="16" fill="url(#spdBody)"/>
+            <circle cx="90" cy="72" r="8" fill="#241145"/>
+            <circle cx="86.5" cy="70" r="1.7" fill="#fff"/>
+            <circle cx="93.5" cy="70" r="1.7" fill="#fff"/>
           </svg>
         </span>
         <span class="gc-card__body">
@@ -233,32 +235,30 @@
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="FreeCell preview">
-            <!-- four empty free cells, glowing outlines -->
-            <g fill="rgba(255,255,255,.14)" stroke="#5bc9ff" stroke-width="2" stroke-opacity=".7">
-              <rect x="8" y="10" width="22" height="30" rx="4"/>
-              <rect x="34" y="10" width="22" height="30" rx="4"/>
-              <rect x="64" y="10" width="22" height="30" rx="4"/>
-              <rect x="90" y="10" width="22" height="30" rx="4"/>
+            <!-- four empty free cells: evenly spaced dashed cyan slots -->
+            <g fill="none" stroke="#3aa0d8" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round">
+              <rect x="8" y="10" width="22" height="30" rx="5"/>
+              <rect x="34" y="10" width="22" height="30" rx="5"/>
+              <rect x="60" y="10" width="22" height="30" rx="5"/>
+              <rect x="86" y="10" width="22" height="30" rx="5"/>
             </g>
-            <g font-family="system-ui, sans-serif" font-size="14" fill="#5bc9ff" fill-opacity=".8" text-anchor="middle">
-              <text x="19" y="30">&#10038;</text><text x="45" y="30">&#10038;</text>
-              <text x="75" y="30">&#10038;</text><text x="101" y="30">&#10038;</text>
-            </g>
-            <!-- a small alternating column: black 9, red 8, black 7 -->
+            <!-- a faint spade marks a home foundation -->
+            <text x="97" y="33" text-anchor="middle" font-size="17" fill="#3aa0d8" fill-opacity=".5" font-family="system-ui, sans-serif">&#9824;</text>
+            <!-- alternating descending column: black 9, red 8, black 7 -->
             <g stroke="#c3ccda" stroke-width="1.5">
-              <rect x="20" y="52" width="40" height="56" rx="6" fill="#fdfdfb"/>
-              <rect x="34" y="60" width="40" height="56" rx="6" fill="#fdfdfb"/>
-              <rect x="48" y="68" width="40" height="56" rx="6" fill="#fdfdfb"/>
+              <rect x="18" y="52" width="42" height="58" rx="7" fill="#fdfdfb"/>
+              <rect x="33" y="60" width="42" height="58" rx="7" fill="#fdfdfb"/>
+              <rect x="48" y="68" width="42" height="58" rx="7" fill="#fdfdfb"/>
             </g>
             <g font-family="system-ui, sans-serif" font-weight="700" font-size="15">
-              <text x="26" y="68" fill="#1b1f27">9</text>
-              <text x="40" y="76" fill="#d21e2b">8</text>
-              <text x="54" y="84" fill="#1b1f27">7</text>
+              <text x="24" y="70" fill="#1b1f27">9</text>
+              <text x="39" y="78" fill="#d21e2b">8</text>
+              <text x="54" y="86" fill="#1b1f27">7</text>
             </g>
-            <g font-family="system-ui, sans-serif" font-size="15" text-anchor="middle">
-              <text x="52" y="68" fill="#1b1f27">&#9824;</text>
-              <text x="66" y="76" fill="#d21e2b">&#9829;</text>
-              <text x="80" y="84" fill="#1b1f27">&#9827;</text>
+            <g font-family="system-ui, sans-serif" font-size="14">
+              <text x="24" y="86" fill="#1b1f27">&#9824;</text>
+              <text x="39" y="94" fill="#d21e2b">&#9829;</text>
+              <text x="54" y="102" fill="#1b1f27">&#9827;</text>
             </g>
           </svg>
         </span>
