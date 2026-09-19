@@ -1028,6 +1028,11 @@
           <svg viewBox="0 0 120 120" role="img" aria-label="Tunnel Flyer neon tunnel preview">
             <defs>
               <clipPath id="tfClip"><rect x="12" y="12" width="96" height="96" rx="16"/></clipPath>
+              <radialGradient id="tfGlow">
+                <stop offset="0" stop-color="#ffd878" stop-opacity=".95"/>
+                <stop offset=".45" stop-color="#ff8c1a" stop-opacity=".6"/>
+                <stop offset="1" stop-color="#ff6e1a" stop-opacity="0"/>
+              </radialGradient>
             </defs>
             <g clip-path="url(#tfClip)">
               <rect x="12" y="12" width="96" height="96" fill="#05070f"/>
@@ -1047,9 +1052,16 @@
               </g>
               <!-- a gold ring to grab -->
               <circle cx="44" cy="72" r="6" fill="none" stroke="#ffd83a" stroke-width="2.4"/>
-              <!-- the ship, seen from behind, riding the center -->
-              <path d="M60 66 66 78 60 75 54 78Z" fill="#e8f6ff" stroke="#19b9d8" stroke-width="1.4" stroke-linejoin="round"/>
-              <path d="M58.5 79 60 86 61.5 79Z" fill="#ff8c1a"/>
+              <!-- the ship, seen from behind, riding the center: same rear-view
+                   model as in-game — swept V-wings, stabiliser fin, hull back,
+                   dark nozzle and a warm engine glow aimed at the camera -->
+              <g transform="translate(61 76) scale(.5)">
+                <polygon points="-26,9 -7,-3 7,-3 26,9 26,13 7,2 -7,2 -26,13" fill="#cfe3f2" stroke="#19b9d8" stroke-width="3" stroke-linejoin="round"/>
+                <polygon points="0,-13 3.5,-4 -3.5,-4" fill="#cfe3f2" stroke="#19b9d8" stroke-width="3" stroke-linejoin="round"/>
+                <circle r="8.5" fill="#e8f6ff" stroke="#19b9d8" stroke-width="3"/>
+                <circle r="5.6" fill="#20353f"/>
+                <circle r="9" fill="url(#tfGlow)"/>
+              </g>
             </g>
             <rect x="12" y="12" width="96" height="96" rx="16" fill="none" stroke="#19b9d8" stroke-opacity=".7" stroke-width="2.5"/>
           </svg>
