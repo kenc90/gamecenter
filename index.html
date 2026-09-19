@@ -100,14 +100,16 @@
               <path d="M60 18v12M60 90v12M18 60h12M90 60h12M31.5 31.5l8.5 8.5M80 80l8.5 8.5M88.5 31.5L80 40M40 80l-8.5 8.5"/>
             </g>
             <circle cx="60" cy="60" r="31" fill="url(#mineBody)" stroke="#0d1116" stroke-width="2" filter="url(#mineDrop)"/>
-            <!-- skull emblem -->
-            <path d="M60 39c-8.3 0-14 6.2-14 13.8 0 4.6 2 8.1 5 10.4v5.3c0 2.9 2 4.5 4.3 4.5h9.4c2.3 0 4.3-1.6 4.3-4.5v-5.3c3-2.3 5-5.8 5-10.4C74 45.2 68.3 39 60 39z"
-                  fill="#f2e9d8" stroke="#0d1116" stroke-width="2.5" stroke-linejoin="round"/>
-            <ellipse cx="54.4" cy="53.5" rx="3.6" ry="4.3" fill="#0d1116"/>
-            <ellipse cx="65.6" cy="53.5" rx="3.6" ry="4.3" fill="#0d1116"/>
-            <path d="M60 57.5 57.9 62.6h4.2Z" fill="#0d1116"/>
-            <g stroke="#0d1116" stroke-width="1.6" stroke-linecap="round">
-              <path d="M56.4 64.8v7M60 64.8v7.4M63.6 64.8v7"/>
+            <!-- skull emblem, centred on the mine body (its bbox sat ~4.5u high) -->
+            <g transform="translate(0 4.5)">
+              <path d="M60 39c-8.3 0-14 6.2-14 13.8 0 4.6 2 8.1 5 10.4v5.3c0 2.9 2 4.5 4.3 4.5h9.4c2.3 0 4.3-1.6 4.3-4.5v-5.3c3-2.3 5-5.8 5-10.4C74 45.2 68.3 39 60 39z"
+                    fill="#f2e9d8" stroke="#0d1116" stroke-width="2.5" stroke-linejoin="round"/>
+              <ellipse cx="54.4" cy="53.5" rx="3.6" ry="4.3" fill="#0d1116"/>
+              <ellipse cx="65.6" cy="53.5" rx="3.6" ry="4.3" fill="#0d1116"/>
+              <path d="M60 57.5 57.9 62.6h4.2Z" fill="#0d1116"/>
+              <g stroke="#0d1116" stroke-width="1.6" stroke-linecap="round">
+                <path d="M56.4 64.8v7M60 64.8v7.4M63.6 64.8v7"/>
+              </g>
             </g>
             <!-- gloss highlight tucked by the rim so the skull stays the star -->
             <ellipse cx="40" cy="44" rx="7" ry="4.5" fill="#fff" fill-opacity=".16" transform="rotate(-35 40 44)"/>
