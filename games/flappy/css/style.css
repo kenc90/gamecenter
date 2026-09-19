@@ -1,42 +1,146 @@
-/* ===== Flappy Bird — game-specific styles =====
-   Generic glass chrome comes from shared/css/glass.css (fixed theme, no
-   light/dark mode). This file sizes the portrait canvas stage (classic
-   Flappy is 2:3) and styles the ready / game-over cards that sit on it. */
-
+/* =====================================================================
+   Flappy Bird — fixed bright "sunny arcade" theme.
+   Like Super Plumber & Tunnel Flyer, this page deliberately ignores the
+   center's light/dark mode and its shared glass chrome (no glass.css is
+   loaded); every color is hardcoded, taken straight from the game's own
+   canvas palette: teal sky, pipe green, sand ground, gold bird, ink
+   outlines.
+   ===================================================================== */
 :root {
-  /* Flappy Bird wears sky-yellow over the default indigo glass. */
-  --accent-1: #ffd83a;
-  --accent-2: #ffb01a;
-  --on-accent: #3d2a00;
+  --fl-sky:    #3ec3cc;   /* canvas sky teal */
+  --fl-sky2:   #8fdde0;
+  --fl-sky3:   #c9f0e8;
+  --fl-pipe:   #2fb068;   /* pipe green */
+  --fl-pipe2:  #27a15c;
+  --fl-pipedk: #145c36;   /* deep pipe green for text accents */
+  --fl-sand:   #ded895;   /* ground sand */
+  --fl-sand2:  #c9ad54;
+  --fl-gold:   #ffd83a;   /* the bird */
+  --fl-ink:    #1c2233;   /* outline ink — main text color */
+  --fl-line:   rgba(28, 34, 51, .8);
 }
 
-.c-app { --fpad: clamp(10px, 3vw, 24px); }
-.c-table { display: flex; align-items: center; justify-content: center; }
+html, body { height: 100%; }
+body.fl-page {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--fl-sky) 0%, var(--fl-sky2) 55%, var(--fl-sky3) 100%);
+  color: var(--fl-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body.fl-page *,
+body.fl-page *::before,
+body.fl-page *::after { box-sizing: border-box; }
 
-/* ---------- Stage: fixed-ratio canvas, capped so it never scrolls ---------- */
+/* ---------- App frame ---------- */
+.c-app {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top bar ---------- */
+.c-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  padding: 12px clamp(12px, 3vw, 28px);
+  padding-top: max(12px, env(safe-area-inset-top));
+  background: rgba(255, 255, 255, .38);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--fl-pipe);
+  z-index: 20;
+}
+.c-bar__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.c-bar__brand svg { filter: drop-shadow(0 2px 0 rgba(28, 34, 51, .18)); }
+.c-bar__title {
+  margin: 0;
+  font-size: clamp(19px, 3.4vw, 26px);
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--fl-ink);
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, .55);
+}
+.c-bar__stats { display: flex; align-items: center; gap: 8px 18px; margin-left: auto; }
+.c-bar__controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stat { font-size: 14px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; color: rgba(28, 34, 51, .72); }
+.stat b { color: var(--fl-pipedk); font-size: 16px; }
+
+/* ---------- Buttons (chunky arcade style, mario-like) ---------- */
+.c-btn {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--fl-line);
+  background: #fff;
+  color: var(--fl-ink);
+  box-shadow: 0 3px 0 rgba(28, 34, 51, .35);
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+}
+.c-btn:hover { background: #eafff3; border-color: var(--fl-pipe); }
+.c-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(28, 34, 51, .35); }
+.c-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 176, 104, .5); }
+.c-btn--primary {
+  background: linear-gradient(140deg, var(--fl-pipe), var(--fl-pipe2));
+  border-color: var(--fl-line);
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .2);
+}
+.c-btn--primary:hover { background: linear-gradient(140deg, #38c476, var(--fl-pipe)); }
+
+/* ---------- Table / stage ---------- */
+.c-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.4vh, 22px);
+}
 .fl-stage {
   position: relative;
   /* 2:3 portrait; capped by viewport height minus the chrome, no fixed
      floor — small screens just get a smaller board (no horizontal scroll). */
   width: min(92vw, calc((100vh - 170px) * 0.6667), 420px);
   aspect-ratio: 2 / 3;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid var(--glass-line);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .08);
+  background: var(--fl-sky);
+  border: 3px solid var(--fl-line);
+  box-shadow: 0 10px 0 rgba(28, 34, 51, .22), 0 22px 48px rgba(28, 34, 51, .35);
   touch-action: manipulation;
   cursor: pointer;
 }
 #screen { display: block; width: 100%; height: 100%; }
 
-/* ---------- Ready / game-over cards on the canvas ---------- */
+/* ---------- Ready / game-over overlays ---------- */
 .fl-overlay {
   position: absolute; inset: 0; z-index: 5;
   display: flex; align-items: center; justify-content: center;
   padding: 18px;
-  background: rgba(5, 8, 20, .35);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  background: rgba(28, 34, 51, .28);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
 }
 .fl-overlay[hidden] { display: none; }
 .fl-card {
@@ -44,28 +148,110 @@
   text-align: center;
   padding: 22px 24px 20px;
   border-radius: 16px;
-  background: var(--glass);
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
-  border: 1px solid var(--glass-line);
-  box-shadow: 0 20px 55px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .2);
-  color: #fff;
+  background: linear-gradient(160deg, #f2ecc2, var(--fl-sand));
+  border: 2px solid var(--fl-line);
+  box-shadow: 0 8px 0 rgba(28, 34, 51, .25), 0 22px 50px rgba(28, 34, 51, .4);
+  color: var(--fl-ink);
   animation: flPop .3s ease;
 }
 @keyframes flPop { from { transform: scale(.88); opacity: 0; } }
 .fl-card__big { font-size: 40px; line-height: 1.1; }
-.fl-card h2 { margin: 6px 0 6px; font-size: 23px; }
-.fl-card p { margin: 0 0 14px; color: var(--c-muted); font-size: 13.5px; line-height: 1.55; }
-.fl-card .c-btn { font-size: 14px; }
-.fl-card kbd {
-  font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace;
-  padding: 1px 6px; border-radius: 5px;
-  color: var(--c-text);
-  background: rgba(0, 0, 0, .35);
-  border: 1px solid var(--glass-line);
+.fl-card h2 {
+  margin: 6px 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--fl-ink);
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, .5);
 }
-.fl-card .c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.fl-card p { margin: 0 0 14px; color: #5a5636; font-size: 13.5px; line-height: 1.55; }
+.fl-card p b { color: var(--fl-pipedk); }
+.fl-card .c-btn { font-size: 14px; }
+.fl-card kbd, .c-modal kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  margin: 0 1px;
+  font: 700 12px/1.5 ui-monospace, "Segoe UI", monospace;
+  text-align: center;
+  color: var(--fl-ink);
+  background: #fff;
+  border: 1px solid var(--fl-line);
+  border-radius: 6px;
+  box-shadow: 0 2px 0 rgba(28, 34, 51, .3);
+}
+.c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Rules modal ---------- */
+.c-modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; }
+.c-modal[hidden] { display: none; }
+.c-modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(28, 34, 51, .5);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.c-modal__panel {
+  position: relative;
+  width: min(92vw, 470px);
+  max-height: 86vh;
+  overflow: auto;
+  background: linear-gradient(160deg, #2aa7b1, #177a84);
+  color: #eafffb;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, .65);
+  box-shadow: 0 8px 0 rgba(28, 34, 51, .3), 0 24px 60px rgba(28, 34, 51, .55);
+}
+.c-modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, .3);
+}
+.c-modal__head h2 {
+  margin: 0; font-size: 18px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: #fff; text-shadow: 2px 2px 0 rgba(0, 0, 0, .25);
+}
+.c-modal__x {
+  appearance: none; border: 0; background: none;
+  color: #eafffb; font-size: 26px; line-height: 1;
+  cursor: pointer; padding: 0 4px;
+}
+.c-modal__x:hover { color: var(--fl-gold); }
+.c-modal__body { padding: 8px 20px 4px; font-size: 14px; line-height: 1.55; }
+.c-modal__body h3 {
+  margin: 16px 0 6px; font-size: 13px;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--fl-gold);
+}
+.c-modal__body ul { margin: 0; padding-left: 20px; }
+.c-modal__body li { margin: 4px 0; }
+.c-modal__body b { color: var(--fl-gold); }
+.c-modal__lead { margin: 12px 0; }
+.c-modal__note {
+  margin: 14px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .12);
+  border: 1px solid rgba(255, 255, 255, .35);
+  font-size: 13px;
+  color: #dff7f2;
+}
+.c-modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
+.c-modal .c-btn { border-color: rgba(255, 255, 255, .8); box-shadow: 0 3px 0 rgba(0, 0, 0, .3); }
+.c-modal .c-btn--primary { border-color: var(--fl-line); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+  .c-bar { flex-wrap: nowrap; gap: 8px; }
+  .c-bar__title { font-size: 16px; }
+  .c-bar__stats { margin-left: auto; }
+  .stat { font-size: 12px; }
+  .stat b { font-size: 13px; }
+  .c-btn { padding: 8px 10px; font-size: 12px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .fl-card { animation: none; }
+  .c-btn, .fl-card { transition: none; animation: none; }
 }
