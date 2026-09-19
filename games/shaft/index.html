@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Shaft</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared chrome: base.css for the back link, glass.css for this game's
+     fixed frosted-glass theme (no light/dark mode by design). -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../../shared/css/glass.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <!-- crushing hazard ceiling on top, spiked ledges, the little digger -->
+          <rect x="2" y="2.5" width="20" height="3" rx="1" fill="#ff5a4e"/>
+          <path d="M4 5.5 6 8.4 8 5.5 10 8.4 12 5.5 14 8.4 16 5.5 18 8.4 20 5.5" fill="none" stroke="#ff5a4e" stroke-width="1.3" stroke-linejoin="round"/>
+          <g fill="#8a6c52" stroke="#3c2c1e" stroke-width="1">
+            <rect x="2.5" y="15" width="6.5" height="3.6" rx="1"/>
+            <rect x="15" y="15" width="6.5" height="3.6" rx="1"/>
+          </g>
+          <path d="M3.6 15 5 12.7 6.4 15Zm2.8 0L7.8 12.7 9.2 15Z" fill="#c3ccd9"/>
+          <circle cx="12" cy="11.4" r="3.1" fill="#ffd83a" stroke="#1c2233" stroke-width="1.1"/>
+          <circle cx="12" cy="14.8" r="2.7" fill="#e8654f" stroke="#1c2233" stroke-width="1.1"/>
+        </svg>
+        <h1 class="c-bar__title">Shaft</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Depth <b id="depth">0</b></span>
+        <span class="stat">Best <b id="best">0</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="soundBtn" class="c-btn" type="button" aria-pressed="true" title="Toggle sound">Sound: On</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="New dig (N)">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface: canvas stage + ready / paused / game-over overlays -->
+    <main class="c-table">
+      <div class="ns-stage" id="stage">
+        <canvas id="screen" width="380" height="620" aria-label="Shaft game screen"></canvas>
+
+        <div class="ns-overlay" id="readyOverlay">
+          <div class="ns-card">
+            <div class="ns-card__big">&#9935;&#65039;</div>
+            <h2>Dig or die</h2>
+            <p>A crushing ceiling is sliding down the shaft.<br>
+               Only two keys: <kbd>&#8592;</kbd> and <kbd>&#8594;</kbd>. Go down.</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="startBtn" type="button">Start dig</button>
+              <button class="c-btn" id="continueBtn" type="button" hidden>Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ns-overlay" id="pauseOverlay" hidden>
+          <div class="ns-card">
+            <div class="ns-card__big">&#9208;&#65039;</div>
+            <h2>Paused</h2>
+            <p>The ceiling will wait. Patiently.<br>Press <kbd>P</kbd> to drop back in.</p>
+            <button class="c-btn c-btn--primary" id="resumeBtn" type="button">Resume</button>
+          </div>
+        </div>
+
+        <div class="ns-overlay" id="overOverlay" hidden>
+          <div class="ns-card">
+            <div class="ns-card__big" id="overMedal">&#128128;</div>
+            <h2 id="overTitle">Game over</h2>
+            <p id="overStats">Depth 0 &#183; Best 0</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="againBtn" type="button">Dig again</button>
+              <a class="c-btn" href="../../index.html">Game Center</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> descend an endless mine shaft as deep as you can —
+          the deeper you dig, the more floors you bank.
+        </p>
+        <h3>The squeeze</h3>
+        <ul>
+          <li>A <b>crushing ceiling</b> slides down from above the whole run. It speeds up the deeper you go.</li>
+          <li>Touch the ceiling and you are <b>crushed</b> — instant death, on the ground or mid-air, full health or not.</li>
+          <li>Staying alive means keeping <b>below</b> it, which means keeping <b>down</b>.</li>
+        </ul>
+        <h3>The shaft</h3>
+        <ul>
+          <li>You only move <b>left and right</b> — gravity does the rest. Bounce off the walls if you slide too hard.</li>
+          <li>The shaft is lined with short <b>floating shelves</b>, one to three per row — weave through the open gaps between them to keep dropping.</li>
+          <li><b>Spike shelves</b> (bristling with pillards) drain your <b>HP bar</b> while you stand on them — at zero HP, you're paste. Landing on a normal shelf <b>heals</b> you back a little.</li>
+          <li><b>Conveyor belts</b> — the steel ones with amber chevrons — drag you sideways toward the walls while you ride them.</li>
+          <li><b>Bounce pads</b> — teal springs with up-arrows — sling you back up the shaft. Thrilling, right up until the ceiling reminds you which way is down.</li>
+        </ul>
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>&#8592;</kbd> <kbd>&#8594;</kbd> or <kbd>A</kbd> <kbd>D</kbd> — dig left / right (hold both halves of the screen on touch).</li>
+          <li><kbd>Space</kbd> start &middot; <kbd>P</kbd> pause &middot; <kbd>N</kbd> new dig &middot; <kbd>R</kbd> rules &middot; <kbd>M</kbd> mute.</li>
+        </ul>
+        <div class="c-modal__note">
+          Best depth and a mid-dig save are kept in this browser — close the tab
+          and the shaft will (reluctantly) let you continue.
+        </div>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/shaft.js"></script>
+</body>
+</html>
