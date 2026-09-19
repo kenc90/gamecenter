@@ -88,46 +88,31 @@
       <a class="gc-card" data-category="puzzle" href="games/minesweeper/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
-          <svg viewBox="0 0 120 120" role="img" aria-label="Minesweeper board preview">
-            <g>
-              <!-- covered tiles -->
-              <g fill="#7fb2e5" stroke="rgba(255,255,255,.45)" stroke-width="1.5">
-                <rect x="4" y="4" width="26" height="26" rx="4"/>
-                <rect x="32" y="4" width="26" height="26" rx="4"/>
-                <rect x="88" y="4" width="26" height="26" rx="4"/>
-                <rect x="4" y="32" width="26" height="26" rx="4"/>
-                <rect x="88" y="32" width="26" height="26" rx="4"/>
-                <rect x="32" y="60" width="26" height="26" rx="4"/>
-                <rect x="4" y="88" width="26" height="26" rx="4"/>
-                <rect x="32" y="88" width="26" height="26" rx="4"/>
-                <rect x="60" y="88" width="26" height="26" rx="4"/>
-                <rect x="88" y="88" width="26" height="26" rx="4"/>
-              </g>
-              <!-- revealed tiles -->
-              <g fill="#f2f5fa" stroke="#c3ccda" stroke-width="1.5">
-                <rect x="60" y="4" width="26" height="26" rx="4"/>
-                <rect x="32" y="32" width="26" height="26" rx="4"/>
-                <rect x="60" y="32" width="26" height="26" rx="4"/>
-                <rect x="4" y="60" width="26" height="26" rx="4"/>
-              </g>
-              <g font-family="system-ui, sans-serif" font-size="16" font-weight="700" text-anchor="middle">
-                <text x="73" y="23" fill="#1a56d6">1</text>
-                <text x="45" y="51" fill="#1a56d6">1</text>
-                <text x="73" y="51" fill="#178a17">2</text>
-                <text x="17" y="79" fill="#1a56d6">1</text>
-              </g>
-              <!-- detonated cell -->
-              <rect x="60" y="60" width="26" height="26" rx="4" fill="#ff6a5a"/>
-              <g stroke="#1d2126" stroke-width="2" stroke-linecap="round">
-                <path d="M73 65v16M65 73h16M67.5 67.5l11 11M78.5 67.5l-11 11"/>
-              </g>
-              <circle cx="73" cy="73" r="5.5" fill="#1d2126"/>
-              <!-- flagged cell -->
-              <rect x="88" y="60" width="26" height="26" rx="4" fill="#f6d9a8" stroke="#c3ccda" stroke-width="1.5"/>
-              <path d="M101 64v15" stroke="#1d2126" stroke-width="2.2" stroke-linecap="round"/>
-              <path d="M101 64l10 4-10 4z" fill="#e02020"/>
-              <rect x="95" y="78" width="12" height="2.8" rx="1.4" fill="#1d2126"/>
+          <svg viewBox="0 0 120 120" role="img" aria-label="Minesweeper mine preview">
+            <defs>
+              <radialGradient id="mineBody" cx="36%" cy="30%" r="75%">
+                <stop offset="0" stop-color="#5b6572"/><stop offset=".55" stop-color="#252c36"/><stop offset="1" stop-color="#0d1116"/>
+              </radialGradient>
+              <filter id="mineDrop" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0d1116" flood-opacity=".5"/>
+              </filter>
+            </defs>
+            <!-- one big classic mine: spiked black ball with a skull emblem -->
+            <g stroke="#1d2126" stroke-width="7" stroke-linecap="round">
+              <path d="M60 18v12M60 90v12M18 60h12M90 60h12M31.5 31.5l8.5 8.5M80 80l8.5 8.5M88.5 31.5L80 40M40 80l-8.5 8.5"/>
             </g>
+            <circle cx="60" cy="60" r="31" fill="url(#mineBody)" stroke="#0d1116" stroke-width="2" filter="url(#mineDrop)"/>
+            <!-- skull emblem -->
+            <path d="M60 39c-8.3 0-14 6.2-14 13.8 0 4.6 2 8.1 5 10.4v5.3c0 2.9 2 4.5 4.3 4.5h9.4c2.3 0 4.3-1.6 4.3-4.5v-5.3c3-2.3 5-5.8 5-10.4C74 45.2 68.3 39 60 39z"
+                  fill="#f2e9d8" stroke="#0d1116" stroke-width="2.5" stroke-linejoin="round"/>
+            <ellipse cx="54.4" cy="53.5" rx="3.6" ry="4.3" fill="#0d1116"/>
+            <ellipse cx="65.6" cy="53.5" rx="3.6" ry="4.3" fill="#0d1116"/>
+            <path d="M60 57.5 57.9 62.6h4.2Z" fill="#0d1116"/>
+            <g stroke="#0d1116" stroke-width="1.6" stroke-linecap="round">
+              <path d="M56.4 64.8v7M60 64.8v7.4M63.6 64.8v7"/>
+            </g>
+            <!-- gloss highlight tucked by the rim so the skull stays the star -->
+            <ellipse cx="40" cy="44" rx="7" ry="4.5" fill="#fff" fill-opacity=".16" transform="rotate(-35 40 44)"/>
           </svg>
         </span>
         <span class="gc-card__body">
