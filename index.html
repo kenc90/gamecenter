@@ -75,6 +75,7 @@
         <button class="gc-chip" type="button" data-category="board" aria-pressed="false">Board</button>
         <button class="gc-chip" type="button" data-category="arcade" aria-pressed="false">Arcade</button>
         <button class="gc-chip" type="button" data-category="platformer" aria-pressed="false">Platformer</button>
+        <button class="gc-chip" type="button" data-category="3d" aria-pressed="false">3D</button>
       </div>
     </div>
     <p class="gc-empty" id="gcEmpty" hidden>No games match — try another name or category.</p>
@@ -1022,7 +1023,7 @@
         </span>
       </a>
 
-      <a class="gc-card" data-category="arcade" href="games/flyer/index.html">
+      <a class="gc-card" data-category="arcade" data-3d="true" href="games/flyer/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Tunnel Flyer neon tunnel preview">
@@ -1070,10 +1071,75 @@
           <span class="gc-card__title">
             Tunnel Flyer
             <span class="gc-badge">Arcade</span>
+            <span class="gc-badge gc-badge--3d">3D</span>
           </span>
           <span class="gc-card__desc">
             A hand-projected neon tunnel that bends and accelerates &mdash; graze
             a wall or smack a hazard block at 600 km/h and it&rsquo;s tarmac.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
+
+      <a class="gc-card" data-category="arcade" data-3d="true" href="games/crypt/index.html">
+        <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Crypt Crawler stone corridor preview">
+            <defs>
+              <clipPath id="ccClip"><rect x="12" y="12" width="96" height="96" rx="16"/></clipPath>
+              <linearGradient id="ccDoor" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffe27a"/>
+                <stop offset="1" stop-color="#b57a05"/>
+              </linearGradient>
+            </defs>
+            <g clip-path="url(#ccClip)">
+              <rect x="12" y="12" width="96" height="96" fill="#100d0a"/>
+              <!-- corridor walls, floor and ceiling in one-point perspective -->
+              <polygon points="12,12 48,44 48,62 12,74" fill="#3a362e"/>
+              <polygon points="108,12 72,44 72,62 108,74" fill="#2c2922"/>
+              <polygon points="12,12 48,44 72,44 108,12" fill="#17140f"/>
+              <polygon points="12,108 48,62 72,62 108,108" fill="#241d13"/>
+              <!-- brick seams -->
+              <g stroke="#201c15" stroke-width="1.6" opacity=".75">
+                <line x1="14" y1="36" x2="47" y2="50"/>
+                <line x1="14" y1="58" x2="47" y2="57"/>
+                <line x1="106" y1="36" x2="73" y2="50"/>
+                <line x1="106" y1="58" x2="73" y2="57"/>
+              </g>
+              <!-- glowing exit door at the vanishing point -->
+              <rect x="49" y="44" width="22" height="18" fill="url(#ccDoor)"/>
+              <rect x="49" y="44" width="22" height="18" fill="none" stroke="#6b6558" stroke-width="2"/>
+              <ellipse cx="60" cy="53" rx="20" ry="14" fill="#ffd83a" opacity=".14"/>
+              <!-- torches -->
+              <circle cx="30" cy="42" r="5" fill="#f0a90a" opacity=".8"/>
+              <circle cx="30" cy="42" r="9" fill="#f0a90a" opacity=".18"/>
+              <circle cx="90" cy="42" r="5" fill="#f0a90a" opacity=".8"/>
+              <circle cx="90" cy="42" r="9" fill="#f0a90a" opacity=".18"/>
+              <!-- a welcome committee -->
+              <g transform="translate(60 82)">
+                <circle cx="0" cy="-12" r="6.4" fill="#ddd5c2" stroke="#8f8875" stroke-width="1.4"/>
+                <circle cx="-2.4" cy="-13" r="1.6" fill="#ff3b30"/>
+                <circle cx="2.4" cy="-13" r="1.6" fill="#ff3b30"/>
+                <rect x="-1.2" y="-8.6" width="2.4" height="2.4" fill="#8f8875"/>
+                <rect x="-4.6" y="-5" width="9.2" height="11" rx="2.4" fill="#cfc7b0" stroke="#8f8875" stroke-width="1.2"/>
+                <line x1="-4" y1="-1.6" x2="4" y2="-1.6" stroke="#8f8875" stroke-width="1.2"/>
+                <line x1="-4" y1="1.8" x2="4" y2="1.8" stroke="#8f8875" stroke-width="1.2"/>
+                <rect x="-9.6" y="-4.4" width="3.4" height="9.6" rx="1.6" fill="#cfc7b0" stroke="#8f8875" stroke-width="1"/>
+                <rect x="6.2" y="-4.4" width="3.4" height="9.6" rx="1.6" fill="#cfc7b0" stroke="#8f8875" stroke-width="1"/>
+              </g>
+            </g>
+            <rect x="12" y="12" width="96" height="96" rx="16" fill="none" stroke="#6b6558" stroke-opacity=".8" stroke-width="2.5"/>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            Crypt Crawler
+            <span class="gc-badge">Arcade</span>
+            <span class="gc-badge gc-badge--3d">3D</span>
+          </span>
+          <span class="gc-card__desc">
+            A raycast dungeon of procedurally carved floors &mdash; loot the idols,
+            drop the skeletons three-shot, and find the glowing door before the crypt keeps you.
           </span>
           <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
         </span>

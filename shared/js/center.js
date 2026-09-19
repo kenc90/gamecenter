@@ -140,7 +140,10 @@
     var q = input.value.trim().toLowerCase();
     var shown = 0;
     Array.prototype.slice.call(grid.querySelectorAll(".gc-card")).forEach(function (card) {
-      var okCat = category === "all" || (card.getAttribute("data-category") || "").toLowerCase() === category;
+      var okCat;
+      if (category === "all") okCat = true;
+      else if (category === "3d") okCat = card.getAttribute("data-3d") === "true";   // cross-cutting tag, not a category
+      else okCat = (card.getAttribute("data-category") || "").toLowerCase() === category;
       var show = okCat && (!q || nameOf(card).indexOf(q) !== -1);
       card.hidden = !show;
       if (show) shown++;

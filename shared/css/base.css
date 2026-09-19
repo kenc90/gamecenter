@@ -261,6 +261,11 @@ body.gc-body *::after { box-sizing: border-box; }
 .gc-card[data-category="arcade"]     .gc-badge { background: #e22a7b; } /* pink   */
 .gc-card[data-category="platformer"] .gc-badge { background: #7d40e0; } /* violet */
 
+/* Cross-cutting "3D" tag badge (cards opt in via data-3d="true", and the
+   3D filter chip keys off the same attribute). Cyan-teal sits apart from
+   every category hue so the two badges never read as the same thing. */
+.gc-card[data-category] .gc-badge.gc-badge--3d { background: #0891b2; }
+
 /* ---- Favourite star (top-right of each card) ---- */
 .gc-fav {
   position: absolute; top: 10px; right: 10px; z-index: 2;

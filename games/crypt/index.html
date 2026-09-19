@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Crypt Crawler</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared base.css only (back chip + resets). This game uses a fixed
+     "torch-lit slate" theme and intentionally ignores the center's
+     light/dark mode and glass chrome — like the Super Plumber page. -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="cc-page gc-body">
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <!-- a stone corridor in perspective with two hungry eyes -->
+          <polygon points="2,22 9,9 15,9 22,22" fill="#2c2a26" stroke="#6b6558" stroke-width="1"/>
+          <polygon points="9,9 11,4 13,4 15,9" fill="#1a1815" stroke="#6b6558" stroke-width="1"/>
+          <circle cx="11.2" cy="6.6" r="1" fill="#ff3b30"/>
+          <circle cx="12.8" cy="6.6" r="1" fill="#ff3b30"/>
+          <rect x="3.4" y="12" width="2.2" height="7" rx=".6" fill="#f0a90a" opacity=".85"/>
+          <rect x="18.4" y="12" width="2.2" height="7" rx=".6" fill="#f0a90a" opacity=".85"/>
+        </svg>
+        <h1 class="c-bar__title">Crypt Crawler</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Score <b id="score">0</b></span>
+        <span class="stat">Best <b id="best">0</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="soundBtn" class="c-btn" type="button" aria-pressed="true" title="Toggle sound">Sound: On</button>
+        <button id="pauseBtn" class="c-btn" type="button" aria-pressed="false" title="Pause (P)">Pause</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="New run (N)">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface: canvas stage + ready / paused / game-over overlays -->
+    <main class="c-table">
+      <div class="cc-stage" id="stage">
+        <canvas id="screen" width="320" height="200" aria-label="Crypt Crawler game screen"></canvas>
+
+        <div class="cc-overlay" id="readyOverlay">
+          <div class="cc-card">
+            <div class="cc-card__big">&#128128;</div>
+            <h2>Descend. Shoot. Loot.</h2>
+            <p>Find the glowing door on every floor &mdash; the skeletons guard it, not you.<br>
+               <kbd>WASD</kbd> / arrows to move, <kbd>Space</kbd> to shoot, <kbd>Tab</kbd> for the map.</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="startBtn" type="button">Start descent</button>
+              <button class="c-btn" id="continueBtn" type="button" hidden>Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="cc-overlay" id="pauseOverlay" hidden>
+          <div class="cc-card">
+            <div class="cc-card__big">&#9208;&#65039;</div>
+            <h2>Paused</h2>
+            <p>The skeletons are politely waiting.<br>Press <kbd>P</kbd> to resume the awkward standoff.</p>
+            <button class="c-btn c-btn--primary" id="resumeBtn" type="button">Resume</button>
+          </div>
+        </div>
+
+        <div class="cc-overlay" id="overOverlay" hidden>
+          <div class="cc-card">
+            <div class="cc-card__big" id="overMedal">&#128128;</div>
+            <h2 id="overTitle">You became d&#233;cor</h2>
+            <p id="overStats">Score 0 &#183; Floor 1</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="againBtn" type="button">Crawl again</button>
+              <a class="c-btn" href="../../index.html">Game Center</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> fight down through endless procedurally carved crypt
+          floors. Each floor hides one glowing exit door &mdash; find it, survive it, go deeper.
+        </p>
+        <h3>The rules</h3>
+        <ul>
+          <li><b>Skeletons</b> rattle awake when they see you and sprint. Three shots drop one; their claws cost you HP.</li>
+          <li><b>Gold idols</b> are worth 150 apiece, <b>med kits</b> heal +25. Grab what you can before the door.</li>
+          <li>Every floor gets <b>darker company</b> &mdash; more skeletons, faster skeletons. The crypt always offers more than you can chew.</li>
+          <li>HP hits zero and the run ends; your best score is kept forever.</li>
+        </ul>
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>W</kbd><kbd>S</kbd> / <kbd>&#8593;</kbd><kbd>&#8595;</kbd> forward &amp; back &middot; <kbd>A</kbd><kbd>D</kbd> strafe &middot; <kbd>&#8592;</kbd><kbd>&#8594;</kbd> turn.</li>
+          <li><kbd>Shift</kbd> run &middot; <kbd>click</kbd> the screen to <b>lock the mouse</b> for FPS-style aiming, click again to shoot, <kbd>Esc</kbd> to release (it pauses). On touch: drag to turn, tap to fire.</li>
+          <li><kbd>Tab</kbd> map &middot; <kbd>P</kbd> pause &middot; <kbd>N</kbd> new run &middot; <kbd>R</kbd> rules &middot; <kbd>M</kbd> mute.</li>
+        </ul>
+        <div class="c-modal__note">
+          Each run is carved from a random seed, then saved in this browser every few
+          seconds &mdash; close the tab mid-crawl and the same crypt (minus any grudges
+          the skeletons are holding) will be exactly where you left it.
+        </div>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/crypt.js"></script>
+</body>
+</html>

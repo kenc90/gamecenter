@@ -1,0 +1,263 @@
+/* =====================================================================
+   Crypt Crawler — fixed "torch-lit slate" theme.
+   Like Super Plumber, Tunnel Flyer, Flappy Bird, Breakout & Shaft, this
+   page deliberately ignores the center's light/dark mode and its shared
+   glass chrome (no glass.css is loaded); every color is hardcoded from
+   the game's own palette: cold slate stone, torch amber, blood red,
+   bone and gold.
+   ===================================================================== */
+:root {
+  --cc-bg1:   #14161c;   /* cold slate depths */
+  --cc-bg2:   #1c1a16;
+  --cc-stone: #6b6558;   /* dressed stone borders */
+  --cc-stone2: rgba(107, 101, 88, .45);
+  --cc-bone:  #ddd5c2;   /* main text — old bone white */
+  --cc-muted: #9a9284;
+  --cc-blood: #d43a2f;   /* the skeletons' HR policy */
+  --cc-gold:  #ffd83a;
+  --cc-amber: #f0a90a;
+}
+
+html, body { height: 100%; }
+body.cc-page {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background:
+    radial-gradient(90% 70% at 50% 110%, rgba(240, 169, 10, .12) 0%, rgba(240, 169, 10, 0) 55%),
+    linear-gradient(180deg, var(--cc-bg1) 0%, var(--cc-bg2) 100%);
+  color: var(--cc-bone);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body.cc-page *,
+body.cc-page *::before,
+body.cc-page *::after { box-sizing: border-box; }
+
+/* ---------- App frame ---------- */
+.c-app {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top bar ---------- */
+.c-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  padding: 12px clamp(12px, 3vw, 28px);
+  padding-top: max(12px, env(safe-area-inset-top));
+  background: rgba(0, 0, 0, .38);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--cc-stone);
+  box-shadow: 0 0 26px rgba(240, 169, 10, .14);
+  z-index: 20;
+}
+.c-bar__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.c-bar__brand svg { filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .5)); }
+.c-bar__title {
+  margin: 0;
+  font-size: clamp(19px, 3.4vw, 26px);
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .6), 0 0 20px rgba(212, 58, 47, .35);
+}
+.c-bar__stats { display: flex; align-items: center; gap: 8px 18px; margin-left: auto; }
+.c-bar__controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stat { font-size: 14px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; color: var(--cc-muted); }
+.stat b { color: var(--cc-gold); font-size: 16px; text-shadow: 0 0 10px rgba(255, 216, 58, .35); }
+
+/* ---------- Buttons (chunky arcade style, mario-like) ---------- */
+.c-btn {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 2px solid var(--cc-stone);
+  background: rgba(255, 255, 255, .07);
+  color: var(--cc-bone);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .5);
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+}
+.c-btn:hover { background: rgba(107, 101, 88, .3); border-color: var(--cc-bone); }
+.c-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, .5); }
+.c-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(240, 169, 10, .5); }
+.c-btn--primary {
+  background: linear-gradient(140deg, #e8574b, var(--cc-blood) 55%, #8f2119);
+  border-color: #f2b7b1;
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .35);
+}
+.c-btn--primary:hover { filter: brightness(1.08); }
+
+/* ---------- Table / stage ---------- */
+.c-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.4vh, 22px);
+}
+.cc-stage {
+  position: relative;
+  /* 8:5; capped by viewport height minus the chrome, no fixed
+     floor — small screens just get a smaller board (no horizontal scroll). */
+  width: min(96vw, calc((100vh - 170px) * 1.6), 760px);
+  aspect-ratio: 8 / 5;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #100d0a;
+  border: 3px solid var(--cc-stone);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, .45), 0 22px 48px rgba(0, 0, 0, .6),
+              0 0 30px rgba(240, 169, 10, .16);
+  touch-action: none;
+  cursor: crosshair;
+}
+#screen {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* ---------- Ready / paused / game-over overlays ---------- */
+.cc-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px;
+  background: rgba(8, 7, 5, .55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  cursor: default;
+}
+.cc-overlay[hidden] { display: none; }
+.cc-card {
+  max-width: 340px;
+  text-align: center;
+  padding: 22px 24px 20px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #2e2c26, #1b1712);
+  border: 2px solid var(--cc-stone);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, .45), 0 22px 50px rgba(0, 0, 0, .6);
+  color: var(--cc-bone);
+  animation: ccPop .3s ease;
+}
+@keyframes ccPop { from { transform: scale(.88); opacity: 0; } }
+.cc-card__big { font-size: 40px; line-height: 1.1; }
+.cc-card h2 {
+  margin: 6px 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .6);
+}
+.cc-card p { margin: 0 0 14px; color: var(--cc-muted); font-size: 13.5px; line-height: 1.55; }
+.cc-card p b { color: var(--cc-gold); }
+.cc-card .c-btn { font-size: 14px; }
+.cc-card kbd, .c-modal kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  margin: 0 1px;
+  font: 700 12px/1.5 ui-monospace, "Segoe UI", monospace;
+  text-align: center;
+  color: #1b1712;
+  background: #ddd5c2;
+  border-radius: 6px;
+  border-bottom: 2px solid rgba(0, 0, 0, .5);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
+.c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Rules modal ---------- */
+.c-modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; }
+.c-modal[hidden] { display: none; }
+.c-modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(6, 6, 8, .72);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.c-modal__panel {
+  position: relative;
+  width: min(92vw, 470px);
+  max-height: 86vh;
+  overflow: auto;
+  background: linear-gradient(160deg, #2e2c26, #17140f);
+  color: var(--cc-bone);
+  border-radius: 16px;
+  border: 2px solid var(--cc-stone);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, .5), 0 24px 60px rgba(0, 0, 0, .65);
+}
+.c-modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--cc-stone2);
+}
+.c-modal__head h2 {
+  margin: 0; font-size: 18px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: #fff; text-shadow: 2px 2px 0 rgba(0, 0, 0, .55);
+}
+.c-modal__x {
+  appearance: none; border: 0; background: none;
+  color: var(--cc-bone); font-size: 26px; line-height: 1;
+  cursor: pointer; padding: 0 4px;
+}
+.c-modal__x:hover { color: var(--cc-gold); }
+.c-modal__body { padding: 8px 20px 4px; font-size: 14px; line-height: 1.55; }
+.c-modal__body h3 {
+  margin: 16px 0 6px; font-size: 13px;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--cc-amber);
+}
+.c-modal__body ul { margin: 0; padding-left: 20px; }
+.c-modal__body li { margin: 4px 0; }
+.c-modal__body b { color: var(--cc-gold); }
+.c-modal__lead { margin: 12px 0; }
+.c-modal__note {
+  margin: 14px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(240, 169, 10, .09);
+  border: 1px solid rgba(240, 169, 10, .32);
+  font-size: 13px;
+  color: #bfb49b;
+}
+.c-modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+  .c-bar { flex-wrap: nowrap; gap: 8px; }
+  .c-bar__title { font-size: 16px; }
+  .c-bar__stats { margin-left: auto; }
+  .stat { font-size: 12px; }
+  .stat b { font-size: 13px; }
+  .c-btn { padding: 8px 10px; font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-btn, .cc-card { transition: none; animation: none; }
+}
