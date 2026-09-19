@@ -54,12 +54,26 @@
           <div class="bj-status" id="status" role="status" aria-live="polite">Place your bet</div>
         </div>
 
-        <!-- Player -->
+        <!-- Player (one hand, or two after a split) -->
         <section class="bj-side bj-side--player" aria-label="You">
-          <div class="bj-side__label">
-            You <span class="bj-count" id="playerCount"></span>
+          <div class="bj-hands">
+            <div class="bj-hand" id="hand0">
+              <div class="bj-side__label">
+                <span id="label0">You</span>
+                <span class="bj-count" id="playerCount"></span>
+                <span class="bj-stake" id="stake0"></span>
+              </div>
+              <div class="bj-well" id="player"></div>
+            </div>
+            <div class="bj-hand" id="hand1" hidden>
+              <div class="bj-side__label">
+                <span>Hand 2</span>
+                <span class="bj-count" id="player2Count"></span>
+                <span class="bj-stake" id="stake1"></span>
+              </div>
+              <div class="bj-well" id="player2"></div>
+            </div>
           </div>
-          <div class="bj-well" id="player"></div>
         </section>
 
         <!-- Bet chips -->
@@ -76,6 +90,7 @@
           <button id="hitBtn" class="c-btn" type="button" disabled>Hit</button>
           <button id="standBtn" class="c-btn" type="button" disabled>Stand</button>
           <button id="doubleBtn" class="c-btn" type="button" disabled>Double</button>
+          <button id="splitBtn" class="c-btn" type="button" disabled>Split</button>
         </div>
       </div>
     </main>
@@ -108,6 +123,7 @@
           <li><b>Hit</b> — take another card. Go past 21 and you <b>bust</b> and lose the bet.</li>
           <li><b>Stand</b> — keep your total and let the dealer play out.</li>
           <li><b>Double</b> — double the bet, take exactly one card, then stand.</li>
+          <li><b>Split</b> — with two cards of the same value, pay one more stake and play them as two separate hands. Split aces each get one card and stand; a 21 after splitting is not a natural blackjack.</li>
         </ul>
         <h3>Payouts</h3>
         <ul>
@@ -118,7 +134,7 @@
         <h3>Extras</h3>
         <ul>
           <li><b>New Bank</b> resets you to $500 anytime — this is just for fun, no real money.</li>
-          <li>Shortcuts: <kbd>Space</kbd> deal &middot; <kbd>H</kbd> hit &middot; <kbd>S</kbd> stand &middot; <kbd>D</kbd> double &middot; <kbd>R</kbd> rules.</li>
+          <li>Shortcuts: <kbd>Space</kbd> deal &middot; <kbd>H</kbd> hit &middot; <kbd>S</kbd> stand &middot; <kbd>D</kbd> double &middot; <kbd>P</kbd> split &middot; <kbd>R</kbd> rules.</li>
         </ul>
         <p class="c-modal__note">Your bankroll is saved in this browser between visits.</p>
       </div>

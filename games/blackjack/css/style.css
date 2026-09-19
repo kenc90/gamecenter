@@ -60,6 +60,23 @@
   from { transform: translateY(-42px) rotate(-7deg); opacity: 0; }
 }
 
+/* ---------- Player hands (split support) ---------- */
+.bj-hands { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: clamp(10px, 4vw, 30px); }
+.bj-hand {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 6px 10px; border-radius: 14px;
+  border: 1px solid transparent;
+  transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+/* Explicit rule: display:flex on .bj-hand would otherwise beat [hidden]. */
+.bj-hand[hidden] { display: none; }
+/* Gold ring marks the hand being played; finished hands recede a little. */
+.bj-hand--active { border-color: rgba(240, 180, 41, .55); box-shadow: 0 0 16px rgba(240, 180, 41, .18); }
+.bj-hand--done { opacity: .55; }
+/* Per-hand stake tag (shows the ×2 after a double). */
+.bj-stake { font-size: 12px; font-weight: 700; color: var(--c-muted); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.bj-stake:empty { display: none; }
+
 /* ---------- Center status ---------- */
 .bj-mid { min-height: 34px; display: flex; align-items: center; }
 .bj-status {
@@ -113,6 +130,10 @@
 /* ---------- Action row ---------- */
 .bj-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .bj-actions .c-btn { min-width: 84px; text-align: center; font-size: 14px; padding: 9px 16px; }
+@media (max-width: 560px) {
+  /* Five action buttons get tight — let the row breathe a bit smaller. */
+  .bj-actions .c-btn { min-width: 70px; padding: 9px 12px; }
+}
 
 @media (max-width: 430px) {
   .bj-chip { width: 40px; height: 40px; }
