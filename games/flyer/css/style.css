@@ -1,0 +1,256 @@
+/* =====================================================================
+   Tunnel Flyer — fixed "deep space neon" theme.
+   Like Super Plumber, this page deliberately ignores the center's
+   light/dark mode and its shared glass chrome (no glass.css is loaded);
+   every color here is hardcoded, built from the game's own palette:
+   cyan tunnel glow on deep space blue, gold accents.
+   ===================================================================== */
+:root {
+  --tf-cyan:  #19b9d8;   /* primary accent — tron tunnel lines */
+  --tf-cyan2: #4de1ff;   /* hover / glow highlight */
+  --tf-gold:  #ffd83a;   /* rings, stats, headings */
+  --tf-ink:   #04222c;   /* text on cyan fills */
+  --tf-line:  rgba(77, 225, 255, .38);
+  --tf-text:  #dff4ff;
+  --tf-muted: #8fb8cc;
+  --tf-panel1: #0f2a4d;
+  --tf-panel2: #081527;
+}
+
+html, body { height: 100%; }
+body.tf-page {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: radial-gradient(120% 95% at 50% -10%, #12406b 0%, #0a1a36 48%, #05070f 100%);
+  color: var(--tf-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body.tf-page *,
+body.tf-page *::before,
+body.tf-page *::after { box-sizing: border-box; }
+
+/* ---------- App frame ---------- */
+.c-app {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top bar ---------- */
+.c-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  padding: 12px clamp(12px, 3vw, 28px);
+  padding-top: max(12px, env(safe-area-inset-top));
+  background: rgba(0, 0, 0, .28);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--tf-line);
+  box-shadow: 0 0 26px rgba(25, 185, 216, .22);
+  z-index: 20;
+}
+.c-bar__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.c-bar__brand svg { filter: drop-shadow(0 0 7px rgba(77, 225, 255, .55)); }
+.c-bar__title {
+  margin: 0;
+  font-size: clamp(19px, 3.4vw, 26px);
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .45), 0 0 18px rgba(77, 225, 255, .45);
+}
+.c-bar__stats { display: flex; align-items: center; gap: 8px 18px; margin-left: auto; }
+.c-bar__controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stat { font-size: 14px; font-weight: 700; color: var(--tf-muted); letter-spacing: .03em; white-space: nowrap; }
+.stat b { color: var(--tf-gold); font-size: 16px; text-shadow: 0 0 10px rgba(255, 216, 58, .45); }
+
+/* ---------- Buttons (chunky arcade style, mario-like) ---------- */
+.c-btn {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .35);
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+}
+.c-btn:hover { background: rgba(77, 225, 255, .22); border-color: var(--tf-cyan2); }
+.c-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, .35); }
+.c-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(77, 225, 255, .6); }
+.c-btn--primary {
+  background: linear-gradient(140deg, var(--tf-cyan), #0e8ba5);
+  border-color: #bff3ff;
+  color: var(--tf-ink);
+  text-shadow: none;
+}
+.c-btn--primary:hover { background: linear-gradient(140deg, #2fd4f2, #12a0bd); filter: brightness(1.06); }
+
+/* ---------- Table / stage ---------- */
+.c-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.4vh, 22px);
+}
+.tf-stage {
+  position: relative;
+  /* 16:10; capped by viewport height minus the chrome, no fixed
+     floor — small screens just get a smaller board (no horizontal scroll). */
+  width: min(96vw, calc((100vh - 170px) * 1.6), 760px);
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #05070f;
+  border: 3px solid rgba(25, 185, 216, .55);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .55), 0 0 34px rgba(25, 185, 216, .28),
+              inset 0 0 0 2px rgba(0, 0, 0, .4);
+  touch-action: none;
+  cursor: crosshair;
+}
+#screen { display: block; width: 100%; height: 100%; }
+
+/* ---------- Ready / game-over overlays ---------- */
+.tf-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px;
+  background: rgba(3, 6, 14, .58);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  cursor: default;
+}
+.tf-overlay[hidden] { display: none; }
+.tf-card {
+  max-width: 330px;
+  text-align: center;
+  padding: 22px 24px 20px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, var(--tf-panel1), var(--tf-panel2));
+  border: 2px solid var(--tf-line);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, .55), 0 0 24px rgba(25, 185, 216, .18);
+  color: var(--tf-text);
+  animation: tfPop .3s ease;
+}
+@keyframes tfPop { from { transform: scale(.88); opacity: 0; } }
+.tf-card__big { font-size: 40px; line-height: 1.1; }
+.tf-card h2 {
+  margin: 6px 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .45);
+}
+.tf-card p { margin: 0 0 14px; color: var(--tf-muted); font-size: 13.5px; line-height: 1.55; }
+.tf-card p b { color: var(--tf-gold); }
+.tf-card .c-btn { font-size: 14px; }
+.tf-card kbd, .c-modal kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  margin: 0 1px;
+  font: 700 12px/1.5 inherit;
+  font-family: ui-monospace, "Segoe UI", monospace;
+  text-align: center;
+  color: #10222c;
+  background: #cfeefc;
+  border-radius: 6px;
+  border-bottom: 2px solid rgba(0, 0, 0, .4);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+}
+.c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Rules modal ---------- */
+.c-modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; }
+.c-modal[hidden] { display: none; }
+.c-modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(3, 6, 14, .68);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.c-modal__panel {
+  position: relative;
+  width: min(92vw, 470px);
+  max-height: 86vh;
+  overflow: auto;
+  background: linear-gradient(160deg, var(--tf-panel1), var(--tf-panel2));
+  color: var(--tf-text);
+  border-radius: 16px;
+  border: 2px solid var(--tf-line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .6), 0 0 30px rgba(25, 185, 216, .2);
+}
+.c-modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(77, 225, 255, .25);
+}
+.c-modal__head h2 {
+  margin: 0; font-size: 18px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: #fff; text-shadow: 2px 2px 0 rgba(0, 0, 0, .4);
+}
+.c-modal__x {
+  appearance: none; border: 0; background: none;
+  color: var(--tf-text); font-size: 26px; line-height: 1;
+  cursor: pointer; padding: 0 4px;
+}
+.c-modal__x:hover { color: var(--tf-cyan2); }
+.c-modal__body { padding: 8px 20px 4px; font-size: 14px; line-height: 1.55; }
+.c-modal__body h3 {
+  margin: 16px 0 6px; font-size: 13px;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--tf-gold);
+}
+.c-modal__body ul { margin: 0; padding-left: 20px; }
+.c-modal__body li { margin: 4px 0; }
+.c-modal__body b { color: var(--tf-gold); }
+.c-modal__lead { margin: 12px 0; }
+.c-modal__note {
+  margin: 14px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(25, 185, 216, .1);
+  border: 1px solid rgba(77, 225, 255, .28);
+  font-size: 13px;
+  color: var(--tf-muted);
+}
+.c-modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+  .c-bar { flex-wrap: nowrap; gap: 8px; }
+  .c-bar__title { font-size: 16px; }
+  .c-bar__stats { margin-left: auto; }
+  .stat { font-size: 12px; }
+  .stat b { font-size: 13px; }
+  .c-btn { padding: 8px 10px; font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-btn, .tf-card { transition: none; animation: none; }
+}

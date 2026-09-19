@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Tunnel Flyer</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared base.css only (back chip + resets). This game uses a fixed
+     "deep space neon" theme and intentionally ignores the center's
+     light/dark mode and glass chrome — like the Super Plumber page. -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="tf-page gc-body">
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <g fill="none" stroke-linejoin="round">
+            <polygon points="12,2 17,5 20,12 17,19 12,22 7,19 4,12 7,5" stroke="#19b9d8" stroke-width="1.6"/>
+            <polygon points="12,7 15,8.5 16.5,12 15,15.5 12,17 9,15.5 7.5,12 9,8.5" stroke="#4de1ff" stroke-width="1.3" opacity=".7"/>
+          </g>
+          <path d="M12 9.4 14.2 14.6 12 13.1 9.8 14.6Z" fill="#ffd83a" stroke="#1c2233" stroke-width=".9" stroke-linejoin="round"/>
+        </svg>
+        <h1 class="c-bar__title">Tunnel Flyer</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Score <b id="score">0</b></span>
+        <span class="stat">Best <b id="best">0</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="soundBtn" class="c-btn" type="button" aria-pressed="true" title="Toggle sound">Sound: On</button>
+        <button id="pauseBtn" class="c-btn" type="button" aria-pressed="false" title="Pause (P)">Pause</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="New game (N)">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface: canvas stage + ready / game-over overlays -->
+    <main class="c-table">
+      <div class="tf-stage" id="stage">
+        <canvas id="screen" width="640" height="400" aria-label="Tunnel Flyer game screen"></canvas>
+
+        <div class="tf-overlay" id="readyOverlay">
+          <div class="tf-card">
+            <div class="tf-card__big">&#128640;</div>
+            <h2>Thread the tunnel</h2>
+            <p>Steer with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, arrows or the mouse.<br>Ride the curving tunnel, dodge the orange blocks, grab the gold rings.</p>
+            <button class="c-btn c-btn--primary" id="startBtn" type="button">Start</button>
+          </div>
+        </div>
+
+        <div class="tf-overlay" id="overOverlay" hidden>
+          <div class="tf-card">
+            <div class="tf-card__big" id="overMedal">&#128165;</div>
+            <h2 id="overTitle">You crashed</h2>
+            <p id="overStats">Score 0 &#183; Best 0</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="againBtn" type="button">Fly again</button>
+              <a class="c-btn" href="../../index.html">Game Center</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> pilot a ship through a neon tunnel that bends, twists and
+          speeds up forever. One touch of the wall and the run is over.
+        </p>
+        <h3>The rules</h3>
+        <ul>
+          <li>The tunnel <b>curves on its own</b> &mdash; the wall slides into you; steer to stay centered.</li>
+          <li><b>Orange hazard blocks</b> float in the tunnel &mdash; they only block part of it, so steer around them. There is always room to pass.</li>
+          <li><b>Gold rings</b> are worth <b>50 points</b> apiece; distance earns 10 points per meter as it grows.</li>
+          <li>Speed creeps up the deeper you fly. There is no finish line &mdash; only how good your reflexes are.</li>
+        </ul>
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>&#8592;</kbd><kbd>&#8593;</kbd><kbd>&#8595;</kbd><kbd>&#8594;</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> &mdash; thrust.</li>
+          <li><kbd>Mouse</kbd> / <kbd>touch</kbd> &mdash; the ship chases your pointer.</li>
+          <li><kbd>P</kbd> pauses &middot; <kbd>N</kbd> new game &middot; <kbd>R</kbd> rules &middot; <kbd>M</kbd> mute.</li>
+        </ul>
+        <div class="c-modal__note">
+          Your run is saved in this browser every few meters &mdash; close the tab mid-flight
+          and the tunnel will be right where you left it. The tunnel itself is generated
+          from your distance, so it rebuilds exactly the same.
+        </div>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/flyer.js"></script>
+</body>
+</html>
