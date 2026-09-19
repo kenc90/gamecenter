@@ -975,6 +975,55 @@
           <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
         </span>
       </a>
+
+      <a class="gc-card" data-category="arcade" href="games/breakout/index.html">
+        <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
+        <span class="gc-card__art">
+          <svg viewBox="0 0 120 120" role="img" aria-label="Breakout brick wall preview">
+            <defs>
+              <radialGradient id="boGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#fff" stop-opacity=".9"/>
+                <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+              </radialGradient>
+              <clipPath id="boClip"><rect x="12" y="12" width="96" height="96" rx="16"/></clipPath>
+            </defs>
+            <g clip-path="url(#boClip)">
+              <!-- arcade night -->
+              <rect x="12" y="12" width="96" height="96" fill="#12103a"/>
+              <g fill="#fff" fill-opacity=".3">
+                <circle cx="26" cy="94" r="1.2"/><circle cx="98" cy="86" r="1"/><circle cx="58" cy="100" r="1.3"/><circle cx="88" cy="64" r=".9"/>
+              </g>
+              <!-- rainbow brick rows, two gaps punched out by the ball -->
+              <g stroke="#08061e" stroke-width="1.5">
+                <g fill="#e23b2e"><rect x="18" y="22" width="19" height="9" rx="2"/><rect x="40" y="22" width="19" height="9" rx="2"/><rect x="62" y="22" width="19" height="9" rx="2"/><rect x="84" y="22" width="18" height="9" rx="2"/></g>
+                <g fill="#ff8c1a"><rect x="18" y="34" width="19" height="9" rx="2"/><rect x="40" y="34" width="19" height="9" rx="2"/><rect x="84" y="34" width="18" height="9" rx="2"/></g>
+                <g fill="#ffd83a"><rect x="18" y="46" width="19" height="9" rx="2"/><rect x="62" y="46" width="19" height="9" rx="2"/><rect x="84" y="46" width="18" height="9" rx="2"/></g>
+                <g fill="#2fb068"><rect x="40" y="58" width="19" height="9" rx="2"/><rect x="62" y="58" width="19" height="9" rx="2"/><rect x="84" y="58" width="18" height="9" rx="2"/></g>
+              </g>
+              <!-- ball on its way down, with a faint trail -->
+              <circle cx="52" cy="74" r="9" fill="url(#boGlow)"/>
+              <circle cx="52" cy="74" r="4" fill="#fff"/>
+              <circle cx="58" cy="66" r="1.6" fill="#fff" fill-opacity=".4"/>
+              <circle cx="63" cy="60" r="1.2" fill="#fff" fill-opacity=".22"/>
+              <!-- paddle -->
+              <rect x="42" y="98" width="36" height="6" rx="3" fill="#2a5ad6" stroke="#08061e" stroke-width="1.5"/>
+              <rect x="46" y="99.5" width="28" height="1.8" rx=".9" fill="#8fb4ff"/>
+            </g>
+            <rect x="12" y="12" width="96" height="96" rx="16" fill="none" stroke="#ff8c1a" stroke-opacity=".65" stroke-width="2.5"/>
+          </svg>
+        </span>
+        <span class="gc-card__body">
+          <span class="gc-card__title">
+            Breakout
+            <span class="gc-badge">Arcade</span>
+          </span>
+          <span class="gc-card__desc">
+            One stubborn ball against a rainbow wall of bricks &mdash; keep the
+            paddle honest, chip away the low rows first, and never let it drop.
+          </span>
+          <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
+        </span>
+      </a>
     </div>
   </main>
 

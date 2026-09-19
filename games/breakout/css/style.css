@@ -1,0 +1,73 @@
+/* ===== Breakout — game-specific styles =====
+   Generic glass chrome comes from shared/css/glass.css (fixed theme, no
+   light/dark mode). This file sizes the portrait canvas stage (classic
+   arcade cabinets stand tall, 4:5 here) and styles the ready / game-over
+   cards that sit on top of it. */
+
+:root {
+  /* Breakout leans on the brick-wall red over the default indigo glass. */
+  --accent-1: #e23b2e;
+  --accent-2: #ff6a4d;
+  --on-accent: #2a0a06;
+}
+
+.c-app { --fpad: clamp(10px, 3vw, 24px); }
+.c-table { display: flex; align-items: center; justify-content: center; }
+
+/* ---------- Stage: fixed-ratio canvas, capped so it never scrolls ---------- */
+.bo-stage {
+  position: relative;
+  /* 4:5 portrait; capped by viewport height minus the chrome, no fixed
+     floor — small screens just get a smaller board (no horizontal scroll). */
+  width: min(94vw, calc((100vh - 170px) * 0.8), 480px);
+  aspect-ratio: 4 / 5;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .08);
+  touch-action: none;
+  cursor: none;
+}
+#screen { display: block; width: 100%; height: 100%; }
+
+/* ---------- Ready / game-over cards on the canvas ---------- */
+.bo-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px;
+  background: rgba(5, 8, 20, .45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  cursor: default;
+}
+.bo-overlay[hidden] { display: none; }
+.bo-card {
+  max-width: 300px;
+  text-align: center;
+  padding: 22px 24px 20px;
+  border-radius: 16px;
+  background: var(--glass);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .2);
+  color: #fff;
+  animation: boPop .3s ease;
+}
+@keyframes boPop { from { transform: scale(.88); opacity: 0; } }
+.bo-card__big { font-size: 40px; line-height: 1.1; }
+.bo-card h2 { margin: 6px 0 6px; font-size: 23px; }
+.bo-card p { margin: 0 0 14px; color: var(--c-muted); font-size: 13.5px; line-height: 1.55; }
+.bo-card .c-btn { font-size: 14px; }
+.bo-card kbd {
+  font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace;
+  padding: 1px 6px; border-radius: 5px;
+  color: var(--c-text);
+  background: rgba(0, 0, 0, .35);
+  border: 1px solid var(--glass-line);
+}
+.bo-card .c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bo-card { animation: none; }
+}

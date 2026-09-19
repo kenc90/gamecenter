@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Breakout</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared chrome: base.css for the back link, glass.css for this game's
+     fixed frosted-glass theme (no light/dark mode by design). -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../../shared/css/glass.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <g stroke="#1c2233" stroke-width="1.1">
+            <rect x="2.5" y="3" width="8.6" height="4" rx="1.2" fill="#e23b2e"/>
+            <rect x="12.9" y="3" width="8.6" height="4" rx="1.2" fill="#ff8c1a"/>
+            <rect x="2.5" y="8.2" width="8.6" height="4" rx="1.2" fill="#ffd83a"/>
+            <rect x="12.9" y="8.2" width="8.6" height="4" rx="1.2" fill="#2fb068"/>
+          </g>
+          <circle cx="16.5" cy="15.6" r="2.1" fill="#fff" stroke="#1c2233" stroke-width="1.1"/>
+          <rect x="6" y="20" width="12" height="2.6" rx="1.3" fill="#2a5ad6" stroke="#1c2233" stroke-width="1.1"/>
+        </svg>
+        <h1 class="c-bar__title">Breakout</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Score <b id="score">0</b></span>
+        <span class="stat">Best <b id="best">0</b></span>
+        <span class="stat">Lives <b id="lives">3</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="soundBtn" class="c-btn" type="button" aria-pressed="true" title="Toggle sound">Sound: On</button>
+        <button id="pauseBtn" class="c-btn" type="button" aria-pressed="false" title="Pause (P)">Pause</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="New game (N)">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface: canvas stage + ready / game-over / level-clear overlays -->
+    <main class="c-table">
+      <div class="bo-stage" id="stage">
+        <canvas id="screen" width="480" height="600" aria-label="Breakout game screen"></canvas>
+
+        <div class="bo-overlay" id="readyOverlay">
+          <div class="bo-card">
+            <div class="bo-card__big">&#129510;</div>
+            <h2>Smash every brick</h2>
+            <p>Move with the mouse or <kbd>&#8592;</kbd><kbd>&#8594;</kbd>.<br>Press <kbd>Space</kbd> or click to launch the ball.</p>
+            <button class="c-btn c-btn--primary" id="startBtn" type="button">Start</button>
+          </div>
+        </div>
+
+        <div class="bo-overlay" id="overOverlay" hidden>
+          <div class="bo-card">
+            <div class="bo-card__big" id="overMedal">&#128128;</div>
+            <h2 id="overTitle">Game over</h2>
+            <p id="overStats">Score 0 &#183; Best 0</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="againBtn" type="button">Play again</button>
+              <a class="c-btn" href="../../index.html">Game Center</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> bounce the ball off your paddle to wipe out every brick
+          on the wall. Miss the paddle and you lose a life &mdash; you have three.
+        </p>
+        <h3>The rules</h3>
+        <ul>
+          <li>Bricks are worth <b>more the lower the row</b> &mdash; the bottom row pays <b>70</b>, the top row just <b>10</b>.</li>
+          <li>Clear the whole wall to advance a <b>level</b>: the ball speeds up and the paddle gets a little narrower.</li>
+          <li>The ball starts parked on the paddle &mdash; launch it when you&rsquo;re ready.</li>
+          <li>Out of lives and the run is over; your best score is kept.</li>
+        </ul>
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>Mouse</kbd> / <kbd>touch</kbd> slides the paddle; <kbd>&#8592;</kbd><kbd>&#8594;</kbd> or <kbd>A</kbd><kbd>D</kbd> work too.</li>
+          <li><kbd>Space</kbd> or <kbd>click</kbd> launches the ball.</li>
+          <li><kbd>P</kbd> pauses &middot; <kbd>N</kbd> new game &middot; <kbd>R</kbd> rules &middot; <kbd>M</kbd> mute.</li>
+        </ul>
+        <div class="c-modal__note">
+          Your run &mdash; score, lives, level and the surviving bricks &mdash; is saved in this
+          browser, so a refresh picks up right where you left off.
+        </div>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/breakout.js"></script>
+</body>
+</html>
