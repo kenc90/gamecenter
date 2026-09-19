@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Redline</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared base.css only (back chip + resets). This game uses a fixed
+     "sunset asphalt" theme and intentionally ignores the center's
+     light/dark mode and glass chrome — like the Super Plumber page. -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="rl-page gc-body">
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <!-- a red coupe seen from behind, sun setting over the highway -->
+          <circle cx="12" cy="7" r="5" fill="#ffd83a" opacity=".9"/>
+          <rect x="0" y="12" width="24" height="12" fill="#26221e"/>
+          <polygon points="9,14 15,14 17,20 7,20" fill="#d43a2f" stroke="#7a1c14" stroke-width="1"/>
+          <rect x="10" y="14.6" width="4" height="2.2" rx=".6" fill="#20242e"/>
+          <rect x="7.6" y="18" width="2.4" height="1.2" fill="#ff5a4e"/>
+          <rect x="14" y="18" width="2.4" height="1.2" fill="#ff5a4e"/>
+        </svg>
+        <h1 class="c-bar__title">Redline</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Score <b id="score">0</b></span>
+        <span class="stat">Best <b id="best">0</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="soundBtn" class="c-btn" type="button" aria-pressed="true" title="Toggle sound">Sound: On</button>
+        <button id="pauseBtn" class="c-btn" type="button" aria-pressed="false" title="Pause (P)">Pause</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="New run (N)">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface: canvas stage + ready / paused / game-over overlays -->
+    <main class="c-table">
+      <div class="rl-stage" id="stage">
+        <canvas id="screen" width="640" height="400" aria-label="Redline game screen"></canvas>
+
+        <div class="rl-overlay" id="readyOverlay">
+          <div class="rl-card">
+            <div class="rl-card__big">&#127937;</div>
+            <h2>Sunset. Gears. Clock.</h2>
+            <p>Smash every checkpoint before the timer dies &mdash; the coast road
+               doesn&rsquo;t forgive slow.<br>
+               <kbd>&#8593;</kbd> gas &middot; <kbd>&#8592;</kbd><kbd>&#8594;</kbd> steer &middot; hold the screen on mobile.</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="startBtn" type="button">Start engine</button>
+              <button class="c-btn" id="continueBtn" type="button" hidden>Resume</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rl-overlay" id="pauseOverlay" hidden>
+          <div class="rl-card">
+            <div class="rl-card__big">&#9208;&#65039;</div>
+            <h2>Parked</h2>
+            <p>Engine ticking, clock frozen.<br>Press <kbd>P</kbd> to drop the clutch again.</p>
+            <button class="c-btn c-btn--primary" id="resumeBtn" type="button">Resume</button>
+          </div>
+        </div>
+
+        <div class="rl-overlay" id="overOverlay" hidden>
+          <div class="rl-card">
+            <div class="rl-card__big" id="overMedal">&#9201;&#65039;</div>
+            <h2 id="overTitle">The clock beat you</h2>
+            <p id="overStats">Score 0 &#183; 0 m</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="againBtn" type="button">Race again</button>
+              <a class="c-btn" href="../../index.html">Game Center</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> ride an endless sunset highway through every checkpoint
+          before the countdown hits zero. Each one you smash adds seconds; the
+          road only gets curvier.
+        </p>
+        <h3>The rules</h3>
+        <ul>
+          <li>Every run starts behind the <b>3&middot;2&middot;1&middot;GO!</b> lights &mdash; the clock only starts when they go out.</li>
+          <li><b>Checkpoints</b> add <b>+8 seconds</b> and they are far apart &mdash; you have to actually drive to reach them. Miss the clock and the run is over.</li>
+          <li><b>Traffic</b> is slower than you on purpose. Rear-end it and you lose <b>4 seconds</b> off the clock, most of your speed, and your line. Ramming your way through is a losing strategy.</li>
+          <li><b>The grass is not road.</b> Off-track you bleed speed and gain dust.</li>
+          <li>Curves throw you outward &mdash; brake early, or the scenery brakes for you.</li>
+        </ul>
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>&#8593;</kbd><kbd>W</kbd> accelerate &middot; <kbd>&#8595;</kbd><kbd>S</kbd> brake &middot; <kbd>&#8592;</kbd><kbd>&#8594;</kbd> or <kbd>A</kbd><kbd>D</kbd> steer.</li>
+          <li>On touch: hold the screen to gun it and drag left / right to steer.</li>
+          <li><kbd>P</kbd> pause &middot; <kbd>N</kbd> new run &middot; <kbd>R</kbd> rules &middot; <kbd>M</kbd> mute.</li>
+        </ul>
+        <div class="c-modal__note">
+          The highway is generated from your run&rsquo;s seed, so the same curves
+          are waiting in the exact same place when you come back &mdash; the
+          traffic, however, has moved on without you.
+        </div>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/redline.js"></script>
+</body>
+</html>
