@@ -321,6 +321,28 @@ body.gc-body *::after { box-sizing: border-box; }
 .gc-back:hover { opacity: 1; transform: translateY(-1px); }
 .gc-back:focus-visible { outline: none; box-shadow: var(--gc-ring), var(--gc-shadow); }
 
+/* Phone sizes: auto-fill's 260px track would collapse to one column, so pin
+   exactly two and compact the card internals to suit the narrow columns.
+   Kept at the end of the file: media queries add no specificity, so these
+   must come after the base .gc-* rules they override. */
+@media (max-width: 700px) {
+  .gc-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .gc-card__art { padding: 20px 12px; }
+  .gc-card__art svg { width: 100%; max-width: 104px; }
+  .gc-card__body { padding: 11px 12px 14px; gap: 5px; }
+  .gc-card__title { font-size: 14.5px; }
+  .gc-badge { margin-left: 5px; padding: 1px 6px; font-size: 10px; }
+  .gc-card__desc {
+    font-size: 12px;
+    /* keep card heights even: long descriptions clip to three lines */
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .gc-card__cta { font-size: 12.5px; }
+  .gc-fav { top: 7px; right: 7px; width: 28px; height: 28px; }
+  .gc-fav svg { width: 15px; height: 15px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gc-card, .gc-card__cta span, .gc-back, .gc-toggle { transition: none; }
   .gc-card:hover, .gc-back:hover { transform: none; }
