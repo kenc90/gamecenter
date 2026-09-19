@@ -1,43 +1,159 @@
-/* ===== Breakout — game-specific styles =====
-   Generic glass chrome comes from shared/css/glass.css (fixed theme, no
-   light/dark mode). This file sizes the portrait canvas stage (classic
-   arcade cabinets stand tall, 4:5 here) and styles the ready / game-over
-   cards that sit on top of it. */
-
+/* =====================================================================
+   Breakout — fixed "midnight arcade" theme.
+   Like Super Plumber, Tunnel Flyer & Flappy Bird, this page deliberately
+   ignores the center's light/dark mode and its shared glass chrome (no
+   glass.css is loaded); every color is hardcoded, taken from the game's
+   own canvas palette: deep space indigo, the rainbow brick rows, paddle
+   blue and ball gold.
+   ===================================================================== */
 :root {
-  /* Breakout leans on the brick-wall red over the default indigo glass. */
-  --accent-1: #e23b2e;
-  --accent-2: #ff6a4d;
-  --on-accent: #2a0a06;
+  --bo-bg1:     #0b1030;   /* canvas night sky */
+  --bo-bg2:     #1a1040;
+  --bo-text:    #e8ecff;
+  --bo-muted:   #9aa4d6;
+  --bo-paddle:  #2a5ad6;   /* paddle blue */
+  --bo-paddle2: #16307e;
+  --bo-shine:   #8fb4ff;
+  --bo-gold:    #ffd83a;   /* the ball / stats */
+  --bo-line:    rgba(143, 180, 255, .45);
+  /* the seven brick rows, top to bottom */
+  --bo-rainbow: repeating-linear-gradient(90deg,
+      #e23b2e 0 26px, #ff8c1a 26px 52px, #ffd83a 52px 78px,
+      #2fb068 78px 104px, #2a9dd6 104px 130px, #7b3bf0 130px 156px,
+      #f04a9b 156px 182px);
 }
 
-.c-app { --fpad: clamp(10px, 3vw, 24px); }
-.c-table { display: flex; align-items: center; justify-content: center; }
+html, body { height: 100%; }
+body.bo-page {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--bo-bg1) 0%, var(--bo-bg2) 100%);
+  color: var(--bo-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body.bo-page *,
+body.bo-page *::before,
+body.bo-page *::after { box-sizing: border-box; }
 
-/* ---------- Stage: fixed-ratio canvas, capped so it never scrolls ---------- */
+/* ---------- App frame ---------- */
+.c-app {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top bar ---------- */
+.c-bar {
+  flex: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  padding: 12px clamp(12px, 3vw, 28px);
+  padding-top: max(12px, env(safe-area-inset-top));
+  background: rgba(0, 0, 0, .32);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  z-index: 20;
+}
+/* a row of bricks along the bottom edge of the bar */
+.c-bar::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 4px;
+  background: var(--bo-rainbow);
+  opacity: .9;
+}
+.c-bar__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.c-bar__brand svg { filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .4)); }
+.c-bar__title {
+  margin: 0;
+  font-size: clamp(19px, 3.4vw, 26px);
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .5), 0 0 18px rgba(42, 90, 214, .6);
+}
+.c-bar__stats { display: flex; align-items: center; gap: 8px 18px; margin-left: auto; }
+.c-bar__controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stat { font-size: 14px; font-weight: 700; letter-spacing: .03em; white-space: nowrap; color: var(--bo-muted); }
+.stat b { color: var(--bo-gold); font-size: 16px; text-shadow: 0 0 10px rgba(255, 216, 58, .4); }
+
+/* ---------- Buttons (chunky arcade style, mario-like) ---------- */
+.c-btn {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .45);
+  transition: transform .06s ease, background .15s ease, box-shadow .15s ease;
+}
+.c-btn:hover { background: rgba(143, 180, 255, .22); border-color: var(--bo-shine); }
+.c-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
+.c-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(143, 180, 255, .55); }
+.c-btn--primary {
+  background: linear-gradient(160deg, var(--bo-shine) 0%, var(--bo-paddle) 40%, var(--bo-paddle2) 100%);
+  border-color: #cfe0ff;
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .3);
+}
+.c-btn--primary:hover { filter: brightness(1.1); }
+
+/* ---------- Table / stage ---------- */
+.c-table {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.4vh, 22px);
+}
 .bo-stage {
   position: relative;
   /* 4:5 portrait; capped by viewport height minus the chrome, no fixed
      floor — small screens just get a smaller board (no horizontal scroll). */
   width: min(94vw, calc((100vh - 170px) * 0.8), 480px);
   aspect-ratio: 4 / 5;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid var(--glass-line);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .08);
+  background: #0b1030;
+  border: 3px solid rgba(42, 90, 214, .65);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, .35), 0 22px 48px rgba(0, 0, 0, .55),
+              0 0 34px rgba(42, 90, 214, .3);
   touch-action: none;
   cursor: none;
 }
 #screen { display: block; width: 100%; height: 100%; }
 
-/* ---------- Ready / game-over cards on the canvas ---------- */
+/* ---------- Ready / game-over overlays ---------- */
 .bo-overlay {
   position: absolute; inset: 0; z-index: 5;
   display: flex; align-items: center; justify-content: center;
   padding: 18px;
-  background: rgba(5, 8, 20, .45);
-  backdrop-filter: blur(3px);
+  background: rgba(5, 8, 24, .5);
   -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   cursor: default;
 }
 .bo-overlay[hidden] { display: none; }
@@ -46,28 +162,108 @@
   text-align: center;
   padding: 22px 24px 20px;
   border-radius: 16px;
-  background: var(--glass);
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
-  border: 1px solid var(--glass-line);
-  box-shadow: 0 20px 55px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .2);
-  color: #fff;
+  background: linear-gradient(160deg, #1c2352, #12102e);
+  border: 2px solid var(--bo-line);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, .35), 0 22px 50px rgba(0, 0, 0, .55);
+  color: var(--bo-text);
   animation: boPop .3s ease;
 }
 @keyframes boPop { from { transform: scale(.88); opacity: 0; } }
 .bo-card__big { font-size: 40px; line-height: 1.1; }
-.bo-card h2 { margin: 6px 0 6px; font-size: 23px; }
-.bo-card p { margin: 0 0 14px; color: var(--c-muted); font-size: 13.5px; line-height: 1.55; }
-.bo-card .c-btn { font-size: 14px; }
-.bo-card kbd {
-  font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace;
-  padding: 1px 6px; border-radius: 5px;
-  color: var(--c-text);
-  background: rgba(0, 0, 0, .35);
-  border: 1px solid var(--glass-line);
+.bo-card h2 {
+  margin: 6px 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, .5);
 }
-.bo-card .c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.bo-card p { margin: 0 0 14px; color: var(--bo-muted); font-size: 13.5px; line-height: 1.55; }
+.bo-card p b { color: var(--bo-gold); }
+.bo-card .c-btn { font-size: 14px; }
+.bo-card kbd, .c-modal kbd {
+  display: inline-block;
+  min-width: 18px;
+  padding: 1px 6px;
+  margin: 0 1px;
+  font: 700 12px/1.5 ui-monospace, "Segoe UI", monospace;
+  text-align: center;
+  color: #141a3c;
+  background: #e8ecff;
+  border-radius: 6px;
+  border-bottom: 2px solid rgba(0, 0, 0, .4);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+}
+.c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Rules modal ---------- */
+.c-modal { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; }
+.c-modal[hidden] { display: none; }
+.c-modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(4, 6, 20, .68);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.c-modal__panel {
+  position: relative;
+  width: min(92vw, 470px);
+  max-height: 86vh;
+  overflow: auto;
+  background: linear-gradient(160deg, #1c2352, #100d2c);
+  color: var(--bo-text);
+  border-radius: 16px;
+  border: 2px solid var(--bo-line);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, .4), 0 24px 60px rgba(0, 0, 0, .6);
+}
+.c-modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(143, 180, 255, .3);
+}
+.c-modal__head h2 {
+  margin: 0; font-size: 18px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: #fff; text-shadow: 2px 2px 0 rgba(0, 0, 0, .45);
+}
+.c-modal__x {
+  appearance: none; border: 0; background: none;
+  color: var(--bo-text); font-size: 26px; line-height: 1;
+  cursor: pointer; padding: 0 4px;
+}
+.c-modal__x:hover { color: var(--bo-gold); }
+.c-modal__body { padding: 8px 20px 4px; font-size: 14px; line-height: 1.55; }
+.c-modal__body h3 {
+  margin: 16px 0 6px; font-size: 13px;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--bo-gold);
+}
+.c-modal__body ul { margin: 0; padding-left: 20px; }
+.c-modal__body li { margin: 4px 0; }
+.c-modal__body b { color: var(--bo-gold); }
+.c-modal__lead { margin: 12px 0; }
+.c-modal__note {
+  margin: 14px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(42, 90, 214, .16);
+  border: 1px solid rgba(143, 180, 255, .35);
+  font-size: 13px;
+  color: #c3cdee;
+}
+.c-modal__foot { display: flex; justify-content: flex-end; padding: 12px 20px 16px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 700px) {
+  .c-bar { flex-wrap: nowrap; gap: 8px; }
+  .c-bar__title { font-size: 16px; }
+  .c-bar__stats { margin-left: auto; }
+  .stat { font-size: 12px; }
+  .stat b { font-size: 13px; }
+  .c-btn { padding: 8px 10px; font-size: 12px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .bo-card { animation: none; }
+  .c-btn, .bo-card { transition: none; animation: none; }
 }
