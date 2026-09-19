@@ -1,0 +1,395 @@
+/* ============================================================
+   Glass card-game theme — shared chrome for Spider, FreeCell,
+   Memory and Blackjack.
+   A fixed (no light/dark switch) translucent-glass look: deep
+   gradient backdrop + diagonal line pattern, frosted panels with
+   backdrop-blur, and classic white playing cards. Component classes
+   are prefixed .c-* and every colour lives in a :root token, so a
+   game re-tints itself by overriding a handful of custom properties.
+   Loading order matters: this file comes AFTER shared/css/base.css
+   (for the .gc-back link) and BEFORE the game's own style.css.
+   ============================================================ */
+
+:root {
+  /* backdrop */
+  --bg-1: #171b34;
+  --bg-2: #090b17;
+  --bg-glow-a: rgba(108, 91, 255, .38);
+  --bg-glow-b: rgba(47, 201, 255, .20);
+  --line: rgba(255, 255, 255, .045);          /* line-pattern colour */
+
+  /* glass panels */
+  --glass: rgba(255, 255, 255, .07);
+  --glass-hi: rgba(255, 255, 255, .14);
+  --glass-line: rgba(255, 255, 255, .16);
+  --c-text: #e9edfb;
+  --c-muted: #a8b2d4;
+
+  /* cards */
+  --card-face: #fbfbf6;
+  --card-edge: #c8ccd6;
+  --card-red: #d21e2b;
+  --card-black: #191d26;
+  --back-1: #5661ff;
+  --back-2: #342b8f;
+  --slot: rgba(255, 255, 255, .06);
+  --slot-line: rgba(255, 255, 255, .20);
+
+  /* actions + highlights */
+  --accent-1: #6c5bff;
+  --accent-2: #2fc9ff;
+  --on-accent: #0a0f22;
+  --gold: #ffdf6b;
+  --ring: 0 0 0 3px rgba(108, 120, 255, .45);
+}
+
+html, body { margin: 0; height: 100%; }
+/* The drag layer / floating clones are <body> children — give the body the
+   same font stack so card text never falls back to the default serif. */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--c-text);
+}
+
+/* ---------- App frame: gradient + glow + line pattern ---------- */
+.c-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--c-text);
+  background:
+    repeating-linear-gradient(45deg, var(--line) 0 2px, transparent 2px 10px),
+    radial-gradient(90% 60% at 15% -10%, var(--bg-glow-a) 0%, transparent 55%),
+    radial-gradient(80% 55% at 100% 0%, var(--bg-glow-b) 0%, transparent 50%),
+    linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 60%);
+  background-attachment: fixed;
+}
+.c-app *, .c-app *::before, .c-app *::after { box-sizing: border-box; }
+
+/* ---------- Top bar (frosted glass) ---------- */
+.c-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px clamp(12px, 3vw, 28px);
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid var(--glass-line);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .25);
+}
+.c-bar__brand { display: flex; align-items: center; gap: 9px; }
+.c-bar__brand svg { display: block; }
+.c-bar__title { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+.c-bar__stats { display: flex; gap: 16px; margin-left: 6px; font-size: 13px; color: var(--c-muted); }
+.c-bar__stats .stat b { color: #fff; font-variant-numeric: tabular-nums; margin-left: 3px; }
+.c-bar__controls { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; align-items: center; }
+
+/* ---------- Buttons ---------- */
+.c-btn {
+  appearance: none;
+  border: 1px solid var(--glass-line);
+  background: var(--glass);
+  color: var(--c-text);
+  font: inherit; font-size: 13px; font-weight: 600;
+  padding: 7px 13px;
+  border-radius: 9px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background .15s ease, border-color .15s ease, transform .05s ease;
+}
+.c-btn:hover { background: var(--glass-hi); }
+.c-btn:active { transform: translateY(1px); }
+.c-btn:focus-visible { outline: none; box-shadow: var(--ring); }
+.c-btn:disabled { opacity: .4; cursor: default; }
+.c-btn--primary {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  border-color: transparent;
+  color: var(--on-accent);
+}
+.c-btn--primary:hover { filter: brightness(1.1); background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); }
+
+/* Segmented control (difficulty pickers) */
+.c-seg {
+  display: inline-flex;
+  border: 1px solid var(--glass-line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--glass);
+}
+.c-seg .c-seg__b {
+  appearance: none; border: 0;
+  background: transparent;
+  color: var(--c-muted);
+  font: inherit; font-size: 12.5px; font-weight: 600;
+  padding: 7px 11px;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.c-seg .c-seg__b:hover { color: #fff; }
+.c-seg .c-seg__b.is-on {
+  color: var(--on-accent);
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+}
+.c-seg .c-seg__b:focus-visible { outline: none; box-shadow: var(--ring); }
+
+/* ---------- Play surface ---------- */
+.c-table {
+  flex: 1;
+  overflow: auto;
+  padding: clamp(14px, 3.5vh, 30px) var(--fpad, clamp(12px, 4vw, 40px)) 60px;
+}
+.c-board {
+  --gap: clamp(6px, 2.4vw, 20px);
+  margin: 0 auto;
+  width: max-content;
+}
+
+/* ---------- Slots (stock/waste/foundations/cells) ---------- */
+.c-slot {
+  position: relative;
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: calc(var(--cw) * .09);
+  box-shadow: inset 0 0 0 2px var(--slot-line);
+  background: var(--slot);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.c-slot--foundation::after,
+.c-slot--cell::after {
+  content: attr(data-glyph);
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cw) * .5);
+  color: rgba(255, 255, 255, .16);
+  pointer-events: none;
+}
+.c-slot--foundation:not(:empty)::after,
+.c-slot--cell:not(:empty)::after { display: none; }
+.c-slot--stock[data-empty="replay"]::after {
+  content: "↻";
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cw) * .55);
+  color: rgba(255, 255, 255, .5);
+}
+
+/* ---------- Tableau ---------- */
+.c-tab {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 7), var(--cw));
+  gap: var(--gap);
+  align-items: start;
+}
+.c-col {
+  position: relative;
+  width: var(--cw);
+  min-height: var(--ch);
+}
+.c-col::before {
+  content: "";
+  position: absolute; inset: 0 0 auto 0;
+  height: var(--ch);
+  border-radius: calc(var(--cw) * .09);
+  box-shadow: inset 0 0 0 2px var(--slot-line);
+  background: var(--slot);
+  opacity: .5;
+}
+
+/* ---------- Cards ---------- */
+.c-card {
+  position: absolute;
+  left: 0;
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: calc(var(--cw) * .09);
+  background: var(--card-face);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35), inset 0 0 0 1px var(--card-edge);
+  user-select: none;
+  touch-action: none;
+  color: var(--card-black);
+}
+.c-card--red { color: var(--card-red); }
+.c-card--up { cursor: grab; }
+.c-card--down { cursor: default; }
+
+.c-card__corner {
+  position: absolute;
+  line-height: 1;
+  font-weight: 700;
+  font-size: calc(var(--cw) * .24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.c-card__corner .r { font-size: calc(var(--cw) * .28); }
+.c-card__corner .s { font-size: calc(var(--cw) * .22); }
+.c-card__tl { top: calc(var(--cw) * .07); left: calc(var(--cw) * .09); }
+.c-card__br { bottom: calc(var(--cw) * .07); right: calc(var(--cw) * .09); transform: rotate(180deg); }
+.c-card__pip {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: calc(var(--cw) * .6);
+  opacity: .9;
+}
+
+/* Face-down: glassy indigo back with the same diagonal line pattern */
+.c-card--down {
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, .13) 0 4px, transparent 4px 8px),
+    linear-gradient(150deg, var(--back-1), var(--back-2));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(255, 255, 255, .5), inset 0 0 0 5px var(--back-2);
+}
+.c-card--down .c-card__corner, .c-card--down .c-card__pip { display: none; }
+
+/* Drag / highlight states */
+.c-card--moving { visibility: hidden; }
+.c-slot--drop, .c-col--drop { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: calc(var(--cw) * .09); }
+.c-card--hint { animation: cHintPulse .6s ease-in-out 3; }
+@keyframes cHintPulse {
+  50% { box-shadow: 0 0 0 3px var(--gold), 0 1px 2px rgba(0, 0, 0, .35); }
+}
+
+/* Floating drag layer (appended to <body>, so it needs the tokens too) */
+.drag-layer {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 900;
+  pointer-events: none;
+  will-change: transform;
+}
+.drag-layer .c-card { position: absolute; box-shadow: 0 10px 22px rgba(0, 0, 0, .45); cursor: grabbing; }
+
+/* ---------- Toast message (fill-empty-column warnings etc.) ---------- */
+.c-toast {
+  position: fixed;
+  left: 50%; bottom: 76px;
+  transform: translateX(-50%);
+  z-index: 950;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+  color: #fff;
+  font-size: 13.5px; font-weight: 600;
+  pointer-events: none;
+  animation: cToastIn .2s ease;
+}
+.c-toast[hidden] { display: none; }
+@keyframes cToastIn { from { opacity: 0; transform: translate(-50%, 8px); } }
+
+/* ---------- Win overlay (frosted) ---------- */
+.c-win {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(5, 8, 20, .55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.c-win[hidden] { display: none; }
+.c-win__card {
+  width: min(90vw, 380px);
+  text-align: center;
+  padding: 28px 26px 24px;
+  border-radius: 18px;
+  background: var(--glass);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .22);
+  color: #fff;
+  animation: cPop .35s ease;
+}
+@keyframes cPop { from { transform: scale(.85); opacity: 0; } }
+.c-win__spark { font-size: 44px; }
+.c-win__card h2 { margin: 4px 0 6px; font-size: 26px; }
+.c-win__card p { margin: 0 0 18px; color: var(--c-muted); font-size: 14px; }
+.c-win__actions { display: flex; gap: 10px; justify-content: center; }
+
+/* ---------- Rules modal (frosted glass panel) ---------- */
+.c-modal {
+  position: fixed; inset: 0; z-index: 1100;
+  overflow: auto;
+  display: grid; place-content: center; place-content: safe center;
+  padding: 16px;
+}
+.c-modal[hidden] { display: none; }
+.c-modal__backdrop {
+  position: fixed; inset: 0;
+  background: rgba(4, 6, 16, .45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.c-modal__panel {
+  position: relative; z-index: 1;
+  width: min(94vw, 520px);
+  background: rgba(18, 22, 44, .55);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  color: var(--c-text);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .6);
+  border: 1px solid var(--glass-line);
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .2);
+  animation: cPop .28s ease;
+}
+.c-modal__head {
+  display: flex; align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--glass-line);
+}
+.c-modal__head h2 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+.c-modal__x {
+  margin-left: auto;
+  border: 0; background: transparent; cursor: pointer;
+  font-size: 26px; line-height: 1; color: var(--c-muted);
+  padding: 0 4px;
+}
+.c-modal__x:hover { color: #fff; }
+.c-modal__body { padding: 14px 20px 4px; font-size: 14px; line-height: 1.6; color: var(--c-muted); }
+.c-modal__lead { margin: 4px 0 12px; color: var(--c-text); }
+.c-modal__body h3 {
+  margin: 16px 0 6px; font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: var(--gold);
+}
+.c-modal__body ul { margin: 0 0 6px; padding-left: 20px; }
+.c-modal__body li { margin: 3px 0; }
+.c-modal__body b { color: #fff; }
+.c-modal__note {
+  margin: 14px 0; padding: 9px 12px;
+  border-radius: 9px;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  color: var(--c-text); font-size: 13px;
+}
+.c-modal__body kbd {
+  font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace;
+  padding: 1px 6px; border-radius: 5px;
+  color: var(--c-text);
+  background: rgba(0, 0, 0, .35);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
+.c-modal__foot {
+  display: flex; justify-content: flex-end;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--glass-line);
+}
+
+/* Small screens: stats drop to their own row */
+@media (max-width: 620px) {
+  .c-bar__stats { order: 3; width: 100%; margin-left: 0; }
+  .c-bar__controls { margin-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-card--hint { animation: none; }
+  .c-win__card, .c-modal__panel, .c-toast { animation: none; }
+}

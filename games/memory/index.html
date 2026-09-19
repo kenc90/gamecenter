@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Memory</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared chrome: base.css for the back link, glass.css for this game's
+     fixed frosted-glass theme (no light/dark mode by design). -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../../shared/css/glass.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats, difficulty and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <rect x="2.5" y="4.5" width="8" height="11" rx="1.8" fill="none" stroke="#e9edfb" stroke-width="1.5" transform="rotate(-7 6.5 10)"/>
+          <rect x="13.5" y="4.5" width="8" height="11" rx="1.8" fill="#fbfbf6" transform="rotate(7 17.5 10)"/>
+          <path d="M17.5 8.6c1 1.5 2 2 2 3a1.7 1.7 0 0 1-3 .9 1.7 1.7 0 0 1-1-2.4c.3-.6.7-1 1-1.5z" fill="#d21e2b" transform="rotate(7 17.5 10)"/>
+        </svg>
+        <h1 class="c-bar__title">Memory</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Pairs <b id="pairs">0</b></span>
+        <span class="stat">Moves <b id="moves">0</b></span>
+        <span class="stat">Time <b id="timer">00:00</b></span>
+        <span class="stat">Best <b id="best">—</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <div class="c-seg" role="group" aria-label="Difficulty">
+          <button class="c-seg__b is-on" type="button" data-pairs="6" aria-pressed="true">6 pairs</button>
+          <button class="c-seg__b" type="button" data-pairs="10" aria-pressed="false">10 pairs</button>
+          <button class="c-seg__b" type="button" data-pairs="15" aria-pressed="false">15 pairs</button>
+        </div>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="Start a new game">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface: the card grid is populated by JS -->
+    <main class="c-table" id="table">
+      <div class="m-board" id="board" role="group" aria-label="Memory card grid"></div>
+    </main>
+  </div>
+
+  <!-- Win overlay -->
+  <div class="c-win" id="winOverlay" hidden>
+    <div class="c-win__card" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div class="c-win__spark">🧠</div>
+      <h2 id="winTitle">All matched!</h2>
+      <p id="winStats">Sharp memory.</p>
+      <div class="c-win__actions">
+        <button class="c-btn c-btn--primary" id="winNew" type="button">Play again</button>
+        <a class="c-btn" href="../../index.html">Game Center</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> flip the cards two at a time and find every matching pair
+          in as few moves — and as little time — as you can.
+        </p>
+        <h3>The rules</h3>
+        <ul>
+          <li>Click any face-down card to flip it, then flip a second one.</li>
+          <li><b>Identical cards?</b> The pair stays face-up and locks in place.</li>
+          <li>Different? Both flip back — remember where they were.</li>
+          <li>Each two-card attempt counts as one <b>move</b>; the timer starts on your first flip.</li>
+        </ul>
+        <h3>Difficulty</h3>
+        <ul>
+          <li><b>6 pairs</b> — a quick warm-up &middot; <b>10 pairs</b> — the classic &middot; <b>15 pairs</b> — a full 5&times;6 wall of cards.</li>
+          <li>Pairs are real playing-card ranks (e.g. two Queen of Spades tiles), shuffled fresh every game.</li>
+        </ul>
+        <h3>Extras</h3>
+        <ul>
+          <li><b>Best</b> shows your fastest clear for the current difficulty, saved per board size.</li>
+          <li>Shortcuts: <kbd>N</kbd> new &middot; <kbd>R</kbd> rules.</li>
+        </ul>
+        <p class="c-modal__note">Records are saved in this browser — no account, no ads.</p>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/memory.js"></script>
+</body>
+</html>

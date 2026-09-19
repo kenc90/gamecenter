@@ -1,0 +1,123 @@
+/* ===== Blackjack — game-specific styles =====
+   Generic glass chrome comes from shared/css/glass.css (cards reuse .c-card
+   wholesale). This file lays out the table stack: dealer / status / player
+   hands as fanned cards, betting chips and the action row. */
+
+:root {
+  /* Blackjack wears casino gold over the default indigo glass. */
+  --accent-1: #f0b429;
+  --accent-2: #ffe08a;
+  --on-accent: #332400;
+  --back-1: #1d8a56;
+  --back-2: #0d5c36;
+}
+
+.c-app { --fpad: clamp(12px, 4vw, 36px); }
+
+/* ---------- Table stack ---------- */
+.bj-board {
+  --cw: clamp(62px, 17vw, 96px);
+  --ch: calc(var(--cw) * 1.42);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 2.4vh, 22px);
+  max-width: 640px;
+  margin: 0 auto;
+}
+.bj-side { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.bj-side__label {
+  font-size: 13px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--c-muted);
+  display: flex; align-items: center; gap: 8px;
+}
+/* Running total badge next to each hand label. */
+.bj-count {
+  min-width: 30px; padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-line);
+  background: var(--glass);
+  color: #fff; font-size: 13px; font-weight: 800;
+  text-align: center; letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.bj-count:empty { display: none; }
+
+/* Card well: absolute fan, height fits one card + slide-in room. */
+.bj-well {
+  position: relative;
+  min-width: calc(var(--cw) + 4px);
+  height: var(--ch);
+}
+.bj-well .c-card {
+  /* left offsets are set inline by JS (measured px fan); CSS keeps the flavour */
+  transform: rotate(calc(var(--i, 0) * -1.2deg));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .35), inset 0 0 0 1px var(--card-edge);
+  animation: bjDeal .28s ease;
+}
+@keyframes bjDeal {
+  from { transform: translateY(-42px) rotate(-7deg); opacity: 0; }
+}
+
+/* ---------- Center status ---------- */
+.bj-mid { min-height: 34px; display: flex; align-items: center; }
+.bj-status {
+  padding: 7px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-line);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 15px; font-weight: 700; letter-spacing: .01em;
+  color: var(--c-text);
+  text-align: center;
+  transition: color .2s ease, border-color .2s ease;
+}
+.bj-status--win   { color: #7ef0a4; border-color: rgba(126, 240, 164, .5); }
+.bj-status--lose  { color: #ff8b94; border-color: rgba(255, 139, 148, .5); }
+.bj-status--push  { color: #ffd97a; border-color: rgba(255, 217, 122, .5); }
+
+/* ---------- Betting chips ---------- */
+.bj-chips { display: flex; gap: 12px; align-items: center; }
+.bj-chip {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, .75);
+  /* Plain value first: if color-mix() is unsupported the fancy gradient below
+     is dropped and the chip still reads as a solid-colour disc. */
+  background: var(--chip);
+  background:
+    repeating-conic-gradient(from 0deg, rgba(255, 255, 255, .22) 0 18deg, transparent 18deg 36deg),
+    radial-gradient(circle at 38% 32%, color-mix(in srgb, var(--chip) 78%, #fff), var(--chip) 70%);
+  color: #fff;
+  font: 800 13px/1 var(--gc-font, system-ui);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .55);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .4), inset 0 0 0 5px rgba(255, 255, 255, .12);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.bj-chip:hover:not(:disabled) { transform: translateY(-3px) scale(1.05); }
+.bj-chip:active:not(:disabled) { transform: translateY(0) scale(.97); }
+.bj-chip:focus-visible { outline: none; box-shadow: var(--ring), 0 4px 10px rgba(0, 0, 0, .4); }
+.bj-chip:disabled { opacity: .35; cursor: default; }
+.bj-chip--clear {
+  background: var(--glass);
+  border-style: solid;
+  border-color: var(--glass-line);
+  color: var(--c-muted);
+  font-size: 20px;
+}
+.bj-chip--clear:hover { color: #fff; }
+
+/* ---------- Action row ---------- */
+.bj-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.bj-actions .c-btn { min-width: 84px; text-align: center; font-size: 14px; padding: 9px 16px; }
+
+@media (max-width: 430px) {
+  .bj-chip { width: 40px; height: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bj-well .c-card { animation: none; }
+  .bj-chip:hover:not(:disabled) { transform: none; }
+}

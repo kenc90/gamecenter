@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Spider Solitaire</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared chrome: base.css for the back link, glass.css for this game's
+     fixed frosted-glass theme (no light/dark mode by design). -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../../shared/css/glass.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats, difficulty and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="#e9edfb" stroke-width="1.4"/>
+          <path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4" stroke="#e9edfb" stroke-width=".9" stroke-opacity=".6"/>
+          <circle cx="12" cy="12" r="2.4" fill="#ff5f9e"/>
+        </svg>
+        <h1 class="c-bar__title">Spider</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Moves <b id="moves">0</b></span>
+        <span class="stat">Time <b id="timer">00:00</b></span>
+        <span class="stat">Score <b id="score">500</b></span>
+        <span class="stat">Runs <b id="runsCount">0/8</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <div class="c-seg" role="group" aria-label="Difficulty">
+          <button class="c-seg__b is-on" type="button" data-suits="1" aria-pressed="true">1 suit</button>
+          <button class="c-seg__b" type="button" data-suits="2" aria-pressed="false">2 suits</button>
+          <button class="c-seg__b" type="button" data-suits="4" aria-pressed="false">4 suits</button>
+        </div>
+        <button id="undoBtn" class="c-btn" type="button" title="Undo last move">Undo</button>
+        <button id="hintBtn" class="c-btn" type="button" title="Find a possible move">Hint</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="Start a new game">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface -->
+    <main class="c-table" id="table">
+      <div class="c-board" id="board" style="--cols:10">
+        <!-- Completed-suit collector on the left, stock on the right -->
+        <div class="sp-upper" id="upper">
+          <div class="sp-runs" id="runs" aria-label="Completed suits"></div>
+          <div class="c-slot slot--stock" id="stock" aria-label="Stock — click to deal a row"></div>
+        </div>
+        <!-- 10 tableau columns are populated by JS -->
+        <div class="c-tab" id="tab"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="c-toast" id="toast" hidden></div>
+
+  <!-- Win overlay -->
+  <div class="c-win" id="winOverlay" hidden>
+    <div class="c-win__card" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div class="c-win__spark">🕷️</div>
+      <h2 id="winTitle">Web complete!</h2>
+      <p id="winStats">Nice spinning.</p>
+      <div class="c-win__actions">
+        <button class="c-btn c-btn--primary" id="winNew" type="button">Play again</button>
+        <a class="c-btn" href="../../index.html">Game Center</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> untangle two full decks (104 cards) across ten columns and
+          build eight complete <b>King-to-Ace runs in one suit</b>.
+        </p>
+        <h3>The layout</h3>
+        <ul>
+          <li><b>Tableau</b>: ten columns; the first four start with 6 cards, the rest with 5.</li>
+          <li><b>Stock</b> (top-right): click to deal <b>one extra row</b> — a card to every column.</li>
+          <li><b>Runs</b> (top-left): every finished K&rarr;A suit is collected here. Collect all 8 to win.</li>
+        </ul>
+        <h3>Moving cards</h3>
+        <ul>
+          <li>Build <b>down by rank in any suit</b>, but you can only <b>lift a run of the same suit</b>.</li>
+          <li><b>Drag &amp; drop</b> a card or run onto a card one rank higher, or into an empty column.</li>
+          <li><b>Double-click</b> a card to send it to the best column that fits.</li>
+          <li>Uncovered face-down cards flip up automatically.</li>
+        </ul>
+        <h3>Drawing</h3>
+        <ul>
+          <li>Dealing requires <b>no empty columns</b> — fill them first.</li>
+          <li>The stock holds 5 deals; the last one is usually the tricky one.</li>
+        </ul>
+        <h3>Extras</h3>
+        <ul>
+          <li><b>1 / 2 / 4 suits</b> changes difficulty — one suit is a calm weave, four is a brawl.</li>
+          <li>Score starts at 500, −1 per move, +100 per completed suit.</li>
+          <li>Shortcuts: <kbd>N</kbd> new &middot; <kbd>U</kbd> undo &middot; <kbd>H</kbd> hint &middot; <kbd>Space</kbd> deal &middot; <kbd>R</kbd> rules.</li>
+        </ul>
+        <p class="c-modal__note">Your game is saved automatically &mdash; refresh any time and the web picks up where you left it.</p>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/spider.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>FreeCell</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared chrome: base.css for the back link, glass.css for this game's
+     fixed frosted-glass theme (no light/dark mode by design). -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../../shared/css/glass.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats, and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <rect x="2.5" y="4" width="8.5" height="8.5" rx="2" fill="none" stroke="#e9edfb" stroke-width="1.6"/>
+          <path d="M6.7 6.6v3.4M5 8.3h3.4" stroke="#2fc9ff" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M14 6.5h7M14 10h7" stroke="#e9edfb" stroke-width="1.4" stroke-linecap="round" stroke-opacity=".8"/>
+          <rect x="2.5" y="15" width="19" height="5.5" rx="2" fill="none" stroke="#e9edfb" stroke-width="1.4" stroke-opacity=".55"/>
+        </svg>
+        <h1 class="c-bar__title">FreeCell</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Moves <b id="moves">0</b></span>
+        <span class="stat">Time <b id="timer">00:00</b></span>
+        <span class="stat">Home <b id="home">0/52</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="autoBtn" class="c-btn" type="button" title="Send every safe card home">Auto</button>
+        <button id="undoBtn" class="c-btn" type="button" title="Undo last move">Undo</button>
+        <button id="hintBtn" class="c-btn" type="button" title="Find a possible move">Hint</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="Start a new game">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface -->
+    <main class="c-table" id="table">
+      <div class="c-board" id="board" style="--cols:8">
+        <!-- Free cells left, foundations right -->
+        <div class="fc-upper" id="upper">
+          <div class="fc-cells">
+            <div class="c-slot slot--cell" data-cell="0" data-glyph="✦" aria-label="Free cell 1"></div>
+            <div class="c-slot slot--cell" data-cell="1" data-glyph="✦" aria-label="Free cell 2"></div>
+            <div class="c-slot slot--cell" data-cell="2" data-glyph="✦" aria-label="Free cell 3"></div>
+            <div class="c-slot slot--cell" data-cell="3" data-glyph="✦" aria-label="Free cell 4"></div>
+          </div>
+          <div class="fc-founds">
+            <div class="c-slot slot--foundation" data-f="0" data-glyph="&#9824;" aria-label="Foundation 1"></div>
+            <div class="c-slot slot--foundation" data-f="1" data-glyph="&#9829;" aria-label="Foundation 2"></div>
+            <div class="c-slot slot--foundation" data-f="2" data-glyph="&#9830;" aria-label="Foundation 3"></div>
+            <div class="c-slot slot--foundation" data-f="3" data-glyph="&#9827;" aria-label="Foundation 4"></div>
+          </div>
+        </div>
+        <!-- 8 tableau columns are populated by JS -->
+        <div class="c-tab" id="tab"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="c-toast" id="toast" hidden></div>
+
+  <!-- Win overlay -->
+  <div class="c-win" id="winOverlay" hidden>
+    <div class="c-win__card" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div class="c-win__spark">🃏</div>
+      <h2 id="winTitle">You win!</h2>
+      <p id="winStats">Every card is home.</p>
+      <div class="c-win__actions">
+        <button class="c-btn c-btn--primary" id="winNew" type="button">Play again</button>
+        <a class="c-btn" href="../../index.html">Game Center</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> move all 52 cards to the four <b>foundations</b> (top-right),
+          each built up by suit from Ace to King. Every deal is solvable.
+        </p>
+        <h3>The layout</h3>
+        <ul>
+          <li><b>Free cells</b> (top-left, ✦): four parking spots, one card each.</li>
+          <li><b>Foundations</b>: build <b>up in suit</b> (A&rarr;2&rarr;3&hellip;&rarr;K).</li>
+          <li><b>Tableau</b>: eight columns, build <b>down in alternating colours</b>.</li>
+          <li>All cards start <b>face-up</b> — nothing to uncover here.</li>
+        </ul>
+        <h3>Moving cards</h3>
+        <ul>
+          <li><b>Drag &amp; drop</b> a card (or a valid alternating run) onto a column, cell or foundation.</li>
+          <li><b>Double-click</b> a card to send it straight to a foundation if it fits.</li>
+          <li>Any card or sequence may move to an <b>empty column</b>.</li>
+          <li>How long a sequence you can move depends on <b>empty cells + empty columns</b>:
+            each doubles your reach. (1 + cells) × 2<sup>columns</sup> cards at once.</li>
+        </ul>
+        <h3>Extras</h3>
+        <ul>
+          <li><b>Auto</b> ships every safe card home once all your cards are face-up and the cells are free.</li>
+          <li><b>Undo</b> reverts the last move; <b>Hint</b> highlights a possible one.</li>
+          <li>Shortcuts: <kbd>N</kbd> new &middot; <kbd>U</kbd> undo &middot; <kbd>H</kbd> hint &middot; <kbd>A</kbd> auto &middot; <kbd>R</kbd> rules.</li>
+        </ul>
+        <p class="c-modal__note">Your game is saved automatically &mdash; refresh any time and pick up mid-deal.</p>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/freecell.js"></script>
+</body>
+</html>

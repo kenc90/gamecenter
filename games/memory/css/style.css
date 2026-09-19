@@ -1,0 +1,98 @@
+/* ===== Memory — game-specific styles =====
+   Generic glass chrome comes from shared/css/glass.css. This file adds the
+   responsive card grid and the 3D flip. --cols is set inline by JS per
+   difficulty (4 / 5 / 6 columns). */
+
+:root {
+  /* Memory wears warm amber/coral over the default indigo glass. */
+  --accent-1: #ffb703;
+  --accent-2: #fb5607;
+  --on-accent: #2b1200;
+  --back-1: #5661ff;
+  --back-2: #342b8f;
+}
+
+.c-app { --fpad: clamp(12px, 4vw, 36px); }
+
+.m-board {
+  --gap: clamp(8px, 1.8vw, 16px);
+  --cw: min(96px, calc((100vw - (var(--cols) - 1) * var(--gap) - 2 * var(--fpad)) / var(--cols)));
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cw));
+  gap: var(--gap);
+  width: max-content;
+  margin: 0 auto;
+}
+
+/* ---------- Flip card ---------- */
+.m-card {
+  aspect-ratio: 1 / 1.42;
+  perspective: 700px;
+  border: 0; padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: calc(var(--cw) * .09);
+}
+.m-card:focus-visible { outline: none; box-shadow: var(--ring); }
+.m-card__inner {
+  position: relative;
+  width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .38s cubic-bezier(.4, .1, .2, 1);
+}
+.m-card.is-up .m-card__inner,
+.m-card.is-matched .m-card__inner { transform: rotateY(180deg); }
+
+.m-face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: calc(var(--cw) * .09);
+  display: flex; align-items: center; justify-content: center;
+}
+/* Face-down: same glassy line-pattern back as the other card games. */
+.m-face--back {
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, .13) 0 4px, transparent 4px 8px),
+    linear-gradient(150deg, var(--back-1), var(--back-2));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35), inset 0 0 0 2px rgba(255, 255, 255, .5), inset 0 0 0 5px var(--back-2);
+}
+.m-face--back::after {
+  content: "✦";
+  font-size: calc(var(--cw) * .34);
+  color: rgba(255, 255, 255, .55);
+}
+/* Face-up: white card, big centred glyph + rank. */
+.m-face--front {
+  transform: rotateY(180deg);
+  background: var(--card-face);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35), inset 0 0 0 1px var(--card-edge);
+  flex-direction: column;
+  color: var(--card-black);
+  font-weight: 800;
+}
+.m-face--front .m-rank { font-size: calc(var(--cw) * .3); line-height: 1.1; }
+.m-face--front .m-glyph { font-size: calc(var(--cw) * .44); line-height: 1.1; }
+.m-card--red .m-face--front { color: var(--card-red); }
+
+/* Hover nudge while still face-down. */
+.m-card:not(.is-up):not(.is-matched):hover .m-card__inner { transform: translateY(-3px) rotate(1.2deg); }
+
+/* Matched: lock out interaction and mark with a gold ring + soft dim. */
+.m-card.is-matched { cursor: default; }
+.m-card.is-matched .m-face--front {
+  box-shadow: 0 0 0 2px var(--gold), 0 1px 2px rgba(0, 0, 0, .35);
+  opacity: .78;
+}
+.m-card.just-matched .m-card__inner { animation: mMatch .45s ease; }
+@keyframes mMatch {
+  50% { transform: rotateY(180deg) scale(1.08); }
+}
+
+/* Short pre-match flip: brief pause before mismatched cards turn back. */
+.m-card.is-wrong .m-face--front { box-shadow: 0 0 0 2px #ff5f6d, 0 1px 2px rgba(0, 0, 0, .35); }
+
+@media (prefers-reduced-motion: reduce) {
+  .m-card__inner { transition: none; }
+  .m-card.just-matched .m-card__inner { animation: none; }
+}

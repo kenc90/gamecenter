@@ -1,0 +1,43 @@
+/* ===== FreeCell — game-specific styles =====
+   Generic chrome (bar, glass, cards, modal, toast) comes from
+   shared/css/glass.css. This file re-tints the theme and lays out the
+   8-column board: cells + foundations share the tableau's column rhythm. */
+
+:root {
+  /* FreeCell wears a teal/cyan accent over the default indigo glass. */
+  --accent-1: #17c3b2;
+  --accent-2: #2fc9ff;
+  --on-accent: #03211c;
+  --back-1: #1fa8c9;
+  --back-2: #14508f;
+}
+
+.c-app { --fpad: clamp(10px, 3.4vw, 34px); }
+
+.c-board {
+  --gap: clamp(6px, 1.6vw, 18px);
+  /* 8 columns + gaps + padding + scrollbar buffer, viewport-derived (no
+     fixed floor) so phones shrink the cards instead of scrolling sideways. */
+  --cw: min(92px, calc((100vw - 7 * var(--gap) - 2 * var(--fpad) - 16px) / 8));
+  --ch: calc(var(--cw) * 1.42);
+  width: calc(8 * var(--cw) + 7 * var(--gap));
+}
+
+/* Upper rows: 4 cells (cols 1-4) + 4 foundations (cols 5-8). */
+.fc-upper {
+  display: grid;
+  grid-template-columns: repeat(8, var(--cw));
+  column-gap: var(--gap);
+  align-items: start;
+  margin-bottom: calc(var(--ch) * 0.24);
+}
+.fc-cells, .fc-founds {
+  display: grid;
+  grid-template-columns: repeat(4, var(--cw));
+  column-gap: var(--gap);
+}
+.fc-cells { grid-column: 1 / span 4; }
+.fc-founds { grid-column: 5 / span 4; }
+
+/* Cells read slightly brighter than foundations — they're the precious ones. */
+.slot--cell { box-shadow: inset 0 0 0 2px rgba(47, 201, 255, .35); }
