@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Flappy Bird</title>
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+<!-- Shared chrome: base.css for the back link, glass.css for this game's
+     fixed frosted-glass theme (no light/dark mode by design). -->
+<link rel="stylesheet" href="../../shared/css/base.css" />
+<link rel="stylesheet" href="../../shared/css/glass.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="gc-back" href="../../index.html">&#8592; Game Center</a>
+
+  <div class="c-app">
+    <!-- Top bar: title, live stats and controls -->
+    <header class="c-bar">
+      <div class="c-bar__brand">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <circle cx="11" cy="11" r="6" fill="#ffd83a" stroke="#1c2233" stroke-width="1.4"/>
+          <path d="M16.5 9.5 22 11.5 16.5 13.5Z" fill="#ff8c1a" stroke="#1c2233" stroke-width="1" stroke-linejoin="round"/>
+          <circle cx="13.2" cy="9.2" r="1.4" fill="#fff" stroke="#1c2233" stroke-width=".8"/>
+          <circle cx="13.6" cy="9.2" r=".7" fill="#1c2233"/>
+          <path d="M6 11q3 4 7 2" fill="none" stroke="#e29a00" stroke-width="2" stroke-linecap="round"/>
+          <rect x="19" y="3" width="2.6" height="18" rx="1" fill="#2fb068"/>
+        </svg>
+        <h1 class="c-bar__title">Flappy Bird</h1>
+      </div>
+
+      <div class="c-bar__stats" role="status">
+        <span class="stat">Score <b id="score">0</b></span>
+        <span class="stat">Best <b id="best">0</b></span>
+      </div>
+
+      <div class="c-bar__controls">
+        <button id="soundBtn" class="c-btn" type="button" aria-pressed="true" title="Toggle sound">Sound: On</button>
+        <button id="rulesBtn" class="c-btn" type="button" title="How to play">Rules</button>
+        <button id="newBtn" class="c-btn c-btn--primary" type="button" title="Restart run (N)">New Game</button>
+      </div>
+    </header>
+
+    <!-- Play surface: canvas stage + ready / game-over overlays -->
+    <main class="c-table">
+      <div class="fl-stage" id="stage">
+        <canvas id="screen" width="400" height="600" aria-label="Flappy Bird game screen"></canvas>
+
+        <div class="fl-overlay" id="readyOverlay">
+          <div class="fl-card">
+            <div class="fl-card__big">&#128038;</div>
+            <h2>Tap to fly</h2>
+            <p>Click, tap or press <kbd>Space</kbd> to flap.<br>One tap = one wingbeat. That's all.</p>
+            <button class="c-btn c-btn--primary" id="startBtn" type="button">Start</button>
+          </div>
+        </div>
+
+        <div class="fl-overlay" id="overOverlay" hidden>
+          <div class="fl-card">
+            <div class="fl-card__big" id="overMedal">&#127942;</div>
+            <h2 id="overTitle">Game over</h2>
+            <p id="overStats">Score 0 &#183; Best 0</p>
+            <div class="c-win__actions">
+              <button class="c-btn c-btn--primary" id="againBtn" type="button">Fly again</button>
+              <a class="c-btn" href="../../index.html">Game Center</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Rules / How to play modal -->
+  <div class="c-modal" id="rulesModal" hidden>
+    <div class="c-modal__backdrop" data-close></div>
+    <div class="c-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="c-modal__head">
+        <h2 id="rulesTitle">How to play</h2>
+        <button class="c-modal__x" type="button" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="c-modal__body">
+        <p class="c-modal__lead">
+          <b>Goal:</b> steer the bird through the gaps between the pipes
+          for as long as you can. One touch = one point. Gravity is forever.
+        </p>
+        <h3>The rules</h3>
+        <ul>
+          <li>Each tap gives the bird an upward flap; it falls right after.</li>
+          <li>Pass a pipe pair to score <b>1 point</b> — the gaps get a little tighter and the world speeds up the further you go.</li>
+          <li>Clip a pipe, the ground or get crushed from above: run over.</li>
+        </ul>
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>Click</kbd> / <kbd>Tap</kbd> / <kbd>Space</kbd> flap.</li>
+          <li><kbd>N</kbd> restart &middot; <kbd>R</kbd> rules &middot; <kbd>M</kbd> mute.</li>
+        </ul>
+        <div class="c-modal__note">
+          Your best score is saved in this browser. No accounts, no leaderboards — just you versus the pipes.
+        </div>
+      </div>
+      <div class="c-modal__foot">
+        <button class="c-btn c-btn--primary" type="button" data-close>Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/flappy.js"></script>
+</body>
+</html>

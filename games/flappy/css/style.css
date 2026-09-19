@@ -1,0 +1,71 @@
+/* ===== Flappy Bird — game-specific styles =====
+   Generic glass chrome comes from shared/css/glass.css (fixed theme, no
+   light/dark mode). This file sizes the portrait canvas stage (classic
+   Flappy is 2:3) and styles the ready / game-over cards that sit on it. */
+
+:root {
+  /* Flappy Bird wears sky-yellow over the default indigo glass. */
+  --accent-1: #ffd83a;
+  --accent-2: #ffb01a;
+  --on-accent: #3d2a00;
+}
+
+.c-app { --fpad: clamp(10px, 3vw, 24px); }
+.c-table { display: flex; align-items: center; justify-content: center; }
+
+/* ---------- Stage: fixed-ratio canvas, capped so it never scrolls ---------- */
+.fl-stage {
+  position: relative;
+  /* 2:3 portrait; capped by viewport height minus the chrome, no fixed
+     floor — small screens just get a smaller board (no horizontal scroll). */
+  width: min(92vw, calc((100vh - 170px) * 0.6667), 420px);
+  aspect-ratio: 2 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .08);
+  touch-action: manipulation;
+  cursor: pointer;
+}
+#screen { display: block; width: 100%; height: 100%; }
+
+/* ---------- Ready / game-over cards on the canvas ---------- */
+.fl-overlay {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px;
+  background: rgba(5, 8, 20, .35);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.fl-overlay[hidden] { display: none; }
+.fl-card {
+  max-width: 300px;
+  text-align: center;
+  padding: 22px 24px 20px;
+  border-radius: 16px;
+  background: var(--glass);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .2);
+  color: #fff;
+  animation: flPop .3s ease;
+}
+@keyframes flPop { from { transform: scale(.88); opacity: 0; } }
+.fl-card__big { font-size: 40px; line-height: 1.1; }
+.fl-card h2 { margin: 6px 0 6px; font-size: 23px; }
+.fl-card p { margin: 0 0 14px; color: var(--c-muted); font-size: 13.5px; line-height: 1.55; }
+.fl-card .c-btn { font-size: 14px; }
+.fl-card kbd {
+  font: 600 12px/1.4 ui-monospace, "Segoe UI", monospace;
+  padding: 1px 6px; border-radius: 5px;
+  color: var(--c-text);
+  background: rgba(0, 0, 0, .35);
+  border: 1px solid var(--glass-line);
+}
+.fl-card .c-win__actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-card { animation: none; }
+}
