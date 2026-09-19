@@ -607,6 +607,7 @@
     ctx.fillStyle = "#9aa4b6";
     ctx.fillText("TIME LEFT", W / 2, 41);
     // bottom strip: speed, score, checkpoints
+    ctx.textAlign = "left";   // timer above set "center" — without this the speed text spills off-canvas
     ctx.fillStyle = "rgba(10,8,6,.62)";
     ctx.fillRect(0, H - 34, W, 34);
     ctx.font = "800 20px system-ui, sans-serif";
