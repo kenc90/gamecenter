@@ -115,14 +115,21 @@
    Cards are shown when their title matches the search text AND their
    data-category matches the active chip ("all" = no category filter).
    Hiding uses the hidden attribute, which base.css un-overrides for the
-   flex cards. Favourite sorting keeps running underneath untouched. */
+   flex cards. Favourite sorting keeps running underneath untouched.
+   Also remembers the active filter, search text and scroll position, so
+   returning from a game lands the user back where they left off. */
 (function () {
   var grid = document.querySelector(".gc-grid");
   var input = document.getElementById("gameSearch");
   var empty = document.getElementById("gcEmpty");
   if (!grid || !input) return;
   var chips = Array.prototype.slice.call(document.querySelectorAll(".gc-chip"));
+  var VIEW_KEY = "gc-home-view";   // must match the persistence convention (gc-*)
   var category = "all";
+
+  // We own scroll restore ourselves (applied after the saved filter re-runs),
+  // so stop the browser's own history scroll restoration from fighting it.
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
   function nameOf(card) {
     var t = card.querySelector(".gc-card__title");
@@ -141,20 +148,57 @@
     if (empty) empty.hidden = shown !== 0;
   }
 
+  function markChip(chip) {
+    chips.forEach(function (c) {
+      var on = c === chip;
+      c.classList.toggle("gc-chip--on", on);
+      c.setAttribute("aria-pressed", String(on));
+    });
+  }
+
+  function saveView() {
+    try {
+      localStorage.setItem(VIEW_KEY, JSON.stringify({
+        category: category,
+        search: input.value,
+        scroll: window.scrollY || window.pageYOffset || 0
+      }));
+    } catch (e) {}
+  }
+
   chips.forEach(function (chip) {
     chip.addEventListener("click", function () {
       category = chip.getAttribute("data-category") || "all";
-      chips.forEach(function (c) {
-        var on = c === chip;
-        c.classList.toggle("gc-chip--on", on);
-        c.setAttribute("aria-pressed", String(on));
-      });
+      markChip(chip);
       apply();
+      saveView();
     });
   });
 
-  input.addEventListener("input", apply);
+  input.addEventListener("input", function () { apply(); saveView(); });
+
+  // ---- Restore the saved view ----
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(VIEW_KEY)); } catch (e) {}
+  if (saved && typeof saved.search === "string") input.value = saved.search;
+  if (saved && saved.category && saved.category !== "all") {
+    var target = chips.filter(function (c) {
+      return (c.getAttribute("data-category") || "all") === saved.category;
+    })[0];
+    if (target) { category = saved.category; markChip(target); }
+  }
   apply();
+
+  // Put the page back at the remembered scroll offset. Layout here is fully
+  // synchronous (inline SVG art, system fonts), so a deferred call suffices.
+  if (saved && saved.scroll > 0) {
+    var y = saved.scroll;
+    setTimeout(function () { window.scrollTo(0, y); }, 0);
+  }
+
+  // Capture the live scroll position when navigating away to a game (or
+  // closing the tab) so the next visit can restore it.
+  window.addEventListener("pagehide", saveView);
 })();
 
 /* ===== Game Center — blank-header click scrolls to top =====
