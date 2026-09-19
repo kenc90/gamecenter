@@ -105,7 +105,6 @@
 
   function speed() { return Math.min(620, 300 + dist * 0.02); }
   function shipScore() { return Math.floor(dist / 10) + ringsGot * 50; }
-  window.__tfDbg = function () { return { dist: dist, ax: ax, ay: ay }; }; // TEMP debug
 
   // ---------- Sound (tiny WebAudio blips, no assets) ----------
   var audioCtx = null;
