@@ -61,10 +61,31 @@
     <h1 class="gc-title">Game Center</h1>
     <p class="gc-sub">Pick a game to start.</p>
 
+    <!-- Search + category filter. The chips mirror the data-category values on
+         the cards below; shared/js/center.js shows/hides cards to match. -->
+    <div class="gc-toolbar">
+      <label class="gc-search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+          <path d="m16.5 16.5 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input type="search" id="gameSearch" placeholder="Search games…" aria-label="Search games by name" autocomplete="off" />
+      </label>
+      <div class="gc-chips" role="group" aria-label="Filter by category">
+        <button class="gc-chip gc-chip--on" type="button" data-category="all" aria-pressed="true">All</button>
+        <button class="gc-chip" type="button" data-category="puzzle" aria-pressed="false">Puzzle</button>
+        <button class="gc-chip" type="button" data-category="card" aria-pressed="false">Card</button>
+        <button class="gc-chip" type="button" data-category="board" aria-pressed="false">Board</button>
+        <button class="gc-chip" type="button" data-category="arcade" aria-pressed="false">Arcade</button>
+        <button class="gc-chip" type="button" data-category="platformer" aria-pressed="false">Platformer</button>
+      </div>
+    </div>
+    <p class="gc-empty" id="gcEmpty" hidden>No games match — try another name or category.</p>
+
     <!-- Adding a game = create games/<name>/ with its own css/ and js/, then copy
          this <a> block. Shared chrome for every page lives in shared/. -->
     <div class="gc-grid">
-      <a class="gc-card" href="games/minesweeper/index.html">
+      <a class="gc-card" data-category="puzzle" href="games/minesweeper/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Minesweeper board preview">
@@ -122,7 +143,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/solitaire/index.html">
+      <a class="gc-card" data-category="card" href="games/solitaire/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Solitaire cards preview">
@@ -160,7 +181,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/tictactoe/index.html">
+      <a class="gc-card" data-category="board" href="games/tictactoe/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Tic tac toe board preview">
@@ -197,7 +218,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/2048/index.html">
+      <a class="gc-card" data-category="puzzle" href="games/2048/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="2048 tiles preview">
@@ -235,7 +256,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/sudoku/index.html">
+      <a class="gc-card" data-category="puzzle" href="games/sudoku/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Sudoku grid preview">
@@ -285,7 +306,7 @@
           <span class="gc-card__cta">Play now <span aria-hidden="true">&#8594;</span></span>
         </span>
       </a>
-      <a class="gc-card" href="games/snake/index.html">
+      <a class="gc-card" data-category="arcade" href="games/snake/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Snake preview">
@@ -319,7 +340,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/chess/index.html">
+      <a class="gc-card" data-category="board" href="games/chess/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Chess preview">
@@ -353,7 +374,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/xiangqi/index.html">
+      <a class="gc-card" data-category="board" href="games/xiangqi/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Chinese Chess preview">
@@ -393,7 +414,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/tetris/index.html">
+      <a class="gc-card" data-category="arcade" href="games/tetris/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Tetris preview">
@@ -467,7 +488,7 @@
         </span>
       </a>
 
-      <a class="gc-card" href="games/mario/index.html">
+      <a class="gc-card" data-category="platformer" href="games/mario/index.html">
         <span class="gc-fav" role="button" tabindex="0" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></span>
         <span class="gc-card__art">
           <svg viewBox="0 0 120 120" role="img" aria-label="Super Plumber stage preview">

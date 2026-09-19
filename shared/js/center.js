@@ -110,3 +110,49 @@
 
   sortGrid();
 })();
+
+/* ===== Game Center — search + category filter =====
+   Cards are shown when their title matches the search text AND their
+   data-category matches the active chip ("all" = no category filter).
+   Hiding uses the hidden attribute, which base.css un-overrides for the
+   flex cards. Favourite sorting keeps running underneath untouched. */
+(function () {
+  var grid = document.querySelector(".gc-grid");
+  var input = document.getElementById("gameSearch");
+  var empty = document.getElementById("gcEmpty");
+  if (!grid || !input) return;
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".gc-chip"));
+  var category = "all";
+
+  function nameOf(card) {
+    var t = card.querySelector(".gc-card__title");
+    return t && t.firstChild ? t.firstChild.textContent.trim().toLowerCase() : "";
+  }
+
+  function apply() {
+    var q = input.value.trim().toLowerCase();
+    var shown = 0;
+    Array.prototype.slice.call(grid.querySelectorAll(".gc-card")).forEach(function (card) {
+      var okCat = category === "all" || (card.getAttribute("data-category") || "").toLowerCase() === category;
+      var show = okCat && (!q || nameOf(card).indexOf(q) !== -1);
+      card.hidden = !show;
+      if (show) shown++;
+    });
+    if (empty) empty.hidden = shown !== 0;
+  }
+
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      category = chip.getAttribute("data-category") || "all";
+      chips.forEach(function (c) {
+        var on = c === chip;
+        c.classList.toggle("gc-chip--on", on);
+        c.setAttribute("aria-pressed", String(on));
+      });
+      apply();
+    });
+  });
+
+  input.addEventListener("input", apply);
+  apply();
+})();

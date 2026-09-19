@@ -111,6 +111,60 @@ body.gc-body *::after { box-sizing: border-box; }
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 }
 
+/* ---- Toolbar: name search + category filter chips ---- */
+.gc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  margin: 0 0 24px;
+}
+.gc-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 220px;
+  max-width: 340px;
+  padding: 8px 14px;
+  border: 1px solid var(--gc-border);
+  border-radius: 999px;
+  background: var(--gc-surface);
+  color: var(--gc-text-muted);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.gc-search:focus-within { border-color: var(--gc-accent); box-shadow: var(--gc-ring); }
+.gc-search svg { flex: none; width: 15px; height: 15px; }
+.gc-search input {
+  flex: 1; min-width: 0;
+  border: 0; outline: 0;
+  background: transparent;
+  color: var(--gc-text);
+  font: inherit; font-size: 14px;
+}
+.gc-search input::placeholder { color: var(--gc-text-muted); }
+.gc-search input::-webkit-search-cancel-button { cursor: pointer; }
+.gc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gc-chip {
+  padding: 6px 13px;
+  border: 1px solid var(--gc-border);
+  border-radius: 999px;
+  background: var(--gc-surface);
+  color: var(--gc-text);
+  font: inherit; font-size: 13px; font-weight: 550;
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease;
+}
+.gc-chip:hover { border-color: var(--gc-accent); }
+.gc-chip:focus-visible { outline: none; box-shadow: var(--gc-ring); }
+.gc-chip--on {
+  color: var(--gc-on-accent);
+  background: linear-gradient(90deg, var(--gc-accent), var(--gc-accent-2));
+  border-color: transparent;
+}
+.gc-empty { margin: 0 0 24px; color: var(--gc-text-muted); text-align: center; }
+
+
 /* ---- Game card ---- */
 .gc-card {
   position: relative;
@@ -125,6 +179,8 @@ body.gc-body *::after { box-sizing: border-box; }
   text-decoration: none;
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
 }
+/* The card sets display:flex, which would beat the bare [hidden] attribute. */
+.gc-card[hidden] { display: none; }
 .gc-card:hover,
 .gc-card:focus-visible {
   transform: translateY(-4px);
