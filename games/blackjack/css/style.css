@@ -53,8 +53,9 @@
   /* left offsets are set inline by JS (measured px fan); CSS keeps the flavour */
   transform: rotate(calc(var(--i, 0) * -1.2deg));
   box-shadow: 0 4px 10px rgba(0, 0, 0, .35), inset 0 0 0 1px var(--card-edge);
-  animation: bjDeal .28s ease;
 }
+/* Only freshly dealt cards slide in; existing cards stay put. */
+.bj-well .c-card.bj-new { animation: bjDeal .28s ease; }
 @keyframes bjDeal {
   from { transform: translateY(-42px) rotate(-7deg); opacity: 0; }
 }
@@ -118,6 +119,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bj-well .c-card { animation: none; }
+  .bj-well .c-card.bj-new { animation: none; }
   .bj-chip:hover:not(:disabled) { transform: none; }
 }

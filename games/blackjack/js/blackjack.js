@@ -118,14 +118,19 @@
     return el;
   }
   function renderHand(well, hand, hideSecond) {
+    const prev = +(well.dataset.count || 0);
     well.innerHTML = "";
     hand.forEach((card, i) => {
       const faceDown = hideSecond && i === 1;
       const el = cardEl(card, faceDown);
+      // Only cards added since the last render animate in; existing cards
+      // are rebuilt in place without the deal-in flash.
+      if (i >= prev) el.classList.add("bj-new");
       el.style.setProperty("--i", String(i));
       el.style.zIndex = String(i + 1);
       well.appendChild(el);
     });
+    well.dataset.count = String(hand.length);
     // Fan the cards with real px offsets (CSS calc on the inherited --cw
     // isn't readable back via getComputedStyle), then widen the well so the
     // absolute fan stays centred under its label.
@@ -188,6 +193,9 @@
     dealer = [draw(), draw()];
     dealerHidden = true;
     phase = "player";
+    // Fresh round: every card is new, so let them all animate in.
+    dealerEl.dataset.count = "0";
+    playerEl.dataset.count = "0";
     setStatus("Your move", "");
     render();
 
