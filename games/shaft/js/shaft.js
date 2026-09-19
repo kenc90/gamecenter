@@ -24,6 +24,8 @@
   var LEAD = 90;                         // screen y of the ceiling: the bar is
                                          // pinned near the top and the world
                                          // scrolls beneath it
+  var CSPIKE = 9;                        // pillards hanging from the bar; the
+                                         // kill line is at their tips
   var HP_MAX = 50, SPIKE_DPS = 22, CONV_SPEED = 110, BOUNCE_VY = 600;
 
   // Sharp rendering on hi-dpi screens: back store in device pixels.
@@ -263,7 +265,7 @@
     // so sampling at the top of the ceiling's step catches every contact —
     // a player can never dive away from a bar that is already on them.
     camY += camSpeed() * dt;
-    if (camY >= pl.y) { die("crushed"); return; }
+    if (camY + CSPIKE >= pl.y) { die("crushed"); return; }
 
     // --- gravity + one-way landing on shelf tops ---
     var prevBottom = pl.y + PH;
@@ -517,6 +519,18 @@
     ctx.shadowBlur = 14;
     ctx.fillRect(0, cy - 1.5, W, 2.5);
     ctx.restore();
+    // row of pillards hanging off the bar — the kill line is their tips
+    ctx.fillStyle = "#c3ccd9";
+    ctx.strokeStyle = "#4c535e";
+    ctx.lineWidth = 1;
+    for (var cx = WALL + 1; cx + 10 <= W - WALL + 0.5; cx += 11) {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + 5, cy + CSPIKE);
+      ctx.lineTo(cx + 10, cy);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    }
   }
 
   function drawPlayer() {
